@@ -1,30 +1,24 @@
 package io.project.BorovskBot.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
-import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
-public class Place {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+public class Place extends AbstractPersistable<Long> {
+
+    @Column(name = "name")
     private String name;
-    @Column(length = 25500)
+
+    @Column(name = "description", length = 25500)
     private String description;
-    @OneToMany
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @Column(name = "photo")
     private List<Photo> photo;
-
-    public Place(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
-
-    public Place() {
-
-    }
 }
