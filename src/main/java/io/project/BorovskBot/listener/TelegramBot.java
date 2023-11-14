@@ -2,7 +2,7 @@ package io.project.BorovskBot.listener;
 
 import com.vdurmont.emoji.EmojiParser;
 import io.project.BorovskBot.config.BotConfig;
-import io.project.BorovskBot.model.Ads;
+import io.project.BorovskBot.model.Ad;
 import io.project.BorovskBot.model.User;
 import io.project.BorovskBot.model.Weather;
 import io.project.BorovskBot.service.*;
@@ -27,6 +27,7 @@ import java.util.List;
 
 import static io.project.BorovskBot.service.constants.Commands.*;
 import static io.project.BorovskBot.service.constants.ErrorText.ERROR_SETTING;
+import static io.project.BorovskBot.service.constants.LogText.METHOD_CALLED;
 import static io.project.BorovskBot.service.constants.LogText.REPLIED_USER;
 import static io.project.BorovskBot.service.constants.TelegramText.*;
 
@@ -51,6 +52,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      */
     @PostConstruct
     public void initCommands() {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
         List<BotCommand> listOfCommands = new ArrayList<>(List.of(
                 new BotCommand(COMMAND_START, DESCRIPTION_START),
                 new BotCommand(COMMAND_MY_DATA, DESCRIPTION_MY_DATA),
@@ -71,10 +73,12 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
         return config.getBotName();
     }
     @Override
     public String getBotToken() {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
         return config.getToken();
     }
 
@@ -85,6 +89,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     @SneakyThrows
     public void onUpdateReceived(Update update) {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
@@ -102,12 +107,11 @@ public class TelegramBot extends TelegramLongPollingBot {
                             execute(sendingService.sendMessage(chatId, jokeService.getRandomJoke().getBody()));
                             break;
                         case COMMAND_WEATHER:
-                            Weather weather = weatherService.getWeather(NAME_CITY);
-                            execute(sendingService.sendMessage(chatId, getTextWeather(weather)));
+                            sendWeather(chatId);
+                            break;
                         default:
                             execute(sendingService.commandNotFound(chatId));
             }
-
         } else if (update.hasCallbackQuery()) {
             buttonRegister(update);
         }
@@ -120,6 +124,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      */
     @SneakyThrows
     private void startCommandReceived(long chatId, String name) {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
         String answer = EmojiParser.parseToUnicode(HELLO + name + GREETING);
         log.info(REPLIED_USER + name);
         execute(sendingService.sendPhoto(chatId, answer));
@@ -131,6 +136,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      */
     @SneakyThrows
     private void register(long chatId) {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(REGISTER_QUESTION);
@@ -165,6 +171,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      */
     @SneakyThrows
     private void buttonRegister(Update update) {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
         String callbackData = update.getCallbackQuery().getData();
         long messageId = update.getCallbackQuery().getMessage().getMessageId();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
@@ -179,15 +186,31 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     /**
+     * Отправляет текущую погоду пользователю
+     * @param chatId ID чата
+     */
+    @SneakyThrows
+    private void sendWeather(long chatId){
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        Weather weather = weatherService.getWeather(NAME_CITY);
+        execute(sendingService.sendMessage(chatId,
+                String.format(TEXT_WEATHER,
+                        weather.getMain().getTemp().toBigInteger(),
+                        weather.getMain().getFeels_like().toBigInteger(),
+                        weather.getWind().getSpeed().toString())));
+    }
+
+    /**
      * Отправляет объявления пользователям каждый понедельник
      */
     @Scheduled(cron = "${cron.scheduler}")
     @SneakyThrows
     public void sendAds() {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
         var ads = adsService.findAllAds();
         var users = userService.findAllUsers();
 
-        for (Ads ad : ads) {
+        for (Ad ad : ads) {
             for (User user : users) {
                 execute(sendingService.sendMessage(user.getChatId(), ad.getAd()));
             }

@@ -19,6 +19,5 @@ public class Place extends AbstractPersistable<Long> {
     private String description;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @Column(name = "photo")
     private List<Photo> photo;
 }

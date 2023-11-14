@@ -32,7 +32,7 @@ public class JokeServiceImpl implements io.project.BorovskBot.service.JokeServic
         var randomId = r.nextInt(MAX_JOKE_ID_MINUS_ONE) + 1;
 
         return jokeRepository.findById(randomId).orElseThrow(()->{
-            JokeNotFoundException jokeEx = new JokeNotFoundException(ERROR_JOKE_NOT_FOUND);
+            JokeNotFoundException jokeEx = new JokeNotFoundException(String.format(ERROR_JOKE_NOT_FOUND, randomId));
             log.error(ERROR_TEXT + jokeEx.getMessage());
             return jokeEx;
         });
