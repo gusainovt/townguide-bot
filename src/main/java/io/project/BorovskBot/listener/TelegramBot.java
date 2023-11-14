@@ -6,28 +6,28 @@ import io.project.BorovskBot.model.Ads;
 import io.project.BorovskBot.model.User;
 import io.project.BorovskBot.model.Weather;
 import io.project.BorovskBot.service.*;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
+import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static io.project.BorovskBot.service.constants.Commands.*;
+import static io.project.BorovskBot.service.constants.ErrorText.ERROR_SETTING;
+import static io.project.BorovskBot.service.constants.LogText.REPLIED_USER;
 import static io.project.BorovskBot.service.constants.TelegramText.*;
 
 
@@ -46,23 +46,28 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final WeatherService weatherService;
     private final JokeService jokeService;
 
-    List<BotCommand> listOfCommands = new ArrayList<>(List.of(
-            new BotCommand(COMMAND_START, "запустить бота"),
-            new BotCommand(COMMAND_MY_DATA, "посмотреть свои данные"),
-            new BotCommand(COMMAND_DELETE_DATA, "удалить свои данные"),
-            new BotCommand(COMMAND_HELP, "информация как пользоваться этим ботом"),
-            new BotCommand(COMMAND_SETTING, "настройки"),
-            new BotCommand(COMMAND_REGISTER, "регистрация"),
-            new BotCommand(COMMAND_JOKE, "рандомная шутка"),
-            new BotCommand(COMMAND_WEATHER, "погода в Боровске")
-    ));
+    /**
+     * Метод создает меню с командами
+     */
+    @PostConstruct
+    public void initCommands() {
+        List<BotCommand> listOfCommands = new ArrayList<>(List.of(
+                new BotCommand(COMMAND_START, DESCRIPTION_START),
+                new BotCommand(COMMAND_MY_DATA, DESCRIPTION_MY_DATA),
+                new BotCommand(COMMAND_DELETE_DATA, DESCRIPTION_DELETE_DATA),
+                new BotCommand(COMMAND_HELP, DESCRIPTION_HELP),
+                new BotCommand(COMMAND_SETTING, DESCRIPTION_SETTING),
+                new BotCommand(COMMAND_REGISTER, DESCRIPTION_REGISTER),
+                new BotCommand(COMMAND_JOKE, DESCRIPTION_JOKE),
+                new BotCommand(COMMAND_WEATHER, DESCRIPTION_WEATHER)
+        ));
+        try {
+            this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
 
-//    try {
-//            this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
-//
-//    } catch (TelegramApiException e) {
-////            log.error(ERROR_SETTING + e.getMessage());
-//    }
+        } catch (TelegramApiException e) {
+            log.error(ERROR_SETTING + e.getMessage());
+        }
+    }
 
     @Override
     public String getBotUsername() {
@@ -73,6 +78,10 @@ public class TelegramBot extends TelegramLongPollingBot {
         return config.getToken();
     }
 
+    /**
+     * Метод реализует основную логику взаимодействия с ботом через команды и кнопки.
+     * @param update объект {@link Update} из библиотеки телеграмма
+     */
     @Override
     @SneakyThrows
     public void onUpdateReceived(Update update) {
@@ -81,93 +90,63 @@ public class TelegramBot extends TelegramLongPollingBot {
             long chatId = update.getMessage().getChatId();
             switch (messageText) {
                         case COMMAND_START:
-                            userService.registeredUser(update.getMessage());
-                            log.info("Registered user: " + update.getMessage().getChat().getUserName());
                             startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
-                            photoService.uploadPhoto();
-                            byte[] bytes = photoRepository.findById(2L).get().getData();
-                            BufferedImage image = null;
-
-                            try {
-                                image = convertBytesToImage(bytes);
-                            } catch (IOException e) {
-                                // Обработка ошибки
-                            }
-                            InputFile imageInputFile = new InputFile();
-                            imageInputFile.setMedia(image.getData());
-                            var message = new SendPhoto();
-                            message.setChatId(chatId);
-                            message.setCaption("Новое фото");
-                            message.setPhoto(imageInputFile);
-
                             break;
-
                         case COMMAND_HELP:
                             execute(sendingService.sendMessage(chatId, HELP_TEXT));
                             break;
-
                         case COMMAND_REGISTER:
                             register(chatId);
                             break;
-
                         case COMMAND_JOKE:
                             execute(sendingService.sendMessage(chatId, jokeService.getRandomJoke().getBody()));
                             break;
                         case COMMAND_WEATHER:
-                            Weather weather = weatherService.getWeather("borovsk");
-                            String weatherBorovsk =
-                                    "Погода в боровске: \n" +
-                                            "Температура - " + weather.getMain().getTemp().toBigInteger() + " градусов; \n" +
-                                            "Ошущается как - " + weather.getMain().getFeels_like().toBigInteger() + " градусов; \n" +
-                                            "Скорость ветра - " + weather.getWind().getSpeed() + " м/с.";
-                            execute(sendingService.sendMessage(chatId, weatherBorovsk));
-
+                            Weather weather = weatherService.getWeather(NAME_CITY);
+                            execute(sendingService.sendMessage(chatId, getTextWeather(weather)));
                         default:
-                            sendingService.commandNotFound(chatId);
+                            execute(sendingService.commandNotFound(chatId));
             }
 
         } else if (update.hasCallbackQuery()) {
-            String callbackData = update.getCallbackQuery().getData();
-            long messageId = update.getCallbackQuery().getMessage().getMessageId();
-            long chatId = update.getCallbackQuery().getMessage().getChatId();
-
-            if (callbackData.equals(YES_BUTTON)) {
-                String text = "Ты зарегистррирован!";
-                execute(sendingService.sendEditMessageText(text, chatId, messageId));
-
-            } else if (callbackData.equals(NO_BUTTON)) {
-                String text = "Отмена регистрации...";
-                execute(sendingService.sendEditMessageText(text, chatId, messageId));
-            }
-
+            buttonRegister(update);
         }
     }
-    }
+
+    /**
+     * Стартовое приветствие
+     * @param chatId ID чата
+     * @param name Имя пользователя
+     */
     @SneakyThrows
     private void startCommandReceived(long chatId, String name) {
         String answer = EmojiParser.parseToUnicode(HELLO + name + GREETING);
-//        log.info(REPLIED_USER + name);
-        execute(sendingService.sendPhoto(chatId,answer));
+        log.info(REPLIED_USER + name);
+        execute(sendingService.sendPhoto(chatId, answer));
     }
 
+    /**
+     * Регистрация пользователя
+     * @param chatId ID чата
+     */
     @SneakyThrows
     private void register(long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText("Ты хочешь зарегистрироваться?");
+        message.setText(REGISTER_QUESTION);
 
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
-
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+
         var yesButton = new InlineKeyboardButton();
 
-        yesButton.setText("Да");
+        yesButton.setText(YES);
         yesButton.setCallbackData(YES_BUTTON);
 
         var noButton = new InlineKeyboardButton();
 
-        noButton.setText("Нет");
+        noButton.setText(NO);
         noButton.setCallbackData(NO_BUTTON);
 
         rowInLine.add(yesButton);
@@ -179,6 +158,29 @@ public class TelegramBot extends TelegramLongPollingBot {
         message.setReplyMarkup(markupInline);
         execute(message);
     }
+
+    /**
+     * Меню регистрации (кнопки)
+     * @param update объект {@link Update} из библиотеки телеграмма
+     */
+    @SneakyThrows
+    private void buttonRegister(Update update) {
+        String callbackData = update.getCallbackQuery().getData();
+        long messageId = update.getCallbackQuery().getMessage().getMessageId();
+        long chatId = update.getCallbackQuery().getMessage().getChatId();
+
+        if (callbackData.equals(YES_BUTTON)) {
+            userService.registeredUser(update.getMessage());
+            execute(sendingService.sendEditMessageText(REGISTER_CONFIRMATION, chatId, messageId));
+        } else if (callbackData.equals(NO_BUTTON)) {
+            execute(sendingService.sendEditMessageText(REGISTER_CANCEL, chatId, messageId));
+        }
+
+    }
+
+    /**
+     * Отправляет объявления пользователям каждый понедельник
+     */
     @Scheduled(cron = "${cron.scheduler}")
     @SneakyThrows
     public void sendAds() {
@@ -191,20 +193,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
         }
     }
-
-    @SneakyThrows
-    public static BufferedImage convertBytesToImage(byte[] bytes)  {
-        BufferedImage image = null;
-
-        try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes)) {
-            image = ImageIO.read(bis);
-        } catch (IOException e) {
-            throw new IOException("Error converting bytes to image", e);
-        }
-
-        return image;
-    }
-
 
 }
 
