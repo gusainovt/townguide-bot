@@ -1,6 +1,11 @@
 package io.project.BorovskBot.service.impl;
 
 import com.vdurmont.emoji.EmojiParser;
+import io.project.BorovskBot.model.Weather;
+import io.project.BorovskBot.service.MenuService;
+import io.project.BorovskBot.service.WeatherService;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -14,11 +19,17 @@ import java.io.File;
 import java.io.IOException;
 
 import static io.project.BorovskBot.service.constants.LogText.METHOD_CALLED;
-import static io.project.BorovskBot.service.constants.TelegramText.NOT_FOUND_COMMAND;
+import static io.project.BorovskBot.service.constants.LogText.REPLIED_USER;
+import static io.project.BorovskBot.service.constants.TelegramText.*;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class SendingServiceImpl implements io.project.BorovskBot.service.SendingService {
+
+    private final MenuService menuService;
+    private final WeatherService weatherService;
+
 
     @Value("${path.start-photo}")
     private String pathStartPhoto;
@@ -85,4 +96,34 @@ public class SendingServiceImpl implements io.project.BorovskBot.service.Sending
         return message;
     }
 
+    /**
+     * Стартовое приветствие
+     * @param chatId ID чата
+     * @param name Имя пользователя
+     */
+    @SneakyThrows
+    @Override
+    public SendPhoto startCommandReceived(long chatId, String name) {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        String answer = EmojiParser.parseToUnicode(HELLO + name + GREETING);
+        log.info(REPLIED_USER + name);
+        SendPhoto sendPhoto = sendPhoto(chatId, answer);
+        sendPhoto.setReplyMarkup(menuService.startMenu());
+        return sendPhoto;
+    }
+
+    /**
+     * Отправляет текущую погоду пользователю
+     * @param chatId ID чата
+     */
+    @Override
+    public SendMessage sendWeather(long chatId){
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        Weather weather = weatherService.getWeather(NAME_CITY);
+        return sendMessage(chatId,
+                String.format(TEXT_WEATHER,
+                        weather.getMain().getTemp().toBigInteger(),
+                        weather.getMain().getFeels_like().toBigInteger(),
+                        weather.getWind().getSpeed().toString()));
+    }
 }

@@ -19,11 +19,9 @@ public class TelegramText {
     public static final String REGISTER_CONFIRMATION = "Ты зарегистррирован!";
     public static final String REGISTER_CANCEL = "Отмена регистрации...";
     public static final String NOT_FOUND_COMMAND = "Извини, это пока не работает:cry:";
-    public static final String YES = "Да";
-    public static final String NO = "Нет";
     public static final String TEXT_WEATHER =
-            "Погода в боровске: " +
-                    "\nТемпература - %s градусов; " +
-                    "\nОшущается как - %s градусов; " +
-                    "\nСкорость ветра - %s м/с.";
+            "Погода в Боровске  " +
+                    "\nТемпература: %s градусов; " +
+                    "\nОшущается как: %s градусов; " +
+                    "\nСкорость ветра: %s м/с.";
 }

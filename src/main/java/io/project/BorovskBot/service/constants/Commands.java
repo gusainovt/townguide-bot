@@ -1,8 +1,6 @@
 package io.project.BorovskBot.service.constants;
 
 public class Commands {
-    public static final String YES_BUTTON = "YES_BUTTON";
-    public static final String NO_BUTTON = "NO_BUTTON";
     public static final String COMMAND_START = "/start";
     public static final String COMMAND_MY_DATA = "/mydata";
     public static final String COMMAND_DELETE_DATA = "/deletedata";
