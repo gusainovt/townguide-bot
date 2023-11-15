@@ -2,9 +2,9 @@ package io.project.BorovskBot.listener;
 
 import com.vdurmont.emoji.EmojiParser;
 import io.project.BorovskBot.config.BotConfig;
-import io.project.BorovskBot.model.Ad;
 import io.project.BorovskBot.model.User;
 import io.project.BorovskBot.model.Weather;
+import io.project.BorovskBot.model.dto.AdDto;
 import io.project.BorovskBot.service.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +45,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final AdsService adsService;
     private final PhotoService photoService;
     private final WeatherService weatherService;
-    private final JokeService jokeService;
+    private final StoryService storyService;
 
     /**
      * Метод создает меню с командами
@@ -104,7 +104,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                             register(chatId);
                             break;
                         case COMMAND_JOKE:
-                            execute(sendingService.sendMessage(chatId, jokeService.getRandomJoke().getBody()));
+                            execute(sendingService.sendMessage(chatId, storyService.getRandomStory().getBody()));
                             break;
                         case COMMAND_WEATHER:
                             sendWeather(chatId);
@@ -177,7 +177,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         long chatId = update.getCallbackQuery().getMessage().getChatId();
 
         if (callbackData.equals(YES_BUTTON)) {
-            userService.registeredUser(update.getMessage());
+            userService.registeredUser(update.getCallbackQuery().getMessage());
             execute(sendingService.sendEditMessageText(REGISTER_CONFIRMATION, chatId, messageId));
         } else if (callbackData.equals(NO_BUTTON)) {
             execute(sendingService.sendEditMessageText(REGISTER_CANCEL, chatId, messageId));
@@ -210,7 +210,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         var ads = adsService.findAllAds();
         var users = userService.findAllUsers();
 
-        for (Ad ad : ads) {
+        for (AdDto ad : ads) {
             for (User user : users) {
                 execute(sendingService.sendMessage(user.getChatId(), ad.getAd()));
             }

@@ -4,13 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "photos")
-public class Photo extends AbstractPersistable<Long> {
+@Table(name = "photos.sql")
+public class Photo {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "file_path")
     private String filePath;
@@ -21,11 +24,12 @@ public class Photo extends AbstractPersistable<Long> {
     @Column(name = "mediaType")
     private String mediaType;
 
+    @Lob
     @JsonIgnore
     @Column(name = "data")
     private byte[] data;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.REMOVE)
     private Place place;
 }

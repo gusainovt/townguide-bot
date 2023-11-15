@@ -6,18 +6,14 @@ import jakarta.persistence.*;
 
 @Entity
 @Data
-@Table(name = "jokes")
-public class Joke {
+@Table(name = "stories")
+public class Story {
 
     @Id
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "body", length = 2550000)
     private String body;
 
-    @Column(name = "category")
-    private String category;
-
-    @Column(name = "rating")
-    private double rating;
 }

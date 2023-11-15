@@ -11,7 +11,7 @@ public class TelegramText {
             "Нажми " + COMMAND_DELETE_DATA + " чтобы удалить данные о себе;\n\n" +
             "Нажми " + COMMAND_WEATHER + " чтобы посмотреть погоду в Боровске;\n\n" +
             "Нажми " + COMMAND_SETTING + " чтобы перейти в настройки.\n\n";
-    public static final int MAX_JOKE_ID_MINUS_ONE = 3772;
+    public static final int MAX_STORY_ID_MINUS_ONE = 3772;
     public static final String HELLO = "Привет, ";
     public static final String GREETING = "!\nРад знакомству!:rocket:";
     public static final String NAME_CITY = "borovsk";
