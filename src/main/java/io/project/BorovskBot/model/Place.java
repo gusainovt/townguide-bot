@@ -3,14 +3,18 @@ package io.project.BorovskBot.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
-public class Place extends AbstractPersistable<Long> {
+@Table(name = "places")
+public class Place {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
     @Column(name = "name")
     private String name;

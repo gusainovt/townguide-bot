@@ -33,13 +33,6 @@ public class StoryServiceImpl implements StoryService {
     public StoryDto getRandomStory() {
         log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
         return storyMapper.toStoryDto(storyRepository.findRandomStory());
-//        var r = new Random();
-//        var randomId = (long)(r.nextInt(MAX_STORY_ID_MINUS_ONE) + 1);
-//        return storyMapper.toStoryDto(storyRepository.findById(randomId).orElseThrow(()->{
-//            StoryNotFoundException storyEx = new StoryNotFoundException(String.format(ERROR_STORY_NOT_FOUND, randomId));
-//            log.error(ERROR_TEXT + storyEx.getMessage());
-//            return storyEx;
-//        }));
     }
 
     /**

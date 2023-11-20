@@ -8,7 +8,7 @@ public class Commands {
     public static final String COMMAND_SETTING = "/setting";
     public static final String COMMAND_REGISTER = "/register";
     public static final String COMMAND_SEND = "/send";
-    public static final String COMMAND_JOKE = "/joke";
+    public static final String COMMAND_STORY = "/story";
     public static final String COMMAND_ADD_PLACE = "/addPlace";
     public static final String COMMAND_WEATHER = "/weather";
     public static final String DESCRIPTION_START = "запустить бота";

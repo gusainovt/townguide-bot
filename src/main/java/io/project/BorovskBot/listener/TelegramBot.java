@@ -58,7 +58,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 new BotCommand(COMMAND_HELP, DESCRIPTION_HELP),
                 new BotCommand(COMMAND_SETTING, DESCRIPTION_SETTING),
                 new BotCommand(COMMAND_REGISTER, DESCRIPTION_REGISTER),
-                new BotCommand(COMMAND_JOKE, DESCRIPTION_JOKE),
+                new BotCommand(COMMAND_STORY, DESCRIPTION_JOKE),
                 new BotCommand(COMMAND_WEATHER, DESCRIPTION_WEATHER)
         ));
         try {
@@ -101,7 +101,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                         case COMMAND_REGISTER:
                             execute(menuService.registerMenu(chatId));
                             break;
-                        case COMMAND_JOKE:
+                        case COMMAND_STORY:
                             execute(sendingService.sendMessage(chatId, storyService.getRandomStory().getBody()));
                             break;
                         case COMMAND_WEATHER:
