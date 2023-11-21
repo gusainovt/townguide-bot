@@ -2,6 +2,10 @@ package io.project.BorovskBot.controller;
 
 import io.project.BorovskBot.model.dto.ImagePreviewDto;
 import io.project.BorovskBot.service.PhotoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,14 +20,29 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/photos")
+@Tag(name = "Фотографии")
 public class PhotoController {
     private final PhotoService photoService;
+
+    @Operation(summary = "Получить превью фотографии", description = "Возвращает превью фотографии по указанному идентификатору.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Превью фотографии успешно возвращено"),
+            @ApiResponse(responseCode = "404", description = "Фотография не найдена"),
+            @ApiResponse(responseCode = "500", description = "Ошибка сервера")
+    })
     @GetMapping(value = "/{id}")
     public ResponseEntity<byte[]> getPhotoPreview(@PathVariable Long id) {
         ImagePreviewDto preview = photoService.generateImagePreview(id);
         return ResponseEntity.status(HttpStatus.OK).headers(preview.getHeaders()).body(preview.getData());
     }
 
+    @Operation(summary = "Сохранить фотографию", description = "Сохраняет фотографию для указанного места.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Фотография успешно сохранена"),
+            @ApiResponse(responseCode = "400", description = "Ошибка в данных фотографии"),
+            @ApiResponse(responseCode = "404", description = "Место не найдено"),
+            @ApiResponse(responseCode = "500", description = "Ошибка сервера")
+    })
     @PostMapping(value = "/{placeId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> savePhoto(@PathVariable Long placeId, @RequestBody MultipartFile multipartFile) throws IOException {
         photoService.uploadPhoto(placeId,multipartFile);

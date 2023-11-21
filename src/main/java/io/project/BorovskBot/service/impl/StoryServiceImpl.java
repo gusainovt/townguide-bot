@@ -32,7 +32,11 @@ public class StoryServiceImpl implements StoryService {
     @Override
     public StoryDto getRandomStory() {
         log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
-        return storyMapper.toStoryDto(storyRepository.findRandomStory());
+        return storyMapper.toStoryDto(storyRepository.findRandomStory().orElseThrow(() -> {
+            StoryNotFoundException storyEx = new StoryNotFoundException(String.format(ERROR_STORY_NOT_FOUND, "random"));
+            log.error(ERROR_TEXT + storyEx.getMessage());
+            return storyEx;
+        }));
     }
 
     /**
