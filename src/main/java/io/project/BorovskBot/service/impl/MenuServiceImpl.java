@@ -20,6 +20,7 @@ import static io.project.BorovskBot.service.constants.TelegramText.REGISTER_QUES
 public class MenuServiceImpl implements io.project.BorovskBot.service.MenuService {
 
 
+
     /**
      * Релизация стартового меню
      * @return объект {@link InlineKeyboardMarkup}
@@ -42,7 +43,6 @@ public class MenuServiceImpl implements io.project.BorovskBot.service.MenuServic
 
         rowInLine.add(getStory);
         rowInLine.add(getPhoto);
-
 
         rowsInLine.add(rowInLine);
 
@@ -78,6 +78,31 @@ public class MenuServiceImpl implements io.project.BorovskBot.service.MenuServic
         rowInLine.add(yesButton);
         rowInLine.add(noButton);
 
+        rowsInLine.add(rowInLine);
+
+        markupInline.setKeyboard(rowsInLine);
+        message.setReplyMarkup(markupInline);
+        return message;
+    }
+
+
+    /**
+     * Меню места
+     * @param message сообщение с местом
+     */
+    @Override
+    public SendMessage placeMenu(SendMessage message) {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+
+        var photoButton = new InlineKeyboardButton();
+
+        photoButton.setText(PLACE_PHOTO_BUTTON);
+        photoButton.setCallbackData(PHOTO_CALLBACK);
+
+        rowInLine.add(photoButton);
         rowsInLine.add(rowInLine);
 
         markupInline.setKeyboard(rowsInLine);

@@ -18,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static io.project.BorovskBot.service.constants.ErrorText.ERROR_PHOTO_NOT_FOUND;
 import static io.project.BorovskBot.service.constants.ErrorText.ERROR_TEXT;
@@ -49,7 +51,8 @@ public class PhotoServiceImpl implements io.project.BorovskBot.service.PhotoServ
         log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName() + WITH_ID + placeId);
         Place place = placeMapper.toPlace(placeService.findPlaceById(placeId));
         place.setId(placeId);
-        Path filePath = Path.of(photoDir, placeId + "." + getExtension(file.getOriginalFilename()));
+        Path filePath = Path.of(photoDir, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) +
+                "." + getExtension(file.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         try (
@@ -66,6 +69,10 @@ public class PhotoServiceImpl implements io.project.BorovskBot.service.PhotoServ
         photo.setFileSize(file.getSize());
         photo.setMediaType(file.getContentType());
         photo.setData(file.getBytes());
+        photoRepository.save(photo);
+        Path finalFilePath = Path.of(photoDir, placeId + "_" + photo.getId() + "." + getExtension(file.getOriginalFilename()));
+        Files.move(filePath, finalFilePath);
+        photo.setFilePath(finalFilePath.toString());
         photoRepository.save(photo);
     }
 
@@ -85,8 +92,17 @@ public class PhotoServiceImpl implements io.project.BorovskBot.service.PhotoServ
         return photoMapper.photoToImagePreviewDto(photo);
     }
 
+    @Override
+    public String getPhotoPathById(Long id) {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        Photo photo = photoRepository.findById(id).orElseThrow();
+        String path = photo.getFilePath()
+                .replaceFirst("\\\\Users\\\\Huawei\\\\IdeaProjects\\\\Telegram_bots\\\\BorovskBot\\\\src\\\\main\\\\resources\\\\", "");
+        return path;
+    }
+
     /**
-     * Создает новый путь для фотографии
+     * Возращает расширение
      * @param fileName Название файла
      * @return Путь в виде строки
      */
@@ -94,4 +110,5 @@ public class PhotoServiceImpl implements io.project.BorovskBot.service.PhotoServ
         log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
+
 }

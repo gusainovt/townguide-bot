@@ -3,6 +3,7 @@ package io.project.BorovskBot.service.impl;
 import com.vdurmont.emoji.EmojiParser;
 import io.project.BorovskBot.model.Weather;
 import io.project.BorovskBot.service.MenuService;
+import io.project.BorovskBot.service.PhotoService;
 import io.project.BorovskBot.service.WeatherService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -29,6 +30,7 @@ public class SendingServiceImpl implements io.project.BorovskBot.service.Sending
 
     private final MenuService menuService;
     private final WeatherService weatherService;
+    private final PhotoService photoService;
 
 
     @Value("${path.start-photo}")
@@ -78,14 +80,14 @@ public class SendingServiceImpl implements io.project.BorovskBot.service.Sending
     }
 
     /**
-     * Отправляет фотографию в чат
+     * Отправляет стартовую фотографию в чат
      * @param chatId ID чата
      * @param caption текст-описание
      * @return объект {@link SendPhoto}
      * @throws IOException ошибка ввода/вывода
      */
     @Override
-    public SendPhoto sendPhoto(Long chatId, String caption) throws IOException {
+    public SendPhoto sendStartPhoto(Long chatId, String caption) throws IOException {
         log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
         File imageFile = new ClassPathResource(pathStartPhoto).getFile();
         InputFile imageInputFile = new InputFile().setMedia(imageFile);
@@ -107,7 +109,7 @@ public class SendingServiceImpl implements io.project.BorovskBot.service.Sending
         log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
         String answer = EmojiParser.parseToUnicode(HELLO + name + GREETING);
         log.info(REPLIED_USER + name);
-        SendPhoto sendPhoto = sendPhoto(chatId, answer);
+        SendPhoto sendPhoto = sendStartPhoto(chatId, answer);
         sendPhoto.setReplyMarkup(menuService.startMenu());
         return sendPhoto;
     }
@@ -125,5 +127,23 @@ public class SendingServiceImpl implements io.project.BorovskBot.service.Sending
                         weather.getMain().getTemp().toBigInteger(),
                         weather.getMain().getFeels_like().toBigInteger(),
                         weather.getWind().getSpeed().toString()));
+    }
+
+    /**
+     * Отправляет фотографию в чат
+     * @param chatId ID чата
+     * @param path путь к фотографии
+     * @return объект {@link SendPhoto}
+     * @throws IOException ошибка ввода/вывода
+     */
+    @Override
+    public SendPhoto sendPhoto(Long chatId, String path) throws IOException {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        File imageFile = new ClassPathResource(path).getFile();
+        InputFile imageInputFile = new InputFile().setMedia(imageFile);
+        var message = new SendPhoto();
+        message.setChatId(chatId);
+        message.setPhoto(imageInputFile);
+        return message;
     }
 }

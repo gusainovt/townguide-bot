@@ -20,8 +20,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.project.BorovskBot.service.constants.Buttons.LEVEL_REG;
-import static io.project.BorovskBot.service.constants.Buttons.LEVEL_START;
+import static io.project.BorovskBot.service.constants.Buttons.*;
 import static io.project.BorovskBot.service.constants.Commands.*;
 import static io.project.BorovskBot.service.constants.ErrorText.ERROR_SETTING;
 import static io.project.BorovskBot.service.constants.LogText.METHOD_CALLED;
@@ -36,10 +35,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private final UserService userService;
     private final BotConfig config;
-    private final PlaceService placeService;
     private final SendingService sendingService;
     private final AdsService adsService;
-    private final PhotoService photoService;
     private final StoryService storyService;
     private final MenuService menuService;
     private final CallbackService callbackService;
@@ -119,6 +116,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                     break;
                 case LEVEL_START:
                     execute(callbackService.buttonStart(update, callbackData));
+                    break;
+                case LEVEL_PLACE:
+                    execute(callbackService.buttonPlace(update, callbackData));
                     break;
             }
 
