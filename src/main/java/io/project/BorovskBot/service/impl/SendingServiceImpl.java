@@ -1,6 +1,12 @@
 package io.project.BorovskBot.service.impl;
 
 import com.vdurmont.emoji.EmojiParser;
+import io.project.BorovskBot.model.Weather;
+import io.project.BorovskBot.service.MenuService;
+import io.project.BorovskBot.service.PhotoService;
+import io.project.BorovskBot.service.WeatherService;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -14,11 +20,18 @@ import java.io.File;
 import java.io.IOException;
 
 import static io.project.BorovskBot.service.constants.LogText.METHOD_CALLED;
-import static io.project.BorovskBot.service.constants.TelegramText.NOT_FOUND_COMMAND;
+import static io.project.BorovskBot.service.constants.LogText.REPLIED_USER;
+import static io.project.BorovskBot.service.constants.TelegramText.*;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class SendingServiceImpl implements io.project.BorovskBot.service.SendingService {
+
+    private final MenuService menuService;
+    private final WeatherService weatherService;
+    private final PhotoService photoService;
+
 
     @Value("${path.start-photo}")
     private String pathStartPhoto;
@@ -67,14 +80,14 @@ public class SendingServiceImpl implements io.project.BorovskBot.service.Sending
     }
 
     /**
-     * Отправляет фотографию в чат
+     * Отправляет стартовую фотографию в чат
      * @param chatId ID чата
      * @param caption текст-описание
      * @return объект {@link SendPhoto}
      * @throws IOException ошибка ввода/вывода
      */
     @Override
-    public SendPhoto sendPhoto(Long chatId, String caption) throws IOException {
+    public SendPhoto sendStartPhoto(Long chatId, String caption) throws IOException {
         log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
         File imageFile = new ClassPathResource(pathStartPhoto).getFile();
         InputFile imageInputFile = new InputFile().setMedia(imageFile);
@@ -85,4 +98,52 @@ public class SendingServiceImpl implements io.project.BorovskBot.service.Sending
         return message;
     }
 
+    /**
+     * Стартовое приветствие
+     * @param chatId ID чата
+     * @param name Имя пользователя
+     */
+    @SneakyThrows
+    @Override
+    public SendPhoto startCommandReceived(long chatId, String name) {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        String answer = EmojiParser.parseToUnicode(HELLO + name + GREETING);
+        log.info(REPLIED_USER + name);
+        SendPhoto sendPhoto = sendStartPhoto(chatId, answer);
+        sendPhoto.setReplyMarkup(menuService.startMenu());
+        return sendPhoto;
+    }
+
+    /**
+     * Отправляет текущую погоду пользователю
+     * @param chatId ID чата
+     */
+    @Override
+    public SendMessage sendWeather(long chatId){
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        Weather weather = weatherService.getWeather(NAME_CITY);
+        return sendMessage(chatId,
+                String.format(TEXT_WEATHER,
+                        weather.getMain().getTemp().toBigInteger(),
+                        weather.getMain().getFeels_like().toBigInteger(),
+                        weather.getWind().getSpeed().toString()));
+    }
+
+    /**
+     * Отправляет фотографию в чат
+     * @param chatId ID чата
+     * @param path путь к фотографии
+     * @return объект {@link SendPhoto}
+     * @throws IOException ошибка ввода/вывода
+     */
+    @Override
+    public SendPhoto sendPhoto(Long chatId, String path) throws IOException {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        File imageFile = new ClassPathResource(path).getFile();
+        InputFile imageInputFile = new InputFile().setMedia(imageFile);
+        var message = new SendPhoto();
+        message.setChatId(chatId);
+        message.setPhoto(imageInputFile);
+        return message;
+    }
 }

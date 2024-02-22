@@ -1,7 +1,9 @@
 package io.project.BorovskBot.repository;
 
-import io.project.BorovskBot.model.Ads;
+import io.project.BorovskBot.model.Ad;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface AdsRepository extends JpaRepository<Ads,Long> {
+@Repository
+public interface AdsRepository extends JpaRepository<Ad,Long> {
 }
