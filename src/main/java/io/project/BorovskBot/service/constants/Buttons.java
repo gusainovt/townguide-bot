@@ -14,6 +14,4 @@ public class Buttons {
     public static final String STORY_CALLBACK = LEVEL_START + "_STORY";
     public static final String PHOTO_CALLBACK = LEVEL_PLACE + "_PHOTO";
     public static final String PLACE_CALLBACK = LEVEL_START + "_PLACE";
-
-
 }

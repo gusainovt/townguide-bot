@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 public class WeatherMain {
     private BigDecimal temp;
     private BigDecimal humidity;
-
     private BigDecimal feels_like;
 
 }

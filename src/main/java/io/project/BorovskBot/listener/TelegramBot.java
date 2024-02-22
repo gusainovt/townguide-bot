@@ -8,6 +8,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -33,14 +34,25 @@ import static io.project.BorovskBot.service.constants.TelegramText.HELP_TEXT;
 public class TelegramBot extends TelegramLongPollingBot {
 
 
+    @Autowired
     private final UserService userService;
+    @Autowired
     private final BotConfig config;
-    private final SendingService sendingService;
-    private final AdsService adsService;
-    private final StoryService storyService;
-    private final MenuService menuService;
-    private final CallbackService callbackService;
 
+    @Autowired
+    private final SendingService sendingService;
+
+    @Autowired
+    private final AdsService adsService;
+
+    @Autowired
+    private final StoryService storyService;
+
+    @Autowired
+    private final MenuService menuService;
+
+    @Autowired
+    private final CallbackService callbackService;
 
     /**
      * Метод создает меню с командами
