@@ -1,20 +1,23 @@
 package io.project.townguidebot.model;
 
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
+@Table(name = "buttons")
 public class Button {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String languageCode;
-
-    private String type;
+    @EmbeddedId
+    private ButtonId buttonId;
 
     private String callback;
+
+    private String textButton;
 }
