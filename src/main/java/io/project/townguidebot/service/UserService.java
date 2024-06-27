@@ -9,4 +9,6 @@ public interface UserService {
     List<User> findAllUsers();
 
     void registeredUser(Message msg);
+
+    Boolean isRegisteredUser(Long chatId);
 }
