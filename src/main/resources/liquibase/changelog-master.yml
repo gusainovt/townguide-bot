@@ -9,3 +9,5 @@ databaseChangeLog:
       file: liquibase/scripts/stories.sql
   - include:
       file: liquibase/scripts/users.sql
+  - include:
+      file: liquibase/scripts/buttons.sql

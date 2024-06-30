@@ -1,5 +1,6 @@
 package io.project.townguidebot.service.impl;
 
+import io.project.townguidebot.model.LanguageCode;
 import io.project.townguidebot.model.User;
 import io.project.townguidebot.repository.UserRepository;
 import io.project.townguidebot.service.UserService;
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional
-    public void registeredUser(Message msg) {
+    public void registeredUser(Message msg, LanguageCode languageCode) {
         log.info("Start registration for user: {}", msg.getChatId());
         var chatId = msg.getChatId();
         var chat = msg.getChat();
@@ -49,6 +50,8 @@ public class UserServiceImpl implements UserService {
         user.setLastName(chat.getLastName());
         user.setUserName(chat.getUserName());
         user.setRegisteredAt(new Timestamp(System.currentTimeMillis()));
+        user.setLanguageCode(languageCode);
+
         userRepository.save(user);
         log.info("Successfully registered user: {}", user);
     }

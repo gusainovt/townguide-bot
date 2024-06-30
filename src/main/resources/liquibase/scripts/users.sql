@@ -16,3 +16,7 @@ create table users
     description    text,
     pinned_message text
 );
+
+-- changeset gusainovt:add-column-language-code
+alter table users
+    add column language_code varchar(50);

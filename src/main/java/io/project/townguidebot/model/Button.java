@@ -1,8 +1,6 @@
 package io.project.townguidebot.model;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -17,7 +15,8 @@ public class Button {
     @EmbeddedId
     private ButtonId buttonId;
 
-    private String callback;
+    @Enumerated(EnumType.STRING)
+    private ButtonCallback callback;
 
     private String textButton;
 }
