@@ -13,7 +13,6 @@ public enum CommandType {
     DELETE_DATA("/deletedata"),
     HELP("/help"),
     SETTING("/setting"),
-    REGISTER("/register"),
     SEND("/send"),
     STORY("/story"),
     ADD_PLACE("/addPlace"),
