@@ -8,8 +8,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.io.IOException;
 
 public interface CallbackService {
-    SendMessage buttonStart(Update update, String callbackData);
+    SendMessage buttonStart(Update update);
     EditMessageText buttonRegister(Update update);
-    SendPhoto buttonPlace(Update update, String callbackData) throws IOException;
+    SendPhoto buttonPlace(Update update) throws IOException;
 
 }
