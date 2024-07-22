@@ -1,12 +1,15 @@
 package io.project.townguidebot.listener;
 
 import io.project.townguidebot.config.BotConfig;
+import io.project.townguidebot.model.ButtonCallback;
 import io.project.townguidebot.model.CommandType;
 import io.project.townguidebot.model.MenuType;
+import io.project.townguidebot.model.util.ButtonCallbackUtils;
 import io.project.townguidebot.service.CallbackService;
 import io.project.townguidebot.service.MenuService;
 import io.project.townguidebot.service.UserService;
 import io.project.townguidebot.service.strategy.CommandHandlerStrategy;
+import io.project.townguidebot.service.strategy.MenuStrategy;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -34,13 +37,18 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final CallbackService callbackService;
 
     private final List<CommandHandlerStrategy> commandStrategiesList;
+    private final List<MenuStrategy> menuStrategyList;
 
     private Map<CommandType, CommandHandlerStrategy> commandHandlerStrategies;
+    private Map<MenuType, MenuStrategy> menuStrategies;
 
     @PostConstruct
     public void init() {
         commandHandlerStrategies = commandStrategiesList.stream()
                 .collect(Collectors.toMap(CommandHandlerStrategy::getCommandType, s -> s));
+
+        menuStrategies = menuStrategyList.stream()
+                .collect(Collectors.toMap(MenuStrategy::getMenuType, s -> s));
 
 //        log.info("Initialization bot menu");
 //        List<BotCommand> listOfCommands = new ArrayList<>(List.of(
@@ -91,51 +99,25 @@ public class TelegramBot extends TelegramLongPollingBot {
             execute(menuService.registerMenu(chatId));
             return;
         }
+
         if (!userService.isRegisteredUser(chatId) && update.hasCallbackQuery()) {
             execute(callbackService.buttonRegister(update));
         }
-
-
 
         if (update.hasMessage() && update.getMessage().hasText() && !update.hasCallbackQuery()) {
             String messageText = update.getMessage().getText();
 
             CommandHandlerStrategy commandHandlerStrategy = commandHandlerStrategies.get(CommandType.fromString(messageText));
             commandHandlerStrategy.handle(this, chatId);
-
-//            switch (messageText) {
-
-//                        case COMMAND_HELP:
-//                            execute(sendingService.sendMessage(chatId, HELP_TEXT));
-//                            break;
-//                        case COMMAND_STORY:
-//                            execute(sendingService.sendMessage(chatId, storyService.getRandomStory().getBody()));
-//                            break;
-//                        case COMMAND_WEATHER:
-//                            execute(sendingService.sendWeather(chatId));
-//                            break;
-//                        default:
-//                            execute(sendingService.commandNotFound(chatId));
-//            }
         }
 
         if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
+            ButtonCallback buttonCallback = ButtonCallback.valueOf(callbackData);
+            MenuType menuType = ButtonCallbackUtils.getMenuType(buttonCallback);
 
-            MenuType levelMenu = MenuType.valueOf(callbackData.split("_")[0]);
-
-            switch (levelMenu) {
-                case REG:
-                    execute(callbackService.buttonRegister(update));
-                    break;
-                case START:
-                    execute(callbackService.buttonStart(update, callbackData));
-                    break;
-                case PLACE:
-                    execute(callbackService.buttonPlace(update, callbackData));
-                    break;
-            }
-
+            MenuStrategy menuStrategy = menuStrategies.get(menuType);
+            menuStrategy.handle(this, update);
         }
     }
 
