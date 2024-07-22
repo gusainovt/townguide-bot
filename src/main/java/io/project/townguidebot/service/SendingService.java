@@ -15,7 +15,7 @@ public interface SendingService {
 
     SendPhoto sendStartPhoto(Long chatId, String caption) throws IOException;
 
-    SendPhoto startCommandReceived(long chatId, String name);
+    SendPhoto startCommandReceived(long chatId);
 
     SendMessage sendWeather(long chatId);
 

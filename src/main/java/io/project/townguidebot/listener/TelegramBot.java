@@ -1,28 +1,25 @@
 package io.project.townguidebot.listener;
 
 import io.project.townguidebot.config.BotConfig;
+import io.project.townguidebot.model.CommandType;
 import io.project.townguidebot.model.MenuType;
-import io.project.townguidebot.service.*;
+import io.project.townguidebot.service.CallbackService;
+import io.project.townguidebot.service.MenuService;
+import io.project.townguidebot.service.UserService;
+import io.project.townguidebot.service.strategy.CommandHandlerStrategy;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
-import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-
-import static io.project.townguidebot.service.constants.Commands.*;
-import static io.project.townguidebot.service.constants.ErrorText.ERROR_SETTING;
-import static io.project.townguidebot.service.constants.TelegramText.HELP_TEXT;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -32,35 +29,36 @@ public class TelegramBot extends TelegramLongPollingBot {
 
 
     private final BotConfig config;
-    private final SendingService sendingService;
-    private final AdsService adsService;
     private final UserService userService;
-    private final StoryService storyService;
     private final MenuService menuService;
     private final CallbackService callbackService;
 
-    /**
-     * Метод создает меню с командами
-     */
-    @PostConstruct
-    public void initCommands() {
-        log.info("Initialization bot menu");
-        List<BotCommand> listOfCommands = new ArrayList<>(List.of(
-                new BotCommand(COMMAND_START, DESCRIPTION_START),
-                new BotCommand(COMMAND_MY_DATA, DESCRIPTION_MY_DATA),
-                new BotCommand(COMMAND_DELETE_DATA, DESCRIPTION_DELETE_DATA),
-                new BotCommand(COMMAND_HELP, DESCRIPTION_HELP),
-                new BotCommand(COMMAND_SETTING, DESCRIPTION_SETTING),
-                new BotCommand(COMMAND_REGISTER, DESCRIPTION_REGISTER),
-                new BotCommand(COMMAND_STORY, DESCRIPTION_JOKE),
-                new BotCommand(COMMAND_WEATHER, DESCRIPTION_WEATHER)
-        ));
-        try {
-            this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
+    private final List<CommandHandlerStrategy> commandStrategiesList;
 
-        } catch (TelegramApiException e) {
-            log.error(ERROR_SETTING + e.getMessage());
-        }
+    private Map<CommandType, CommandHandlerStrategy> commandHandlerStrategies;
+
+    @PostConstruct
+    public void init() {
+        commandHandlerStrategies = commandStrategiesList.stream()
+                .collect(Collectors.toMap(CommandHandlerStrategy::getCommandType, s -> s));
+
+//        log.info("Initialization bot menu");
+//        List<BotCommand> listOfCommands = new ArrayList<>(List.of(
+//                new BotCommand(COMMAND_START, DESCRIPTION_START),
+//                new BotCommand(COMMAND_MY_DATA, DESCRIPTION_MY_DATA),
+//                new BotCommand(COMMAND_DELETE_DATA, DESCRIPTION_DELETE_DATA),
+//                new BotCommand(COMMAND_HELP, DESCRIPTION_HELP),
+//                new BotCommand(COMMAND_SETTING, DESCRIPTION_SETTING),
+//                new BotCommand(COMMAND_REGISTER, DESCRIPTION_REGISTER),
+//                new BotCommand(COMMAND_STORY, DESCRIPTION_JOKE),
+//                new BotCommand(COMMAND_WEATHER, DESCRIPTION_WEATHER)
+//        ));
+//        try {
+//            this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
+//
+//        } catch (TelegramApiException e) {
+//            log.error(ERROR_SETTING + e.getMessage());
+//        }
 
     }
 
@@ -102,24 +100,23 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText() && !update.hasCallbackQuery()) {
             String messageText = update.getMessage().getText();
 
-            switch (messageText) {
-                        case COMMAND_START:
-                            execute(sendingService.startCommandReceived(chatId, update.getMessage().getChat().getFirstName()));
-                            break;
-                        case COMMAND_HELP:
-                            execute(sendingService.sendMessage(chatId, HELP_TEXT));
-                            break;
-                        case COMMAND_REGISTER:
-                            break;
-                        case COMMAND_STORY:
-                            execute(sendingService.sendMessage(chatId, storyService.getRandomStory().getBody()));
-                            break;
-                        case COMMAND_WEATHER:
-                            execute(sendingService.sendWeather(chatId));
-                            break;
-                        default:
-                            execute(sendingService.commandNotFound(chatId));
-            }
+            CommandHandlerStrategy commandHandlerStrategy = commandHandlerStrategies.get(CommandType.fromString(messageText));
+            commandHandlerStrategy.handle(this, chatId);
+
+//            switch (messageText) {
+
+//                        case COMMAND_HELP:
+//                            execute(sendingService.sendMessage(chatId, HELP_TEXT));
+//                            break;
+//                        case COMMAND_STORY:
+//                            execute(sendingService.sendMessage(chatId, storyService.getRandomStory().getBody()));
+//                            break;
+//                        case COMMAND_WEATHER:
+//                            execute(sendingService.sendWeather(chatId));
+//                            break;
+//                        default:
+//                            execute(sendingService.commandNotFound(chatId));
+//            }
         }
 
         if (update.hasCallbackQuery()) {
