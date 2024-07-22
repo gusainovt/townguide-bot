@@ -47,10 +47,10 @@ public class CallbackServiceImpl implements CallbackService {
 
         log.info("Activate buttons registered for chat: {} and callback: {}", chatId, callback);
         switch (callback) {
-            case RLC_RU:
+            case LANGUAGE_CODE_RU:
                 userService.registeredUser(message, RU);
                 return sendingService.sendEditMessageText(REGISTER_CONFIRMATION, chatId, messageId);
-            case RCC_CANCEL:
+            case CANCEL:
                 return sendingService.sendEditMessageText(REGISTER_CANCEL, chatId, messageId);
             default:
                 return new EditMessageText();
@@ -70,9 +70,9 @@ public class CallbackServiceImpl implements CallbackService {
 
         log.info("Activate buttons in start menu for chat: {} and callback: {}", chatId, callback);
         switch (callback) {
-            case SC_STORY:
+            case STORY:
                 return sendingService.sendMessage(chatId, storyService.getRandomStory().getBody());
-            case SC_PLACE:
+            case PLACE:
                 PlaceDto randomPlace = placeService.getRandomStory();
                 SendMessage message = sendingService.sendMessage(chatId,
                         randomPlace.getName() +
@@ -88,15 +88,19 @@ public class CallbackServiceImpl implements CallbackService {
      * @return {@link SendPhoto}
      */
     @Override
-    public SendPhoto buttonPlace(Update update) throws IOException {
+    public SendPhoto buttonPlace(Update update) {
 
         ButtonCallback callback = ButtonCallback.valueOf(update.getCallbackQuery().getData());
         long chatId = update.getCallbackQuery().getMessage().getChatId();
 
         log.info("Activate buttons in place menu for chat: {} and callback: {}", chatId, callback);
 
-        if (callback.equals(PC_PHOTO)) {
-            return sendingService.sendPhoto(chatId, photoService.getPhotoPathById(14L));
+        if (callback.equals(PHOTO)) {
+            try {
+                return sendingService.sendPhoto(chatId, photoService.getPhotoPathById(14L));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         return new SendPhoto();
