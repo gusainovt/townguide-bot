@@ -155,4 +155,14 @@ public class SendingServiceImpl implements SendingService {
         String storyText = storyService.getRandomStory().getBody();
         return sendMessage(chatId, storyText);
     }
+
+    /**
+     * Отправляет текс с руководством
+     * @param chatId id чата
+     * @return объект {@link SendMessage}
+     */
+    @Override
+    public SendMessage sendHelpText(Long chatId) {
+        return sendMessage(chatId, HELP_TEXT);
+    }
 }
