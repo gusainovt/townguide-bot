@@ -11,8 +11,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import static io.project.townguidebot.service.constants.LogText.METHOD_CALLED;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -33,7 +31,7 @@ public class WeatherServiceImpl implements WeatherService {
      */
     @Override
     public Weather getWeather(String city) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Get weather for city: {}", city);
         return restTemplate.exchange(
                 url,
                 HttpMethod.GET,
