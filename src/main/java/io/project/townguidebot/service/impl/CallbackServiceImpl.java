@@ -1,8 +1,10 @@
 package io.project.townguidebot.service.impl;
 
 import io.project.townguidebot.model.ButtonCallback;
-import io.project.townguidebot.model.dto.PlaceDto;
 import io.project.townguidebot.service.*;
+import io.project.townguidebot.service.strategy.CallbackSendMessageStrategy;
+import io.project.townguidebot.service.strategy.RegisterStrategy;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,11 +15,11 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import static io.project.townguidebot.model.ButtonCallback.*;
-import static io.project.townguidebot.model.LanguageCode.RU;
-import static io.project.townguidebot.service.constants.TelegramText.REGISTER_CANCEL;
-import static io.project.townguidebot.service.constants.TelegramText.REGISTER_CONFIRMATION;
+import static io.project.townguidebot.model.ButtonCallback.PHOTO;
 
 @Service
 @Slf4j
@@ -25,12 +27,23 @@ import static io.project.townguidebot.service.constants.TelegramText.REGISTER_CO
 public class CallbackServiceImpl implements CallbackService {
 
     private final SendingService sendingService;
-    private final UserService userService;
-    private final StoryService storyService;
-    private final MenuService menuService;
-    private final PlaceService placeService;
     private final PhotoService photoService;
 
+    private final List<RegisterStrategy> registerStrategyList;
+    private Map<ButtonCallback, RegisterStrategy> registerStrategies;
+
+    private final List<CallbackSendMessageStrategy> callbackSendMessageStrategyList;
+    private Map<ButtonCallback, CallbackSendMessageStrategy> callbackSendMessageStrategies;
+
+
+    @PostConstruct
+    public void init() {
+        registerStrategies = registerStrategyList.stream()
+                .collect(Collectors.toMap(RegisterStrategy::getButtonCallback, s -> s));
+
+        callbackSendMessageStrategies = callbackSendMessageStrategyList.stream()
+                .collect(Collectors.toMap(CallbackSendMessageStrategy::getButtonCallback, s -> s));
+    }
 
     /**
      * Ответ на кнопки регистрации
@@ -39,22 +52,12 @@ public class CallbackServiceImpl implements CallbackService {
      */
     @Override
     public EditMessageText buttonRegister(Update update) {
-
         ButtonCallback callback = ButtonCallback.valueOf(update.getCallbackQuery().getData());
         Message message = update.getCallbackQuery().getMessage();
-        long messageId = message.getMessageId();
-        long chatId = message.getChatId();
 
-        log.info("Activate buttons registered for chat: {} and callback: {}", chatId, callback);
-        switch (callback) {
-            case LANGUAGE_CODE_RU:
-                userService.registeredUser(message, RU);
-                return sendingService.sendEditMessageText(REGISTER_CONFIRMATION, chatId, messageId);
-            case CANCEL:
-                return sendingService.sendEditMessageText(REGISTER_CANCEL, chatId, messageId);
-            default:
-                return new EditMessageText();
-        }
+        log.info("Activate buttons registered for chat: {} and callback: {}", message.getChatId(), callback);
+        RegisterStrategy registerStrategy = registerStrategies.get(callback);
+        return registerStrategy.handle(message);
     }
 
     /**
@@ -64,22 +67,14 @@ public class CallbackServiceImpl implements CallbackService {
      */
     @Override
     public SendMessage buttonStart(Update update) {
-
-        long chatId = update.getCallbackQuery().getMessage().getChatId();
+        Message message = update.getCallbackQuery().getMessage();
         ButtonCallback callback = ButtonCallback.valueOf(update.getCallbackQuery().getData());
 
-        log.info("Activate buttons in start menu for chat: {} and callback: {}", chatId, callback);
-        switch (callback) {
-            case STORY:
-                return sendingService.sendMessage(chatId, storyService.getRandomStory().getBody());
-            case PLACE:
-                PlaceDto randomPlace = placeService.getRandomStory();
-                SendMessage message = sendingService.sendMessage(chatId,
-                        randomPlace.getName() +
-                                "\n" + randomPlace.getDescription());
-                return menuService.placeMenu(message);
-        }
-       return new SendMessage();
+        log.info("Activate buttons in start menu for chat: {} and callback: {}", message.getChatId(), callback);
+
+        CallbackSendMessageStrategy callbackSendMessageStrategy = callbackSendMessageStrategies.get(callback);
+        return callbackSendMessageStrategy.handle(message);
+
     }
 
     /**
