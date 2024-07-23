@@ -27,7 +27,6 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
 public class PhotoServiceImpl implements PhotoService {
 
     private final PhotoRepository photoRepository;
@@ -43,6 +42,7 @@ public class PhotoServiceImpl implements PhotoService {
      * @param placeId ID места {@link io.project.townguidebot.model.Place}
      * @throws IOException ошибка ввода/вывода
      */
+    @Transactional
     @Override
     public void uploadPhoto(Long placeId, MultipartFile file) throws IOException {
         log.info("Upload photo for place: {}", placeId);
@@ -78,6 +78,7 @@ public class PhotoServiceImpl implements PhotoService {
      * @param id ID фотографии
      * @return {@link ImagePreviewDto}
      */
+    @Transactional(readOnly = true)
     @Override
     public ImagePreviewDto generateImagePreview(Long id) {
         log.info("Generate image preview for image: {}", id);
@@ -88,6 +89,7 @@ public class PhotoServiceImpl implements PhotoService {
         return photoMapper.photoToImagePreviewDto(photo);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public String getPhotoPathById(Long id) {
         log.info("Get path photo by id: {}", id);

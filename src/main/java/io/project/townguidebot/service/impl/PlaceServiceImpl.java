@@ -9,6 +9,7 @@ import io.project.townguidebot.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -23,6 +24,7 @@ public class PlaceServiceImpl implements PlaceService {
      * @param id идентификатор места
      * @return найденное место {@link PlaceDto}
      */
+    @Transactional(readOnly = true)
     @Override
     public PlaceDto findPlaceById(Long id) {
         log.info("Find place by id: {}", id);
@@ -37,6 +39,7 @@ public class PlaceServiceImpl implements PlaceService {
      * @param placeDto объект места {@link PlaceDto}
      * @return созданное место {@link PlaceDto}
      */
+    @Transactional
     @Override
     public PlaceDto createPlace(PlaceDto placeDto) {
         log.info("Create new palace...");
@@ -50,6 +53,7 @@ public class PlaceServiceImpl implements PlaceService {
      * @param placeDto объект места {@link PlaceDto}
      * @return обновленное место {@link PlaceDto}
      */
+    @Transactional
     @Override
     public PlaceDto updatePlace(Long id, PlaceDto placeDto) {
         log.info("Updating place by id: {}", id);
@@ -67,6 +71,7 @@ public class PlaceServiceImpl implements PlaceService {
      * Удаляет место по ID
      * @param id идентификатор места
      */
+    @Transactional
     @Override
     public void deletePlace(Long id) {
         log.info("Delete place with id: {}", id);
@@ -82,6 +87,7 @@ public class PlaceServiceImpl implements PlaceService {
      * Находит место в БД по рандомному ID
      * @return История {@link Place}
      */
+    @Transactional(readOnly = true)
     @Override
     public PlaceDto getRandomStory() {
         log.info("Get random place");
