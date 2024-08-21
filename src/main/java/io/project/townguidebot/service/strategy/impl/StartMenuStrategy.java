@@ -9,11 +9,14 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import static io.project.townguidebot.model.MenuType.START;
+
 @Component
 @RequiredArgsConstructor
 public class StartMenuStrategy implements MenuStrategy {
 
-    private final MenuType menuType = MenuType.START;
+    private final MenuType menuType = START;
+
     private final CallbackService callbackService;
 
     @Override
