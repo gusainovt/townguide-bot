@@ -5,12 +5,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.io.IOException;
-
 public interface CallbackService {
-    EditMessageText buttonRegister(Update update, String callbackData);
-    SendMessage buttonStart(Update update, String callbackData);
-
-    SendPhoto buttonPlace(Update update, String callbackData) throws IOException;
+    SendMessage buttonStart(Update update);
+    EditMessageText buttonRegister(Update update);
+    SendPhoto buttonPlace(Update update);
 
 }

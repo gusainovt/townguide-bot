@@ -1,31 +1,28 @@
 package io.project.townguidebot.listener;
 
 import io.project.townguidebot.config.BotConfig;
-import io.project.townguidebot.model.User;
-import io.project.townguidebot.model.dto.AdDto;
-import io.project.townguidebot.service.*;
+import io.project.townguidebot.model.ButtonCallback;
+import io.project.townguidebot.model.CommandType;
+import io.project.townguidebot.model.MenuType;
+import io.project.townguidebot.model.util.ButtonCallbackUtils;
+import io.project.townguidebot.service.CallbackService;
+import io.project.townguidebot.service.MenuService;
+import io.project.townguidebot.service.UserService;
+import io.project.townguidebot.service.strategy.CommandHandlerStrategy;
+import io.project.townguidebot.service.strategy.MenuStrategy;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
-import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static io.project.townguidebot.service.constants.Buttons.*;
-import static io.project.townguidebot.service.constants.Commands.*;
-import static io.project.townguidebot.service.constants.ErrorText.ERROR_SETTING;
-import static io.project.townguidebot.service.constants.LogText.METHOD_CALLED;
-import static io.project.townguidebot.service.constants.TelegramText.HELP_TEXT;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -34,128 +31,105 @@ import static io.project.townguidebot.service.constants.TelegramText.HELP_TEXT;
 public class TelegramBot extends TelegramLongPollingBot {
 
 
-    @Autowired
-    private final UserService userService;
-    @Autowired
     private final BotConfig config;
-
-    @Autowired
-    private final SendingService sendingService;
-
-    @Autowired
-    private final AdsService adsService;
-
-    @Autowired
-    private final StoryService storyService;
-
-    @Autowired
+    private final UserService userService;
     private final MenuService menuService;
-
-    @Autowired
     private final CallbackService callbackService;
 
-    /**
-     * Метод создает меню с командами
-     */
-    @PostConstruct
-    public void initCommands() {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
-        List<BotCommand> listOfCommands = new ArrayList<>(List.of(
-                new BotCommand(COMMAND_START, DESCRIPTION_START),
-                new BotCommand(COMMAND_MY_DATA, DESCRIPTION_MY_DATA),
-                new BotCommand(COMMAND_DELETE_DATA, DESCRIPTION_DELETE_DATA),
-                new BotCommand(COMMAND_HELP, DESCRIPTION_HELP),
-                new BotCommand(COMMAND_SETTING, DESCRIPTION_SETTING),
-                new BotCommand(COMMAND_REGISTER, DESCRIPTION_REGISTER),
-                new BotCommand(COMMAND_STORY, DESCRIPTION_JOKE),
-                new BotCommand(COMMAND_WEATHER, DESCRIPTION_WEATHER)
-        ));
-        try {
-            this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
+    private final List<CommandHandlerStrategy> commandStrategiesList;
 
-        } catch (TelegramApiException e) {
-            log.error(ERROR_SETTING + e.getMessage());
-        }
+
+    private final List<MenuStrategy> menuStrategyList;
+
+    private Map<CommandType, CommandHandlerStrategy> commandHandlerStrategies;
+
+
+    private Map<MenuType, MenuStrategy> menuStrategies;
+
+    @PostConstruct
+    public void init() {
+        commandHandlerStrategies = commandStrategiesList.stream()
+                .collect(Collectors.toMap(CommandHandlerStrategy::getCommandType, s -> s));
+
+        menuStrategies = menuStrategyList.stream()
+                .collect(Collectors.toMap(MenuStrategy::getMenuType, s -> s));
+
+
+        //TODO: Вынести этот код в отдельный метод и вызывать его только после регистрации (добавить локализацию описаний).
+//        log.info("Initialization bot menu");
+//        List<BotCommand> listOfCommands = new ArrayList<>(List.of(
+//                new BotCommand(COMMAND_START, DESCRIPTION_START),
+//                new BotCommand(COMMAND_MY_DATA, DESCRIPTION_MY_DATA),
+//                new BotCommand(COMMAND_DELETE_DATA, DESCRIPTION_DELETE_DATA),
+//                new BotCommand(COMMAND_HELP, DESCRIPTION_HELP),
+//                new BotCommand(COMMAND_SETTING, DESCRIPTION_SETTING),
+//                new BotCommand(COMMAND_REGISTER, DESCRIPTION_REGISTER),
+//                new BotCommand(COMMAND_STORY, DESCRIPTION_JOKE),
+//                new BotCommand(COMMAND_WEATHER, DESCRIPTION_WEATHER)
+//        ));
+//        try {
+//            this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
+//
+//        } catch (TelegramApiException e) {
+//            log.error(ERROR_SETTING + e.getMessage());
+//        }
+
     }
 
     @Override
     public String getBotUsername() {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Get bot name...");
         return config.getBotName();
     }
     @Override
     public String getBotToken() {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Get bot token...");
         return config.getToken();
     }
 
     /**
      * Метод реализует основную логику взаимодействия с ботом через команды и кнопки.
-     * @param update объект {@link Update} из библиотеки телеграмма
+     * @param update {@link Update} из библиотеки телеграмма
      */
     @Override
     @SneakyThrows
     public void onUpdateReceived(Update update) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
-        if (update.hasMessage() && update.getMessage().hasText()) {
+
+        Message message = Optional.ofNullable(update.getMessage()).orElseGet(() -> update.getCallbackQuery().getMessage());
+
+        long chatId = message.getChatId();
+
+        log.info("Starting bot for chat: {}", chatId);
+
+        if (!userService.isRegisteredUser(chatId) && !update.hasCallbackQuery()) {
+            execute(menuService.registerMenu(chatId));
+            return;
+        }
+
+        if (!userService.isRegisteredUser(chatId) && update.hasCallbackQuery()) {
+            execute(callbackService.buttonRegister(update));
+        }
+
+        if (update.hasMessage() && update.getMessage().hasText() && !update.hasCallbackQuery()) {
             String messageText = update.getMessage().getText();
-            long chatId = update.getMessage().getChatId();
-            switch (messageText) {
-                        case COMMAND_START:
-                            execute(sendingService.startCommandReceived(chatId, update.getMessage().getChat().getFirstName()));
-                            break;
-                        case COMMAND_HELP:
-                            execute(sendingService.sendMessage(chatId, HELP_TEXT));
-                            break;
-                        case COMMAND_REGISTER:
-                            execute(menuService.registerMenu(chatId));
-                            break;
-                        case COMMAND_STORY:
-                            execute(sendingService.sendMessage(chatId, storyService.getRandomStory().getBody()));
-                            break;
-                        case COMMAND_WEATHER:
-                            execute(sendingService.sendWeather(chatId));
-                            break;
-                        default:
-                            execute(sendingService.commandNotFound(chatId));
-            }
-        } else if (update.hasCallbackQuery()) {
+
+            CommandHandlerStrategy commandHandlerStrategy = commandHandlerStrategies.get(CommandType.fromString(messageText));
+            commandHandlerStrategy.handle(this, chatId);
+        }
+
+        if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
-            String levelMenu = callbackData.split("_")[0];
-            switch (levelMenu) {
-                case LEVEL_REG:
-                    execute(callbackService.buttonRegister(update, callbackData));
-                    break;
-                case LEVEL_START:
-                    execute(callbackService.buttonStart(update, callbackData));
-                    break;
-                case LEVEL_PLACE:
-                    execute(callbackService.buttonPlace(update, callbackData));
-                    break;
-            }
+            ButtonCallback buttonCallback = ButtonCallback.valueOf(callbackData);
+            MenuType menuType = ButtonCallbackUtils.getMenuType(buttonCallback);
 
+            MenuStrategy menuStrategy = menuStrategies.get(menuType);
+            menuStrategy.handle(this, update);
         }
     }
 
 
 
 
-    /**
-     * Отправляет объявления пользователям каждый понедельник
-     */
-    @Scheduled(cron = "${cron.scheduler}")
-    @SneakyThrows
-    public void sendAds() {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
-        var ads = adsService.findAllAds();
-        var users = userService.findAllUsers();
-
-        for (AdDto ad : ads) {
-            for (User user : users) {
-                execute(sendingService.sendMessage(user.getChatId(), ad.getAd()));
-            }
-        }
-    }
 
 }
 

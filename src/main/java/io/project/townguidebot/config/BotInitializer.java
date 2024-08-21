@@ -10,8 +10,6 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-import static io.project.townguidebot.service.constants.ErrorText.ERROR_TEXT;
-
 
 @Slf4j
 @Component
@@ -26,7 +24,7 @@ public class BotInitializer {
             telegramBotsApi.registerBot(bot);
         }
         catch (TelegramApiException e){
-            log.error(ERROR_TEXT + e.getMessage());
+            log.error("Error from telegram api: {}", e.getMessage());
         }
     }
 }

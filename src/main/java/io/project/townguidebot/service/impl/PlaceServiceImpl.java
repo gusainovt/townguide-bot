@@ -9,11 +9,7 @@ import io.project.townguidebot.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import static io.project.townguidebot.service.constants.ErrorText.ERROR_PLACE_NOT_FOUND;
-import static io.project.townguidebot.service.constants.ErrorText.ERROR_TEXT;
-import static io.project.townguidebot.service.constants.LogText.METHOD_CALLED;
-import static io.project.townguidebot.service.constants.LogText.WITH_ID;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -28,13 +24,13 @@ public class PlaceServiceImpl implements PlaceService {
      * @param id идентификатор места
      * @return найденное место {@link PlaceDto}
      */
+    @Transactional(readOnly = true)
     @Override
     public PlaceDto findPlaceById(Long id) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName() + WITH_ID + id);
+        log.info("Find place by id: {}", id);
         return placeMapper.toPlaceDto(placeRepository.findById(id).orElseThrow(() -> {
-            PlaceNotFoundException placeEx = new PlaceNotFoundException(String.format(ERROR_PLACE_NOT_FOUND, id));
-            log.error(ERROR_TEXT + placeEx.getMessage());
-            return placeEx;
+            log.error("Place with id: {} not found", id);
+            return new PlaceNotFoundException(String.format("Place with id: %s not found", id));
         }));
     }
 
@@ -43,9 +39,10 @@ public class PlaceServiceImpl implements PlaceService {
      * @param placeDto объект места {@link PlaceDto}
      * @return созданное место {@link PlaceDto}
      */
+    @Transactional
     @Override
     public PlaceDto createPlace(PlaceDto placeDto) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Create new palace...");
         Place place = placeMapper.toPlace(placeDto);
         return placeMapper.toPlaceDto(placeRepository.save(place));
     }
@@ -56,17 +53,17 @@ public class PlaceServiceImpl implements PlaceService {
      * @param placeDto объект места {@link PlaceDto}
      * @return обновленное место {@link PlaceDto}
      */
+    @Transactional
     @Override
     public PlaceDto updatePlace(Long id, PlaceDto placeDto) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName() + WITH_ID + id);
+        log.info("Updating place by id: {}", id);
         if (placeRepository.existsById(id)) {
             Place place = placeMapper.toPlace(placeDto);
             place.setId(id);
             return placeMapper.toPlaceDto(placeRepository.save(place));
         } else {
-            String message = String.format(ERROR_PLACE_NOT_FOUND, id);
-            log.error(ERROR_TEXT + message);
-            throw new PlaceNotFoundException(message);
+            log.error("Place with id: {} not found", id);
+            throw new PlaceNotFoundException(String.format("Place with id: %s not found", id));
         }
     }
 
@@ -74,15 +71,15 @@ public class PlaceServiceImpl implements PlaceService {
      * Удаляет место по ID
      * @param id идентификатор места
      */
+    @Transactional
     @Override
     public void deletePlace(Long id) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName() + WITH_ID + id);
+        log.info("Delete place with id: {}", id);
         if (placeRepository.existsById(id)) {
             placeRepository.deleteById(id);
         } else {
-            String message = String.format(ERROR_PLACE_NOT_FOUND, id);
-            log.error(ERROR_TEXT + message);
-            throw new PlaceNotFoundException(message);
+            log.error("Place with id: {} not found", id);
+            throw new PlaceNotFoundException(String.format("Place with id: %s not found", id));
         }
     }
 
@@ -90,13 +87,13 @@ public class PlaceServiceImpl implements PlaceService {
      * Находит место в БД по рандомному ID
      * @return История {@link Place}
      */
+    @Transactional(readOnly = true)
     @Override
     public PlaceDto getRandomStory() {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Get random place");
         return placeMapper.toPlaceDto(placeRepository.findRandomPlace().orElseThrow(() -> {
-                    PlaceNotFoundException placeEx = new PlaceNotFoundException(String.format(ERROR_PLACE_NOT_FOUND, "random"));
-                    log.error(ERROR_TEXT + placeEx.getMessage());
-                    return placeEx;
+                    log.error("Random place not found");
+                    return new PlaceNotFoundException("Random place not found");
                 }));
     }
 
