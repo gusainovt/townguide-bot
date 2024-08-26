@@ -2,9 +2,9 @@ databaseChangeLog:
   - include:
       file: liquibase/scripts/ads.sql
   - include:
-      file: liquibase/scripts/photos.sql
-  - include:
       file: liquibase/scripts/places.sql
+  - include:
+      file: liquibase/scripts/photos.sql
   - include:
       file: liquibase/scripts/stories.sql
   - include:

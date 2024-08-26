@@ -64,4 +64,16 @@ public class GlobalExceptionHandler  {
         return ResponseEntity.of(Optional.of(errorResponse));
     }
 
+    @ExceptionHandler(PhotoUploadException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ApiResponse(responseCode = "404", description = "Failed upload photo to Cloudinary")
+    public ResponseEntity<ErrorResponse> handleBusinessException(PhotoUploadException ex) {
+        ErrorResponse errorResponse =  ErrorResponse.builder()
+                .type(FAIL_UPLOAD_PHOTO)
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.of(Optional.of(errorResponse));
+    }
+
 }
