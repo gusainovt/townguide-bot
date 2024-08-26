@@ -2,10 +2,15 @@ package io.project.townguidebot.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 @Entity
-@Data
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
+@EqualsAndHashCode
 @Table(name = "photos")
 public class Photo {
 
@@ -13,8 +18,8 @@ public class Photo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "file_path")
-    private String filePath;
+    @Column(name = "url", nullable = false)
+    private String url;
 
     @Column(name = "file_size")
     private long fileSize;
@@ -22,12 +27,11 @@ public class Photo {
     @Column(name = "mediaType")
     private String mediaType;
 
-    @Lob
-    @JsonIgnore
-    @Column(name = "data")
-    private byte[] data;
+    @Column(name = "public_id", nullable = false, unique = true)
+    private String publicId;
 
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 }
