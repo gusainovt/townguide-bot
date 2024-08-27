@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.sql.Timestamp;
@@ -38,11 +39,8 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional
-    public void registeredUser(Message msg, LanguageCode languageCode) {
-        log.info("Start registration for user: {}", msg.getChatId());
-        var chatId = msg.getChatId();
-        var chat = msg.getChat();
-
+    public void registeredUser(Long chatId, Chat chat) {
+        log.info("Start registration for user: {}", chatId);
         User user = new User();
 
         user.setChatId(chatId);
@@ -50,7 +48,7 @@ public class UserServiceImpl implements UserService {
         user.setLastName(chat.getLastName());
         user.setUserName(chat.getUserName());
         user.setRegisteredAt(new Timestamp(System.currentTimeMillis()));
-        user.setLanguageCode(languageCode);
+        user.setLanguageCode(LanguageCode.RU);
 
         userRepository.save(user);
         log.info("Successfully registered user: {}", user);
@@ -65,6 +63,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public Boolean isRegisteredUser(Long chatId) {
         log.info("Checking for user in database...");
+        //TODO: Добавить кеширование
         return userRepository.existsUserByChatId(chatId);
     }
 
