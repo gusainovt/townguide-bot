@@ -23,6 +23,9 @@ public class City {
     @Column(name = "name_eng", nullable = false)
     private String nameEng;
 
+    @Column(name = "description", nullable = false)
+    private String description;
+
     @Column(name = "callback", nullable = false, unique = true)
     private String callback;
 
