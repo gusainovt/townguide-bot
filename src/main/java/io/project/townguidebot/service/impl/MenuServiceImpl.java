@@ -1,5 +1,7 @@
 package io.project.townguidebot.service.impl;
 
+import io.project.townguidebot.model.City;
+import io.project.townguidebot.service.CityService;
 import io.project.townguidebot.service.MenuService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import static io.project.townguidebot.service.constants.TelegramText.REGISTER_QU
 @RequiredArgsConstructor
 public class MenuServiceImpl implements MenuService {
 
+    private final CityService cityService;
 
     /**
      * Вызов стартового меню
@@ -27,24 +30,16 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public InlineKeyboardMarkup startMenu() {
         log.info("Generating start menu...");
+        List<City> cities = cityService.getAllCity();
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
-        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
 
-        var getStory = new InlineKeyboardButton();
-
-        getStory.setText("START_STORY_BUTTON");
-        getStory.setCallbackData(STORY.toString());
-
-        var getPhoto = new InlineKeyboardButton();
-
-        getPhoto.setText("START_PLACE_BUTTON");
-        getPhoto.setCallbackData(PLACE.toString());
-
-        rowInLine.add(getStory);
-        rowInLine.add(getPhoto);
-
-        rowsInLine.add(rowInLine);
+        for (City city : cities) {
+            InlineKeyboardButton button = new InlineKeyboardButton();
+            button.setText(city.getName());
+            button.setCallbackData(city.getCallback());
+            rowsInLine.add(List.of(button));
+        }
 
         markupInline.setKeyboard(rowsInLine);
         return markupInline;
