@@ -16,4 +16,8 @@ public class Story {
     @Column(name = "body", length = 2550000)
     private String body;
 
+    @ManyToOne
+    @JoinColumn(name = "city_id", nullable = false)
+    private City city;
+
 }
