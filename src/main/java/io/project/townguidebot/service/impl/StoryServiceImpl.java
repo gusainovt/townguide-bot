@@ -5,6 +5,7 @@ import io.project.townguidebot.mapper.StoryMapper;
 import io.project.townguidebot.model.Story;
 import io.project.townguidebot.model.dto.StoryDto;
 import io.project.townguidebot.repository.StoryRepository;
+import io.project.townguidebot.service.CityService;
 import io.project.townguidebot.service.StoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,17 +20,19 @@ public class StoryServiceImpl implements StoryService {
 
     private final StoryRepository storyRepository;
     private final StoryMapper storyMapper;
+    private final CityService cityService;
 
     /**
      * Находит историю в БД по рандомному ID
      * @return История {@link Story}
      */
     @Override
-    public StoryDto getRandomStory() {
-        log.info("Find random story...");
+    public StoryDto getRandomStoryForCity(Long chatId) {
+        String cityName = cityService.getSelectedCityForChat(chatId);
+        log.info("Find random story city: {} for chat: {}", cityName, chatId);
         return storyMapper.toStoryDto(storyRepository.findRandomStory().orElseThrow(() -> {
-            log.error("Random story npt found");
-            return  new StoryNotFoundException("Random story npt found");
+            log.error("Random story not found");
+            return  new StoryNotFoundException("Random story not found");
         }));
     }
 

@@ -24,8 +24,8 @@ public class StoryHandler implements CallbackSendMessageStrategy {
     }
 
     @Override
-    public SendMessage handle(Message message) {
+    public SendMessage handle(String cityName, Message message) {
         long chatId = message.getChatId();
-        return sendingService.sendMessage(chatId, storyService.getRandomStory().getBody());
+        return sendingService.sendMessage(chatId, storyService.getRandomStoryForCity(chatId).getBody());
     }
 }
