@@ -25,7 +25,7 @@ public class StartMenuStrategy implements MenuStrategy {
     }
 
     @Override
-    public void handle(TelegramLongPollingBot bot, Update update) throws TelegramApiException {
-        bot.execute(callbackService.buttonStart(update));
+    public void handle(TelegramLongPollingBot bot, Update update, String cityName) throws TelegramApiException {
+        bot.execute(callbackService.buttonStart(cityName, update));
     }
 }
