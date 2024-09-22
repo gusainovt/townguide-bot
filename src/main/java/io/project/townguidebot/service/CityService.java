@@ -17,4 +17,6 @@ public interface CityService {
     String selectedCity(String callbackData, Long chatId);
 
     String getDescriptionSelectedCity(Long chatId);
+
+    String getCityNameByNameEng(String nameEng);
 }

@@ -28,7 +28,4 @@ public class RandomStoryCommandHandler implements CommandHandlerStrategy {
         bot.execute(sendingService.sendRandomStory(chatId));
     }
 
-
-
-
 }
