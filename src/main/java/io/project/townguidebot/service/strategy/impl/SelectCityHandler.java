@@ -10,11 +10,10 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
 @RequiredArgsConstructor
-public class StoryHandler implements CallbackSendMessageStrategy {
+public class SelectCityHandler implements CallbackSendMessageStrategy {
 
-    private final ButtonCallback buttonCallback = ButtonCallback.STORY;
+    private final ButtonCallback buttonCallback = ButtonCallback.SELECT_CITY;
     private final SendingService sendingService;
-
 
     @Override
     public ButtonCallback getButtonCallback() {
@@ -23,7 +22,6 @@ public class StoryHandler implements CallbackSendMessageStrategy {
 
     @Override
     public SendMessage handle(Message message) {
-        long chatId = message.getChatId();
-        return sendingService.sendRandomStory(chatId);
+        return sendingService.selectCityCommandReceived(message.getChatId());
     }
 }

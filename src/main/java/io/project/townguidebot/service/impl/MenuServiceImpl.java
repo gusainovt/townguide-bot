@@ -80,7 +80,8 @@ public class MenuServiceImpl implements MenuService {
         log.info("Generating city menu...");
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
-        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInLine1 = new ArrayList<>();
+        List<InlineKeyboardButton> rowInLine2 = new ArrayList<>();
         var getStory = new InlineKeyboardButton();
 
         getStory.setText("История");
@@ -91,9 +92,24 @@ public class MenuServiceImpl implements MenuService {
         getPhoto.setText("Место");
         getPhoto.setCallbackData(PLACE.toString());
 
-        rowInLine.add(getStory);
-        rowInLine.add(getPhoto);
-        rowsInLine.add(rowInLine);
+        rowInLine1.add(getStory);
+        rowInLine1.add(getPhoto);
+
+        var getWeather = new InlineKeyboardButton();
+
+        getWeather.setText("Погода");
+        getWeather.setCallbackData(WEATHER.toString());
+
+        var selectCity = new InlineKeyboardButton();
+
+        selectCity.setText("Выбрать город");
+        selectCity.setCallbackData(SELECT_CITY.toString());
+
+        rowInLine2.add(getWeather);
+        rowInLine2.add(selectCity);
+
+        rowsInLine.add(rowInLine1);
+        rowsInLine.add(rowInLine2);
 
         markupInline.setKeyboard(rowsInLine);
 
