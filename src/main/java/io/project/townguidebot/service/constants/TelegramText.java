@@ -17,6 +17,9 @@ public class TelegramText {
     public static final String TEXT_WEATHER =
             "%s погода: " +
                     "\nТемпература: %s градусов; " +
-                    "\nОшущается как: %s градусов; " +
+                    "\nОщущается как: %s градусов; " +
                     "\nСкорость ветра: %s м/с.";
+
+    public static final String SELECT_CITY = "Выбери город: ";
+
 }
