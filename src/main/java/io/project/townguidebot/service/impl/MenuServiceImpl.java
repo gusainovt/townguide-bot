@@ -59,7 +59,7 @@ public class MenuServiceImpl implements MenuService {
 
         var photoButton = new InlineKeyboardButton();
 
-        photoButton.setText("PLACE_PHOTO_BUTTON");
+        photoButton.setText("Фотография");
         photoButton.setCallbackData(PHOTO.toString());
 
         rowInLine.add(photoButton);
