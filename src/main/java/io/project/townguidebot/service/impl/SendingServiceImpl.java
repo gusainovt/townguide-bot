@@ -230,9 +230,26 @@ public class SendingServiceImpl implements SendingService {
                     SendMessage sendMessage = sendMessage(chatId,
                             randomPlace.getName() +
                                     "\n" + randomPlace.getDescription());
-                    return menuService.placeMenu(sendMessage);
+                    return menuService.photoMenu(sendMessage);
                 })
                 .orElseGet(()-> cityNotSelected(chatId));
     }
+
+    /**
+     * Отправляет меню выбора места пользователю
+     * @param chatId id чата
+     * @return объект {@link SendMessage}
+     */
+    @Override
+    public SendMessage sendMenuPlaces(Long chatId) {
+        log.info("Sending place menu fo chat: {}", chatId);
+        return Optional.ofNullable(cityService.getSelectedCityForChat(chatId))
+                .map(cityName->{
+                    SendMessage sendMessage = sendMessage(chatId, SELECT_PLACE);
+                    return menuService.placeMenu(sendMessage, cityName);
+                })
+                .orElseGet(()-> cityNotSelected(chatId));
+    }
+
 
 }

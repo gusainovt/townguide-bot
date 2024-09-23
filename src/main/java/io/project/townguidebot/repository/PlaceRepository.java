@@ -6,10 +6,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface PlaceRepository extends JpaRepository<Place, Long> {
     @Query(value = "select p.* from places p join cities c on c.id = p.city_id where c.name_eng = :cityName order by random() limit 1", nativeQuery = true)
     Optional<Place> findRandomPlace(@Param("cityName") String cityName);
+
+    @Query(value = "select p.* from places p join cities c on c.id = p.city_id where c.name_eng = :cityName", nativeQuery = true)
+    Optional<List<Place>> findPlacesByCityName(@Param("cityName") String cityName);
 }

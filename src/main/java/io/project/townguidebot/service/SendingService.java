@@ -32,4 +32,6 @@ public interface SendingService {
     SendMessage sendRandomPlace(Long chatId);
 
     SendMessage cityNotSelected(Long chatId);
+
+    SendMessage sendMenuPlaces(Long chatId);
 }

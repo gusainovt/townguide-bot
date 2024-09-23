@@ -9,9 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Slf4j
@@ -20,7 +20,7 @@ public class CityServiceImpl implements CityService {
 
     private final CityRepository cityRepository;
 
-    private final Map<Long, String> cityForChat = new HashMap<>();
+    private final Map<Long, String> cityForChat = new ConcurrentHashMap<>();
 
     @Override
     @Transactional(readOnly = true)
