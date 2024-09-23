@@ -27,9 +27,8 @@ public class StoryServiceImpl implements StoryService {
      * @return История {@link Story}
      */
     @Override
-    public StoryDto getRandomStoryForCity(Long chatId) {
-        String cityName = cityService.getSelectedCityForChat(chatId);
-        log.info("Find random story city: {} for chat: {}", cityName, chatId);
+    public StoryDto getRandomStoryForCity(String cityName) {
+        log.info("Find random story for city: {}", cityName);
         Story story = storyRepository.findRandomStoryByNameCity(cityName).orElseThrow(() -> {
             log.error("Random story for city: {} not found", cityName);
             return  new StoryNotFoundException("Random story not found");

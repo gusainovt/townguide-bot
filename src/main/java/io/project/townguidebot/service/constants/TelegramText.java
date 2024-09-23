@@ -21,6 +21,7 @@ public class TelegramText {
                     "\nСкорость ветра: %s м/с.";
 
     public static final String SELECT_CITY = "Выбери город: ";
+    public static final String CITY_UNSELECTED = ":scream_cat: Нужно выбрать город..";
 
     //описание команд
     public static final String START_DESCRIPTION = "запустить бота";

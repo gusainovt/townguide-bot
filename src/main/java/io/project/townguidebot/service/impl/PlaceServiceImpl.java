@@ -91,9 +91,8 @@ public class PlaceServiceImpl implements PlaceService {
      */
     @Transactional(readOnly = true)
     @Override
-    public PlaceDto getRandomStoryByChatId(Long chatId) {
-        log.info("Get random place for chat: {}", chatId);
-        String cityName = cityService.getSelectedCityForChat(chatId);
+    public PlaceDto getRandomPlaceByCity(String cityName) {
+        log.info("Get random place for city: {}", cityName);
         return placeMapper.toPlaceDto(placeRepository.findRandomPlace(cityName).orElseThrow(() -> {
                     log.error("Random place not found");
                     return new PlaceNotFoundException("Random place not found");
