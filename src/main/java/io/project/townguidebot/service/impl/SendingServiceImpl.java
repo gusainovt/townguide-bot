@@ -7,14 +7,12 @@ import io.project.townguidebot.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -146,18 +144,16 @@ public class SendingServiceImpl implements SendingService {
     /**
      * Отправляет фотографию в чат
      * @param chatId ID чата
-     * @param path путь к фотографии
+     * @param urlPhoto путь к фотографии
      * @return объект {@link SendPhoto}
      * @throws IOException ошибка ввода/вывода
      */
     @Override
-    public SendPhoto sendPhoto(Long chatId, String path) throws IOException {
+    public SendPhoto sendPhoto(Long chatId, String urlPhoto) throws IOException {
         log.info("Sending photo for chat: {}", chatId);
-        File imageFile = new ClassPathResource(path).getFile();
-        InputFile imageInputFile = new InputFile().setMedia(imageFile);
         var message = new SendPhoto();
         message.setChatId(chatId);
-        message.setPhoto(imageInputFile);
+        message.setPhoto(new InputFile(urlPhoto));
         return message;
     }
 

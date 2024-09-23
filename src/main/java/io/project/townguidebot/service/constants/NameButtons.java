@@ -1,5 +1,8 @@
 package io.project.townguidebot.service.constants;
 
+/**
+ * Названия кнопок
+ */
 public class NameButtons {
     public static final String STORY_BUTTON = "История";
     public static final String PLACE_BUTTON = "Место";
