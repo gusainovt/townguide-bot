@@ -23,12 +23,6 @@ erDiagram
 	    character_varying photo
 	}
 	
-	commands {
-	    bigint id PK
-	    character_varying command_type
-	    character_varying description
-	}
-	
 	photos {
 	    integer id PK
 	    bigint file_size
