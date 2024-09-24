@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static io.project.townguidebot.service.constants.Prefixes.PLACE_PREFIX;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -117,8 +119,8 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public Long selectedPlace(String callbackData, Long chatId) {
         Long placeId;
-        if (callbackData.contains(":")) {
-            placeId = Long.parseLong(callbackData.split(":", 2)[1]);
+        if (callbackData.startsWith(PLACE_PREFIX)) {
+            placeId = Long.parseLong(callbackData.substring(PLACE_PREFIX.length()));
         } else {
             return placeForChat.get(chatId);
         }
