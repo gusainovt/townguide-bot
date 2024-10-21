@@ -1,9 +1,9 @@
 package io.project.townguidebot.listener;
 
 import io.project.townguidebot.config.BotConfig;
-import io.project.townguidebot.model.ButtonCallback;
-import io.project.townguidebot.model.CommandType;
-import io.project.townguidebot.model.MenuType;
+import io.project.townguidebot.model.enums.ButtonCallback;
+import io.project.townguidebot.model.enums.CommandType;
+import io.project.townguidebot.model.enums.MenuType;
 import io.project.townguidebot.model.util.ButtonCallbackUtils;
 import io.project.townguidebot.service.CityService;
 import io.project.townguidebot.service.CommandService;
@@ -61,6 +61,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         log.info("Get bot name...");
         return config.getBotName();
     }
+
     @Override
     public String getBotToken() {
         log.info("Get bot token...");

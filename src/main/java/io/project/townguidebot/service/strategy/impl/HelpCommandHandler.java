@@ -1,6 +1,6 @@
 package io.project.townguidebot.service.strategy.impl;
 
-import io.project.townguidebot.model.CommandType;
+import io.project.townguidebot.model.enums.CommandType;
 import io.project.townguidebot.service.SendingService;
 import io.project.townguidebot.service.strategy.CommandHandlerStrategy;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,6 @@
-package io.project.townguidebot.service.impl;
+package io.project.townguidebot.client;
 
-import io.project.townguidebot.model.Weather;
-import io.project.townguidebot.service.WeatherService;
+import io.project.townguidebot.model.dto.Weather;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class WeatherServiceImpl implements WeatherService {
+public class WeatherClient {
 
     @Value("${weather-forecast-service.url}")
     private String url;
@@ -29,7 +28,6 @@ public class WeatherServiceImpl implements WeatherService {
      * @param city название города
      * @return объект {@link Weather}
      */
-    @Override
     public Weather getWeather(String city) {
         log.info("Get weather for city: {}", city);
         return restTemplate.exchange(

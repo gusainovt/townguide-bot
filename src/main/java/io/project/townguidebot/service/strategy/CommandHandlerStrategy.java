@@ -1,6 +1,6 @@
 package io.project.townguidebot.service.strategy;
 
-import io.project.townguidebot.model.CommandType;
+import io.project.townguidebot.model.enums.CommandType;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
