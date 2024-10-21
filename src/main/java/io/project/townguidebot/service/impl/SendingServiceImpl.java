@@ -1,9 +1,26 @@
 package io.project.townguidebot.service.impl;
 
+import static io.project.townguidebot.service.constants.TelegramText.CITY_UNSELECTED;
+import static io.project.townguidebot.service.constants.TelegramText.GREETING;
+import static io.project.townguidebot.service.constants.TelegramText.HELLO;
+import static io.project.townguidebot.service.constants.TelegramText.HELP_TEXT;
+import static io.project.townguidebot.service.constants.TelegramText.NOT_FOUND_COMMAND;
+import static io.project.townguidebot.service.constants.TelegramText.PLACE_UNSELECTED;
+import static io.project.townguidebot.service.constants.TelegramText.SELECT_CITY;
+import static io.project.townguidebot.service.constants.TelegramText.SELECT_PLACE;
+import static io.project.townguidebot.service.constants.TelegramText.TEXT_WEATHER;
 import com.vdurmont.emoji.EmojiParser;
-import io.project.townguidebot.model.Weather;
 import io.project.townguidebot.model.dto.PlaceDto;
-import io.project.townguidebot.service.*;
+import io.project.townguidebot.model.dto.Weather;
+import io.project.townguidebot.service.CityService;
+import io.project.townguidebot.service.MenuService;
+import io.project.townguidebot.service.PlaceService;
+import io.project.townguidebot.service.SendingService;
+import io.project.townguidebot.service.StoryService;
+import io.project.townguidebot.service.UserService;
+import io.project.townguidebot.service.WeatherService;
+import java.io.IOException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -12,11 +29,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
-
-import java.io.IOException;
-import java.util.Optional;
-
-import static io.project.townguidebot.service.constants.TelegramText.*;
 
 @Slf4j
 @Service

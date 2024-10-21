@@ -1,13 +1,14 @@
 package io.project.townguidebot.model.util;
 
 import io.project.townguidebot.annotation.Menu;
-import io.project.townguidebot.model.ButtonCallback;
-import io.project.townguidebot.model.MenuType;
+import io.project.townguidebot.model.enums.ButtonCallback;
+import io.project.townguidebot.model.enums.MenuType;
+import java.lang.reflect.Field;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.reflect.Field;
-
 @Slf4j
+@UtilityClass
 public class ButtonCallbackUtils {
     public static MenuType getMenuType(ButtonCallback buttonCallback) {
         try {

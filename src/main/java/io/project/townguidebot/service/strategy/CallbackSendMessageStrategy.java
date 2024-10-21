@@ -1,6 +1,6 @@
 package io.project.townguidebot.service.strategy;
 
-import io.project.townguidebot.model.ButtonCallback;
+import io.project.townguidebot.model.enums.ButtonCallback;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 

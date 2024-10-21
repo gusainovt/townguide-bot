@@ -1,4 +1,4 @@
-package io.project.townguidebot.model;
+package io.project.townguidebot.model.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

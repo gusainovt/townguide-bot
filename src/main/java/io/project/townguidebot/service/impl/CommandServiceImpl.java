@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.project.townguidebot.model.CommandType.*;
+import static io.project.townguidebot.model.enums.CommandType.*;
 import static io.project.townguidebot.service.constants.TelegramText.*;
 
 @Slf4j

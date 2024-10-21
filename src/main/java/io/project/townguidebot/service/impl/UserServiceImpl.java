@@ -1,6 +1,6 @@
 package io.project.townguidebot.service.impl;
 
-import io.project.townguidebot.model.LanguageCode;
+import io.project.townguidebot.model.enums.LanguageCode;
 import io.project.townguidebot.model.User;
 import io.project.townguidebot.repository.UserRepository;
 import io.project.townguidebot.service.UserService;

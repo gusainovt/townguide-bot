@@ -1,6 +1,6 @@
 package io.project.townguidebot.service.impl;
 
-import io.project.townguidebot.model.ButtonCallback;
+import io.project.townguidebot.model.enums.ButtonCallback;
 import io.project.townguidebot.service.CallbackService;
 import io.project.townguidebot.service.PhotoService;
 import io.project.townguidebot.service.PlaceService;
@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static io.project.townguidebot.model.ButtonCallback.PHOTO;
+import static io.project.townguidebot.model.enums.ButtonCallback.PHOTO;
 
 @Service
 @Slf4j

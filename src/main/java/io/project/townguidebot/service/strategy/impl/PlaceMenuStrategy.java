@@ -1,6 +1,6 @@
 package io.project.townguidebot.service.strategy.impl;
 
-import io.project.townguidebot.model.MenuType;
+import io.project.townguidebot.model.enums.MenuType;
 import io.project.townguidebot.service.CallbackService;
 import io.project.townguidebot.service.strategy.MenuStrategy;
 import lombok.RequiredArgsConstructor;
