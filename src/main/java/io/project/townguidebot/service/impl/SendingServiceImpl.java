@@ -10,6 +10,7 @@ import static io.project.townguidebot.service.constants.TelegramText.SELECT_CITY
 import static io.project.townguidebot.service.constants.TelegramText.SELECT_PLACE;
 import static io.project.townguidebot.service.constants.TelegramText.TEXT_WEATHER;
 import com.vdurmont.emoji.EmojiParser;
+import io.project.townguidebot.client.WeatherClient;
 import io.project.townguidebot.model.dto.PlaceDto;
 import io.project.townguidebot.model.dto.Weather;
 import io.project.townguidebot.service.CityService;
@@ -18,7 +19,6 @@ import io.project.townguidebot.service.PlaceService;
 import io.project.townguidebot.service.SendingService;
 import io.project.townguidebot.service.StoryService;
 import io.project.townguidebot.service.UserService;
-import io.project.townguidebot.service.WeatherService;
 import java.io.IOException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 public class SendingServiceImpl implements SendingService {
 
     private final MenuService menuService;
-    private final WeatherService weatherService;
+    private final WeatherClient weatherClient;
     private final UserService userService;
     private final StoryService storyService;
     private final CityService cityService;
@@ -141,7 +141,7 @@ public class SendingServiceImpl implements SendingService {
         return Optional.ofNullable(cityService.getSelectedCityForChat(chatId))
                 .map(cityNameEng -> {
                     log.info("Sending weather for chat: {} and city: {}", chatId, cityNameEng);
-                    Weather weather = weatherService.getWeather(cityNameEng);
+                    Weather weather = weatherClient.getWeather(cityNameEng);
                     String nameCity = cityService.getCityNameByNameEng(cityNameEng);
                     return sendMessage(chatId,
                             String.format(TEXT_WEATHER,
