@@ -1,7 +1,7 @@
 package io.project.townguidebot.controller.impl;
 
 import io.project.townguidebot.controller.PlaceController;
-import io.project.townguidebot.model.dto.PlaceDto;
+import io.project.townguidebot.dto.PlaceDto;
 import io.project.townguidebot.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

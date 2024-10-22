@@ -3,7 +3,7 @@ package io.project.townguidebot.service.impl;
 import io.project.townguidebot.exception.AdNotFoundException;
 import io.project.townguidebot.mapper.AdMapper;
 import io.project.townguidebot.model.Ad;
-import io.project.townguidebot.model.dto.AdDto;
+import io.project.townguidebot.dto.AdDto;
 import io.project.townguidebot.repository.AdsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,12 +34,12 @@ class AdsServiceImplTest {
 
     private Ad ad;
     private AdDto adDto;
-    private final Long AD_ID = 1L;
+    private final Long adId = 1L;
 
     @BeforeEach
     void setUp() {
         ad = new Ad();
-        ad.setId(AD_ID);
+        ad.setId(adId);
         ad.setAd("Тестовое объявление");
 
         adDto = new AdDto();
@@ -67,27 +67,27 @@ class AdsServiceImplTest {
     @Test
     void findAdById_WhenAdExists_ShouldReturnAd() {
         // Arrange
-        when(adsRepository.findById(AD_ID)).thenReturn(Optional.of(ad));
+        when(adsRepository.findById(adId)).thenReturn(Optional.of(ad));
         when(adMapper.toAdDto(ad)).thenReturn(adDto);
 
         // Act
-        AdDto result = adsService.findAdById(AD_ID);
+        AdDto result = adsService.findAdById(adId);
 
         // Assert
         assertNotNull(result);
         assertEquals(adDto, result);
-        verify(adsRepository).findById(AD_ID);
+        verify(adsRepository).findById(adId);
         verify(adMapper).toAdDto(ad);
     }
 
     @Test
     void findAdById_WhenAdDoesNotExist_ShouldThrowException() {
         // Arrange
-        when(adsRepository.findById(AD_ID)).thenReturn(Optional.empty());
+        when(adsRepository.findById(adId)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(AdNotFoundException.class, () -> adsService.findAdById(AD_ID));
-        verify(adsRepository).findById(AD_ID);
+        assertThrows(AdNotFoundException.class, () -> adsService.findAdById(adId));
+        verify(adsRepository).findById(adId);
         verify(adMapper, never()).toAdDto(any());
     }
 
@@ -112,18 +112,18 @@ class AdsServiceImplTest {
     @Test
     void updateAd_WhenAdExists_ShouldReturnUpdatedAd() {
         // Arrange
-        when(adsRepository.existsById(AD_ID)).thenReturn(true);
+        when(adsRepository.existsById(adId)).thenReturn(true);
         when(adMapper.ToAd(adDto)).thenReturn(ad);
         when(adsRepository.save(ad)).thenReturn(ad);
         when(adMapper.toAdDto(ad)).thenReturn(adDto);
 
         // Act
-        AdDto result = adsService.updateAd(AD_ID, adDto);
+        AdDto result = adsService.updateAd(adId, adDto);
 
         // Assert
         assertNotNull(result);
         assertEquals(adDto, result);
-        verify(adsRepository).existsById(AD_ID);
+        verify(adsRepository).existsById(adId);
         verify(adMapper).ToAd(adDto);
         verify(adsRepository).save(ad);
         verify(adMapper).toAdDto(ad);
@@ -132,11 +132,11 @@ class AdsServiceImplTest {
     @Test
     void updateAd_WhenAdDoesNotExist_ShouldThrowException() {
         // Arrange
-        when(adsRepository.existsById(AD_ID)).thenReturn(false);
+        when(adsRepository.existsById(adId)).thenReturn(false);
 
         // Act & Assert
-        assertThrows(AdNotFoundException.class, () -> adsService.updateAd(AD_ID, adDto));
-        verify(adsRepository).existsById(AD_ID);
+        assertThrows(AdNotFoundException.class, () -> adsService.updateAd(adId, adDto));
+        verify(adsRepository).existsById(adId);
         verify(adMapper, never()).ToAd(any());
         verify(adsRepository, never()).save(any());
     }
@@ -144,24 +144,24 @@ class AdsServiceImplTest {
     @Test
     void deleteAd_WhenAdExists_ShouldDeleteSuccessfully() {
         // Arrange
-        when(adsRepository.existsById(AD_ID)).thenReturn(true);
+        when(adsRepository.existsById(adId)).thenReturn(true);
 
         // Act
-        adsService.deleteAd(AD_ID);
+        adsService.deleteAd(adId);
 
         // Assert
-        verify(adsRepository).existsById(AD_ID);
-        verify(adsRepository).deleteById(AD_ID);
+        verify(adsRepository).existsById(adId);
+        verify(adsRepository).deleteById(adId);
     }
 
     @Test
     void deleteAd_WhenAdDoesNotExist_ShouldThrowException() {
         // Arrange
-        when(adsRepository.existsById(AD_ID)).thenReturn(false);
+        when(adsRepository.existsById(adId)).thenReturn(false);
 
         // Act & Assert
-        assertThrows(AdNotFoundException.class, () -> adsService.deleteAd(AD_ID));
-        verify(adsRepository).existsById(AD_ID);
+        assertThrows(AdNotFoundException.class, () -> adsService.deleteAd(adId));
+        verify(adsRepository).existsById(adId);
         verify(adsRepository, never()).deleteById(any());
     }
 } 

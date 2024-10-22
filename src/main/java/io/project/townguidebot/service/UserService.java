@@ -1,9 +1,10 @@
 package io.project.townguidebot.service;
 
+import io.project.townguidebot.dto.request.UserFilterRequest;
+import io.project.townguidebot.dto.response.UsersResponse;
 import io.project.townguidebot.model.User;
-import org.telegram.telegrambots.meta.api.objects.Chat;
-
 import java.util.List;
+import org.telegram.telegrambots.meta.api.objects.Chat;
 
 public interface UserService {
     List<User> findAllUsers();
@@ -13,4 +14,6 @@ public interface UserService {
     Boolean isRegisteredUser(Long chatId);
 
     String getNameByChatId(Long chatId);
+
+    UsersResponse findUsersByFilter(UserFilterRequest userFilterRequest);
 }
