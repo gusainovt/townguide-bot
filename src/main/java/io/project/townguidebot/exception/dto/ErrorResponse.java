@@ -1,6 +1,7 @@
-package io.project.townguidebot.model.dto;
+package io.project.townguidebot.exception.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.project.townguidebot.exception.enums.ExType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

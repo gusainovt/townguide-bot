@@ -1,7 +1,7 @@
 package io.project.townguidebot.mapper;
 
 import io.project.townguidebot.model.Ad;
-import io.project.townguidebot.model.dto.AdDto;
+import io.project.townguidebot.dto.AdDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;

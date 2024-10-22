@@ -1,7 +1,7 @@
 package io.project.townguidebot.controller.impl;
 
 import io.project.townguidebot.controller.StoriesController;
-import io.project.townguidebot.model.dto.StoryDto;
+import io.project.townguidebot.dto.StoryDto;
 import io.project.townguidebot.service.StoryService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

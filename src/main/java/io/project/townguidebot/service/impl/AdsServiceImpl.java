@@ -3,7 +3,7 @@ package io.project.townguidebot.service.impl;
 import io.project.townguidebot.exception.AdNotFoundException;
 import io.project.townguidebot.mapper.AdMapper;
 import io.project.townguidebot.model.Ad;
-import io.project.townguidebot.model.dto.AdDto;
+import io.project.townguidebot.dto.AdDto;
 import io.project.townguidebot.repository.AdsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

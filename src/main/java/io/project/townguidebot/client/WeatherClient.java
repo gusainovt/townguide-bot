@@ -1,6 +1,6 @@
 package io.project.townguidebot.client;
 
-import io.project.townguidebot.model.dto.Weather;
+import io.project.townguidebot.dto.Weather;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +24,7 @@ public class WeatherClient {
     private final RestTemplate restTemplate;
 
     /**
-     * Возращает погоду по названию города
+     * Возвращает погоду по названию города
      * @param city название города
      * @return объект {@link Weather}
      */

@@ -11,8 +11,8 @@ import static io.project.townguidebot.service.constants.TelegramText.SELECT_PLAC
 import static io.project.townguidebot.service.constants.TelegramText.TEXT_WEATHER;
 import com.vdurmont.emoji.EmojiParser;
 import io.project.townguidebot.client.WeatherClient;
-import io.project.townguidebot.model.dto.PlaceDto;
-import io.project.townguidebot.model.dto.Weather;
+import io.project.townguidebot.dto.PlaceDto;
+import io.project.townguidebot.dto.Weather;
 import io.project.townguidebot.service.CityService;
 import io.project.townguidebot.service.MenuService;
 import io.project.townguidebot.service.PlaceService;
@@ -147,7 +147,7 @@ public class SendingServiceImpl implements SendingService {
                             String.format(TEXT_WEATHER,
                                     nameCity,
                                     weather.getMain().getTemp().toBigInteger(),
-                                    weather.getMain().getFeels_like().toBigInteger(),
+                                    weather.getMain().getFeelsLike().toBigInteger(),
                                     weather.getWind().getSpeed().toString()));
                 })
                 .orElseGet(()-> cityNotSelected(chatId));

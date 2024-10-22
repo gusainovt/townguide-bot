@@ -1,17 +1,24 @@
 package io.project.townguidebot.service.impl;
 
-import io.project.townguidebot.model.enums.LanguageCode;
+import io.project.townguidebot.dto.request.UserFilterRequest;
+import io.project.townguidebot.dto.response.UsersResponse;
+import io.project.townguidebot.mapper.UserMapper;
 import io.project.townguidebot.model.User;
+import io.project.townguidebot.model.enums.LanguageCode;
 import io.project.townguidebot.repository.UserRepository;
 import io.project.townguidebot.service.UserService;
+import io.project.townguidebot.specification.UserSpecification;
+import java.sql.Timestamp;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Chat;
-
-import java.sql.Timestamp;
-import java.util.List;
 
 
 @Slf4j
@@ -20,6 +27,8 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
+    private final UserMapper userMapper;
 
     /**
      * Находит всех пользователей
@@ -77,6 +86,22 @@ public class UserServiceImpl implements UserService {
     public String getNameByChatId(Long chatId) {
         log.info("Get user name for chat: {}", chatId);
         return userRepository.getNameByChatId(chatId);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public UsersResponse findUsersByFilter(UserFilterRequest userFilterRequest) {
+        int page = userFilterRequest.getPage();
+        int size = userFilterRequest.getSize();
+
+        log.info("Get users by filter page: {}, size {}", page, size);
+        Pageable pageable = PageRequest.of(page, size);
+        Specification<User> specification = UserSpecification.filterBy(userFilterRequest);
+
+        Page<User> users = userRepository.findAll(specification, pageable);
+
+        return userMapper.toUsersResponse(users);
     }
 
 

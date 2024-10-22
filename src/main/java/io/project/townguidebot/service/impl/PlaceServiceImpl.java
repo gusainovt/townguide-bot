@@ -3,7 +3,7 @@ package io.project.townguidebot.service.impl;
 import io.project.townguidebot.exception.PlaceNotFoundException;
 import io.project.townguidebot.mapper.PlaceMapper;
 import io.project.townguidebot.model.Place;
-import io.project.townguidebot.model.dto.PlaceDto;
+import io.project.townguidebot.dto.PlaceDto;
 import io.project.townguidebot.repository.PlaceRepository;
 import io.project.townguidebot.service.PlaceService;
 import lombok.RequiredArgsConstructor;
