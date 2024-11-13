@@ -2,8 +2,7 @@ package io.project.BorovskBot.model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.*;
 import java.sql.Timestamp;
 
 @Entity(name = "userDataTable")
