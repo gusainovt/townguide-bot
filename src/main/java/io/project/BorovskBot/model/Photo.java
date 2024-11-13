@@ -27,6 +27,5 @@ public class Photo extends AbstractPersistable<Long> {
 
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
-    @Column(name = "place")
     private Place place;
 }

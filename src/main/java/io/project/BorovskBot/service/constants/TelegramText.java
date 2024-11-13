@@ -1,7 +1,5 @@
 package io.project.BorovskBot.service.constants;
 
-import io.project.BorovskBot.model.Weather;
-
 import static io.project.BorovskBot.service.constants.Commands.*;
 
 public class TelegramText {
@@ -23,16 +21,9 @@ public class TelegramText {
     public static final String NOT_FOUND_COMMAND = "Извини, это пока не работает:cry:";
     public static final String YES = "Да";
     public static final String NO = "Нет";
-
-
-
-
-
-
-    public static String getTextWeather(Weather weather){
-        return "Погода в боровске: \n" +
-                "Температура - " + weather.getMain().getTemp().toBigInteger() + " градусов; \n" +
-                "Ошущается как - " + weather.getMain().getFeels_like().toBigInteger() + " градусов; \n" +
-                "Скорость ветра - " + weather.getWind().getSpeed() + " м/с.";
-    }
+    public static final String TEXT_WEATHER =
+            "Погода в боровске: " +
+                    "\nТемпература - %s градусов; " +
+                    "\nОшущается как - %s градусов; " +
+                    "\nСкорость ветра - %s м/с.";
 }
