@@ -5,13 +5,16 @@ import lombok.Setter;
 
 import jakarta.persistence.*;
 
-@Entity(name = "adsTable")
+@Entity
 @Getter
 @Setter
+@Table(name = "ads")
 public class Ads {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(name = "ad")
     private String ad;
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
+import static io.project.BorovskBot.service.constants.ErrorText.ERROR_TEXT;
 import static io.project.BorovskBot.service.constants.LogText.METHOD_CALLED;
 import static io.project.BorovskBot.service.constants.TelegramText.MAX_JOKE_ID_MINUS_ONE;
 import static io.project.BorovskBot.service.constants.ErrorText.ERROR_JOKE_NOT_FOUND;
@@ -32,7 +33,7 @@ public class JokeServiceImpl implements io.project.BorovskBot.service.JokeServic
 
         return jokeRepository.findById(randomId).orElseThrow(()->{
             JokeNotFoundException jokeEx = new JokeNotFoundException(ERROR_JOKE_NOT_FOUND);
-            log.error(jokeEx.getMessage());
+            log.error(ERROR_TEXT + jokeEx.getMessage());
             return jokeEx;
         });
     }
