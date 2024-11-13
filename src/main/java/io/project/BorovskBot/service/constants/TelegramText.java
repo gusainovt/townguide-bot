@@ -1,5 +1,7 @@
 package io.project.BorovskBot.service.constants;
 
+import io.project.BorovskBot.model.Weather;
+
 import static io.project.BorovskBot.service.constants.Commands.*;
 
 public class TelegramText {
@@ -12,11 +14,25 @@ public class TelegramText {
             "Нажми " + COMMAND_WEATHER + " чтобы посмотреть погоду в Боровске;\n\n" +
             "Нажми " + COMMAND_SETTING + " чтобы перейти в настройки.\n\n";
     public static final int MAX_JOKE_ID_MINUS_ONE = 3772;
-    public static final String REPLIED_USER = "Replied to user ";
-
     public static final String HELLO = "Привет, ";
-    public static final String GREETING = "!\n Рад знакомству! :rocket:";
+    public static final String GREETING = "!\nРад знакомству!:rocket:";
+    public static final String NAME_CITY = "borovsk";
+    public static final String REGISTER_QUESTION = "Ты хочешь зарегистрироваться?";
+    public static final String REGISTER_CONFIRMATION = "Ты зарегистррирован!";
+    public static final String REGISTER_CANCEL = "Отмена регистрации...";
+    public static final String NOT_FOUND_COMMAND = "Извини, это пока не работает:cry:";
+    public static final String YES = "Да";
+    public static final String NO = "Нет";
 
 
 
+
+
+
+    public static String getTextWeather(Weather weather){
+        return "Погода в боровске: \n" +
+                "Температура - " + weather.getMain().getTemp().toBigInteger() + " градусов; \n" +
+                "Ошущается как - " + weather.getMain().getFeels_like().toBigInteger() + " градусов; \n" +
+                "Скорость ветра - " + weather.getWind().getSpeed() + " м/с.";
+    }
 }

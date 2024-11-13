@@ -1,7 +1,8 @@
 package io.project.BorovskBot.service.impl;
 
 import io.project.BorovskBot.model.Weather;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -9,7 +10,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import static io.project.BorovskBot.service.constants.LogText.METHOD_CALLED;
+
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class WeatherServiceImpl implements io.project.BorovskBot.service.WeatherService {
 
     @Value("${weather-forecast-service.url}")
@@ -18,11 +23,16 @@ public class WeatherServiceImpl implements io.project.BorovskBot.service.Weather
     @Value("${weather-forecast-service.api-key}")
     private String apiKey;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
+    /**
+     * Возращает погоду по названию города
+     * @param city название города
+     * @return объект {@link Weather}
+     */
     @Override
     public Weather getWeather(String city) {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
         return restTemplate.exchange(
                 url,
                 HttpMethod.GET,

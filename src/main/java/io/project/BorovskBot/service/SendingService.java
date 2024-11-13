@@ -11,8 +11,6 @@ public interface SendingService {
 
     SendMessage sendMessage(long chatId, String textToSend);
 
-    SendMessage prepareAndSendMessage(long chatId, String textToSend);
-
     SendMessage commandNotFound(long chatId);
 
     SendPhoto sendPhoto(Long chatId, String caption) throws IOException;

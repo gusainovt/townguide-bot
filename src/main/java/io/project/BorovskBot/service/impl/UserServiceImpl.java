@@ -26,6 +26,7 @@ public class UserServiceImpl implements io.project.BorovskBot.service.UserServic
      */
     @Override
     public List<User> findAllUsers() {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
         return (List<User>) userRepository.findAll();
     }
 

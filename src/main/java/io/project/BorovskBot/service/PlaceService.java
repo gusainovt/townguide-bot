@@ -1,5 +1,7 @@
 package io.project.BorovskBot.service;
 
+import io.project.BorovskBot.model.Place;
+
 public interface PlaceService {
-    String addPlace(String name, String description);
+    Place addPlace(Place place);
 }
