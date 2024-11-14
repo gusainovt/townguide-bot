@@ -1,13 +1,13 @@
 package io.project.BorovskBot.service;
 
-import io.project.BorovskBot.model.Ad;
+import io.project.BorovskBot.model.dto.AdDto;
 
 import java.util.List;
 
 public interface AdsService {
-    List<Ad> findAllAds();
-    Ad findAdById(long id);
-    Ad createAd(Ad ad);
-    Ad updateAd(long id, Ad ad);
+    List<AdDto> findAllAds();
+    AdDto findAdById(long id);
+    AdDto createAd(AdDto adDto);
+    AdDto updateAd(long id, AdDto adDto);
     void deleteAd(long id);
 }
