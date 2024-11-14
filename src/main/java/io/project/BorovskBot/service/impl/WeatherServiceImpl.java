@@ -37,7 +37,7 @@ public class WeatherServiceImpl implements io.project.BorovskBot.service.Weather
                 url,
                 HttpMethod.GET,
                 new HttpEntity<>(HttpHeaders.EMPTY),
-                Weather.class, city,apiKey
+                Weather.class, city, apiKey
         ).getBody();
     }
 }

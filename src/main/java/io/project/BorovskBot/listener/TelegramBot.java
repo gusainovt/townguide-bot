@@ -1,9 +1,7 @@
 package io.project.BorovskBot.listener;
 
-import com.vdurmont.emoji.EmojiParser;
 import io.project.BorovskBot.config.BotConfig;
 import io.project.BorovskBot.model.User;
-import io.project.BorovskBot.model.Weather;
 import io.project.BorovskBot.model.dto.AdDto;
 import io.project.BorovskBot.service.*;
 import jakarta.annotation.PostConstruct;
@@ -14,22 +12,20 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.project.BorovskBot.service.constants.Buttons.LEVEL_REG;
+import static io.project.BorovskBot.service.constants.Buttons.LEVEL_START;
 import static io.project.BorovskBot.service.constants.Commands.*;
 import static io.project.BorovskBot.service.constants.ErrorText.ERROR_SETTING;
 import static io.project.BorovskBot.service.constants.LogText.METHOD_CALLED;
-import static io.project.BorovskBot.service.constants.LogText.REPLIED_USER;
-import static io.project.BorovskBot.service.constants.TelegramText.*;
+import static io.project.BorovskBot.service.constants.TelegramText.HELP_TEXT;
 
 
 @Component
@@ -44,8 +40,10 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final SendingService sendingService;
     private final AdsService adsService;
     private final PhotoService photoService;
-    private final WeatherService weatherService;
     private final StoryService storyService;
+    private final MenuService menuService;
+    private final CallbackService callbackService;
+
 
     /**
      * Метод создает меню с командами
@@ -95,110 +93,40 @@ public class TelegramBot extends TelegramLongPollingBot {
             long chatId = update.getMessage().getChatId();
             switch (messageText) {
                         case COMMAND_START:
-                            startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
+                            execute(sendingService.startCommandReceived(chatId, update.getMessage().getChat().getFirstName()));
                             break;
                         case COMMAND_HELP:
                             execute(sendingService.sendMessage(chatId, HELP_TEXT));
                             break;
                         case COMMAND_REGISTER:
-                            register(chatId);
+                            execute(menuService.registerMenu(chatId));
                             break;
                         case COMMAND_JOKE:
                             execute(sendingService.sendMessage(chatId, storyService.getRandomStory().getBody()));
                             break;
                         case COMMAND_WEATHER:
-                            sendWeather(chatId);
+                            execute(sendingService.sendWeather(chatId));
                             break;
                         default:
                             execute(sendingService.commandNotFound(chatId));
             }
         } else if (update.hasCallbackQuery()) {
-            buttonRegister(update);
+            String callbackData = update.getCallbackQuery().getData();
+            String levelMenu = callbackData.split("_")[0];
+            switch (levelMenu) {
+                case LEVEL_REG:
+                    execute(callbackService.buttonRegister(update, callbackData));
+                    break;
+                case LEVEL_START:
+                    execute(callbackService.buttonStart(update, callbackData));
+                    break;
+            }
+
         }
     }
 
-    /**
-     * Стартовое приветствие
-     * @param chatId ID чата
-     * @param name Имя пользователя
-     */
-    @SneakyThrows
-    private void startCommandReceived(long chatId, String name) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
-        String answer = EmojiParser.parseToUnicode(HELLO + name + GREETING);
-        log.info(REPLIED_USER + name);
-        execute(sendingService.sendPhoto(chatId, answer));
-    }
 
-    /**
-     * Регистрация пользователя
-     * @param chatId ID чата
-     */
-    @SneakyThrows
-    private void register(long chatId) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText(REGISTER_QUESTION);
 
-        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
-        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
-
-        var yesButton = new InlineKeyboardButton();
-
-        yesButton.setText(YES);
-        yesButton.setCallbackData(YES_BUTTON);
-
-        var noButton = new InlineKeyboardButton();
-
-        noButton.setText(NO);
-        noButton.setCallbackData(NO_BUTTON);
-
-        rowInLine.add(yesButton);
-        rowInLine.add(noButton);
-
-        rowsInLine.add(rowInLine);
-
-        markupInline.setKeyboard(rowsInLine);
-        message.setReplyMarkup(markupInline);
-        execute(message);
-    }
-
-    /**
-     * Меню регистрации (кнопки)
-     * @param update объект {@link Update} из библиотеки телеграмма
-     */
-    @SneakyThrows
-    private void buttonRegister(Update update) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
-        String callbackData = update.getCallbackQuery().getData();
-        long messageId = update.getCallbackQuery().getMessage().getMessageId();
-        long chatId = update.getCallbackQuery().getMessage().getChatId();
-
-        if (callbackData.equals(YES_BUTTON)) {
-            userService.registeredUser(update.getCallbackQuery().getMessage());
-            execute(sendingService.sendEditMessageText(REGISTER_CONFIRMATION, chatId, messageId));
-        } else if (callbackData.equals(NO_BUTTON)) {
-            execute(sendingService.sendEditMessageText(REGISTER_CANCEL, chatId, messageId));
-        }
-
-    }
-
-    /**
-     * Отправляет текущую погоду пользователю
-     * @param chatId ID чата
-     */
-    @SneakyThrows
-    private void sendWeather(long chatId){
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
-        Weather weather = weatherService.getWeather(NAME_CITY);
-        execute(sendingService.sendMessage(chatId,
-                String.format(TEXT_WEATHER,
-                        weather.getMain().getTemp().toBigInteger(),
-                        weather.getMain().getFeels_like().toBigInteger(),
-                        weather.getWind().getSpeed().toString())));
-    }
 
     /**
      * Отправляет объявления пользователям каждый понедельник

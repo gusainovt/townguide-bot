@@ -11,11 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Random;
 
-import static io.project.BorovskBot.service.constants.ErrorText.*;
-import static io.project.BorovskBot.service.constants.LogText.*;
-import static io.project.BorovskBot.service.constants.TelegramText.MAX_STORY_ID_MINUS_ONE;
+import static io.project.BorovskBot.service.constants.ErrorText.ERROR_STORY_NOT_FOUND;
+import static io.project.BorovskBot.service.constants.ErrorText.ERROR_TEXT;
+import static io.project.BorovskBot.service.constants.LogText.METHOD_CALLED;
+import static io.project.BorovskBot.service.constants.LogText.WITH_ID;
 
 @Service
 @Slf4j
@@ -32,13 +32,14 @@ public class StoryServiceImpl implements StoryService {
     @Override
     public StoryDto getRandomStory() {
         log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
-        var r = new Random();
-        var randomId = (long)(r.nextInt(MAX_STORY_ID_MINUS_ONE) + 1);
-        return storyMapper.toStoryDto(storyRepository.findById(randomId).orElseThrow(()->{
-            StoryNotFoundException storyEx = new StoryNotFoundException(String.format(ERROR_STORY_NOT_FOUND, randomId));
-            log.error(ERROR_TEXT + storyEx.getMessage());
-            return storyEx;
-        }));
+        return storyMapper.toStoryDto(storyRepository.findRandomStory());
+//        var r = new Random();
+//        var randomId = (long)(r.nextInt(MAX_STORY_ID_MINUS_ONE) + 1);
+//        return storyMapper.toStoryDto(storyRepository.findById(randomId).orElseThrow(()->{
+//            StoryNotFoundException storyEx = new StoryNotFoundException(String.format(ERROR_STORY_NOT_FOUND, randomId));
+//            log.error(ERROR_TEXT + storyEx.getMessage());
+//            return storyEx;
+//        }));
     }
 
     /**
