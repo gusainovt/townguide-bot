@@ -1,7 +1,12 @@
 package io.project.BorovskBot.service;
 
-import io.project.BorovskBot.model.Place;
+import io.project.BorovskBot.model.dto.PlaceDto;
 
 public interface PlaceService {
-    Place addPlace(Place place);
+
+    PlaceDto findPlaceById(Long id);
+    PlaceDto createPlace(PlaceDto placeDto);
+    PlaceDto updatePlace(Long id, PlaceDto placeDto);
+
+    void deletePlace(Long id);
 }
