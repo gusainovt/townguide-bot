@@ -85,5 +85,18 @@ public class PlaceServiceImpl implements io.project.BorovskBot.service.PlaceServ
         }
     }
 
+    /**
+     * Находит место в БД по рандомному ID
+     * @return История {@link Place}
+     */
+    @Override
+    public PlaceDto getRandomStory() {
+        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        return placeMapper.toPlaceDto(placeRepository.findRandomPlace().orElseThrow(() -> {
+                    PlaceNotFoundException placeEx = new PlaceNotFoundException(String.format(ERROR_PLACE_NOT_FOUND, "random"));
+                    log.error(ERROR_TEXT + placeEx.getMessage());
+                    return placeEx;
+                }));
+    }
 
 }

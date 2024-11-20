@@ -1,5 +1,7 @@
 package io.project.BorovskBot.service.impl;
 
+import io.project.BorovskBot.model.dto.PlaceDto;
+import io.project.BorovskBot.service.PlaceService;
 import io.project.BorovskBot.service.SendingService;
 import io.project.BorovskBot.service.StoryService;
 import io.project.BorovskBot.service.UserService;
@@ -24,6 +26,8 @@ public class CallbackServiceImpl implements io.project.BorovskBot.service.Callba
     private final SendingService sendingService;
     private final UserService userService;
     private final StoryService storyService;
+    private final PlaceService placeService;
+
 
     /**
      * Ответ на кнопки регистрации
@@ -50,8 +54,11 @@ public class CallbackServiceImpl implements io.project.BorovskBot.service.Callba
         switch (callbackData) {
             case STORY_CALLBACK:
                 return sendingService.sendMessage(chatId, storyService.getRandomStory().getBody());
-            case PHOTO_CALLBACK:
-                break;
+            case PLACE_CALLBACK:
+                PlaceDto randomPlace = placeService.getRandomStory();
+                return sendingService.sendMessage(chatId,
+                        randomPlace.getName() +
+                        "\n" + randomPlace.getDescription());
         }
         return new SendMessage();
     }

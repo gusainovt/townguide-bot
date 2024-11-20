@@ -37,8 +37,8 @@ public class MenuServiceImpl implements io.project.BorovskBot.service.MenuServic
 
         var getPhoto = new InlineKeyboardButton();
 
-        getPhoto.setText(START_PHOTO_BUTTON);
-        getPhoto.setCallbackData(PHOTO_CALLBACK);
+        getPhoto.setText(START_PLACE_BUTTON);
+        getPhoto.setCallbackData(PLACE_CALLBACK);
 
         rowInLine.add(getStory);
         rowInLine.add(getPhoto);
