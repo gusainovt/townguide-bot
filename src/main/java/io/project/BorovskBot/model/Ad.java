@@ -1,17 +1,19 @@
 package io.project.BorovskBot.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import jakarta.persistence.*;
-
-@Entity(name = "adsTable")
+@Entity
 @Getter
 @Setter
-public class Ads {
+@Table(name = "ads")
+public class Ad {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
+    @Column(name = "ad")
     private String ad;
 }

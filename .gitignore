@@ -6,4 +6,4 @@ target
 *.cmd
 *.md
 mvnw
-/src/main/resources/
+

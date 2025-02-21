@@ -1,30 +1,27 @@
 package io.project.BorovskBot.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
+@Table(name = "places")
 public class Place {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+
+    @Column(name = "name")
     private String name;
-    @Column(length = 25500)
+
+    @Column(name = "description", length = 25500)
     private String description;
-    @OneToMany
+
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Photo> photo;
-
-    public Place(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
-
-    public Place() {
-
-    }
 }
