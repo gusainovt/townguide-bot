@@ -22,6 +22,7 @@ import java.io.IOException;
 @RequestMapping("/photos")
 @Tag(name = "Фотографии")
 public class PhotoController {
+
     private final PhotoService photoService;
 
     @Operation(summary = "Получить превью фотографии", description = "Возвращает превью фотографии по указанному идентификатору.")
