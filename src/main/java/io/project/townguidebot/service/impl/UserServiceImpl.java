@@ -6,12 +6,11 @@ import io.project.townguidebot.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.sql.Timestamp;
 import java.util.List;
-
-import static io.project.townguidebot.service.constants.LogText.*;
 
 
 @Slf4j
@@ -23,35 +22,48 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Находит всех пользователей
-     * @return Список пользователей {@link User}
+     * @return {@link List} cписок пользователей
      */
     @Override
+    @Transactional(readOnly = true)
     public List<User> findAllUsers() {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
-        return (List<User>) userRepository.findAll();
+        log.info("Finding all users...");
+        return userRepository.findAll();
     }
 
     /**
-     * Регестрирует пользавтеля и сохранет в БД
-     * @param msg Объект {@link Message} из библиотеки телеграмма
+     * Регистрация пользователя
+     * @param msg {@link Message} из библиотеки телеграмма
      */
     @Override
+    @Transactional
     public void registeredUser(Message msg) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
-        if (userRepository.findById(msg.getChatId()).isEmpty()) {
-            var chatId = msg.getChatId();
-            var chat = msg.getChat();
+        log.info("Start registration for user: {}", msg.getChatId());
+        var chatId = msg.getChatId();
+        var chat = msg.getChat();
 
-            User user = new User();
+        User user = new User();
 
-            user.setChatId(chatId);
-            user.setFirstName(chat.getFirstName());
-            user.setLastName(chat.getLastName());
-            user.setUserName(chat.getUserName());
-            user.setRegisteredAt(new Timestamp(System.currentTimeMillis()));
-            userRepository.save(user);
-            log.info(REGISTERED + user);
-        }
+        user.setChatId(chatId);
+        user.setFirstName(chat.getFirstName());
+        user.setLastName(chat.getLastName());
+        user.setUserName(chat.getUserName());
+        user.setRegisteredAt(new Timestamp(System.currentTimeMillis()));
+        userRepository.save(user);
+        log.info("Successfully registered user: {}", user);
     }
+
+    /**
+     * Проверяет зарегистрирован ли пользователь
+     * @param chatId {@link Long} ID чата пользователя
+     * @return {@link Boolean} возвращает true если пользователь зарегистрирован
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Boolean isRegisteredUser(Long chatId) {
+        log.info("Checking for user in database...");
+        return userRepository.existsUserByChatId(chatId);
+    }
+
 
 }
