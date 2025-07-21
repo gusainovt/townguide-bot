@@ -14,7 +14,7 @@ public class TelegramText {
     public static final String HELLO = "Привет, ";
     public static final String GREETING = "!\nРад знакомству!:rocket:";
     public static final String NAME_CITY = "borovsk";
-    public static final String REGISTER_QUESTION = "Ты хочешь зарегистрироваться?";
+    public static final String REGISTER_QUESTION = "Select language: ";
     public static final String REGISTER_CONFIRMATION = "Ты зарегистррирован!";
     public static final String REGISTER_CANCEL = "Отмена регистрации...";
     public static final String NOT_FOUND_COMMAND = "Извини, это пока не работает:cry:";

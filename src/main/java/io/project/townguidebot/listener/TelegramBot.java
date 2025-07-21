@@ -1,18 +1,16 @@
 package io.project.townguidebot.listener;
 
 import io.project.townguidebot.config.BotConfig;
-import io.project.townguidebot.model.User;
-import io.project.townguidebot.model.dto.AdDto;
+import io.project.townguidebot.model.MenuType;
 import io.project.townguidebot.service.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
@@ -20,11 +18,10 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static io.project.townguidebot.service.constants.Buttons.*;
 import static io.project.townguidebot.service.constants.Commands.*;
 import static io.project.townguidebot.service.constants.ErrorText.ERROR_SETTING;
-import static io.project.townguidebot.service.constants.LogText.METHOD_CALLED;
 import static io.project.townguidebot.service.constants.TelegramText.HELP_TEXT;
 
 
@@ -34,24 +31,12 @@ import static io.project.townguidebot.service.constants.TelegramText.HELP_TEXT;
 public class TelegramBot extends TelegramLongPollingBot {
 
 
-    @Autowired
-    private final UserService userService;
-    @Autowired
     private final BotConfig config;
-
-    @Autowired
     private final SendingService sendingService;
-
-    @Autowired
     private final AdsService adsService;
-
-    @Autowired
+    private final UserService userService;
     private final StoryService storyService;
-
-    @Autowired
     private final MenuService menuService;
-
-    @Autowired
     private final CallbackService callbackService;
 
     /**
@@ -59,7 +44,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      */
     @PostConstruct
     public void initCommands() {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Initialization bot menu");
         List<BotCommand> listOfCommands = new ArrayList<>(List.of(
                 new BotCommand(COMMAND_START, DESCRIPTION_START),
                 new BotCommand(COMMAND_MY_DATA, DESCRIPTION_MY_DATA),
@@ -76,30 +61,47 @@ public class TelegramBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             log.error(ERROR_SETTING + e.getMessage());
         }
+
     }
 
     @Override
     public String getBotUsername() {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Get bot name...");
         return config.getBotName();
     }
     @Override
     public String getBotToken() {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Get bot token...");
         return config.getToken();
     }
 
     /**
      * Метод реализует основную логику взаимодействия с ботом через команды и кнопки.
-     * @param update объект {@link Update} из библиотеки телеграмма
+     * @param update {@link Update} из библиотеки телеграмма
      */
     @Override
     @SneakyThrows
     public void onUpdateReceived(Update update) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
-        if (update.hasMessage() && update.getMessage().hasText()) {
+
+        Message message = Optional.ofNullable(update.getMessage()).orElseGet(() -> update.getCallbackQuery().getMessage());
+
+        long chatId = message.getChatId();
+
+        log.info("Starting bot for chat: {}", chatId);
+
+        if (!userService.isRegisteredUser(chatId) && !update.hasCallbackQuery()) {
+            execute(menuService.registerMenu(chatId));
+            return;
+        }
+        if (!userService.isRegisteredUser(chatId) && update.hasCallbackQuery()) {
+            execute(callbackService.buttonRegister(update));
+        }
+
+
+
+        if (update.hasMessage() && update.getMessage().hasText() && !update.hasCallbackQuery()) {
             String messageText = update.getMessage().getText();
-            long chatId = update.getMessage().getChatId();
+
             switch (messageText) {
                         case COMMAND_START:
                             execute(sendingService.startCommandReceived(chatId, update.getMessage().getChat().getFirstName()));
@@ -108,7 +110,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                             execute(sendingService.sendMessage(chatId, HELP_TEXT));
                             break;
                         case COMMAND_REGISTER:
-                            execute(menuService.registerMenu(chatId));
                             break;
                         case COMMAND_STORY:
                             execute(sendingService.sendMessage(chatId, storyService.getRandomStory().getBody()));
@@ -119,17 +120,21 @@ public class TelegramBot extends TelegramLongPollingBot {
                         default:
                             execute(sendingService.commandNotFound(chatId));
             }
-        } else if (update.hasCallbackQuery()) {
+        }
+
+        if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
-            String levelMenu = callbackData.split("_")[0];
+
+            MenuType levelMenu = MenuType.valueOf(callbackData.split("_")[0]);
+
             switch (levelMenu) {
-                case LEVEL_REG:
-                    execute(callbackService.buttonRegister(update, callbackData));
+                case REG:
+                    execute(callbackService.buttonRegister(update));
                     break;
-                case LEVEL_START:
+                case START:
                     execute(callbackService.buttonStart(update, callbackData));
                     break;
-                case LEVEL_PLACE:
+                case PLACE:
                     execute(callbackService.buttonPlace(update, callbackData));
                     break;
             }
@@ -140,22 +145,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
 
 
-    /**
-     * Отправляет объявления пользователям каждый понедельник
-     */
-    @Scheduled(cron = "${cron.scheduler}")
-    @SneakyThrows
-    public void sendAds() {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
-        var ads = adsService.findAllAds();
-        var users = userService.findAllUsers();
-
-        for (AdDto ad : ads) {
-            for (User user : users) {
-                execute(sendingService.sendMessage(user.getChatId(), ad.getAd()));
-            }
-        }
-    }
 
 }
 
