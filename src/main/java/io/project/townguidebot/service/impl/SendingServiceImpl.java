@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 
 import static io.project.townguidebot.service.constants.LogText.METHOD_CALLED;
-import static io.project.townguidebot.service.constants.LogText.REPLIED_USER;
 import static io.project.townguidebot.service.constants.TelegramText.*;
 
 @Slf4j
@@ -107,9 +106,8 @@ public class SendingServiceImpl implements SendingService {
     @SneakyThrows
     @Override
     public SendPhoto startCommandReceived(long chatId, String name) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Hello message for user: {}, in chat: {}", name, chatId);
         String answer = EmojiParser.parseToUnicode(HELLO + name + GREETING);
-        log.info(REPLIED_USER + name);
         SendPhoto sendPhoto = sendStartPhoto(chatId, answer);
         sendPhoto.setReplyMarkup(menuService.startMenu());
         return sendPhoto;
