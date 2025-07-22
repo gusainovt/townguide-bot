@@ -1,6 +1,7 @@
 package io.project.townguidebot.service.impl;
 
 import io.project.townguidebot.model.ButtonCallback;
+import io.project.townguidebot.model.dto.PlaceDto;
 import io.project.townguidebot.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.io.IOException;
 
+import static io.project.townguidebot.model.ButtonCallback.*;
 import static io.project.townguidebot.model.LanguageCode.RU;
 import static io.project.townguidebot.service.constants.TelegramText.REGISTER_CANCEL;
 import static io.project.townguidebot.service.constants.TelegramText.REGISTER_CONFIRMATION;
@@ -37,12 +39,13 @@ public class CallbackServiceImpl implements CallbackService {
      */
     @Override
     public EditMessageText buttonRegister(Update update) {
+
         ButtonCallback callback = ButtonCallback.valueOf(update.getCallbackQuery().getData());
         Message message = update.getCallbackQuery().getMessage();
         long messageId = message.getMessageId();
         long chatId = message.getChatId();
 
-        log.info("Request for button registered for chat: {} and callback: {}", chatId, callback);
+        log.info("Activate buttons registered for chat: {} and callback: {}", chatId, callback);
         switch (callback) {
             case RLC_RU:
                 userService.registeredUser(message, RU);
@@ -56,43 +59,47 @@ public class CallbackServiceImpl implements CallbackService {
 
     /**
      * Ответ на кнопки меню старт
-     * @param update бъект {@link Update} из библиотеки телеграмма
-     * @param callbackData Ответ от кнопки
+     * @param update объект {@link Update} из библиотеки телеграмма
      * @return {@link SendMessage}
      */
     @Override
-    public SendMessage buttonStart(Update update, String callbackData) {
-//        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
-//        long chatId = update.getCallbackQuery().getMessage().getChatId();
-//        switch (callbackData) {
-//            case STORY_CALLBACK:
-//                return sendingService.sendMessage(chatId, storyService.getRandomStory().getBody());
-//            case PLACE_CALLBACK:
-//                PlaceDto randomPlace = placeService.getRandomStory();
-//                SendMessage message = sendingService.sendMessage(chatId,
-//                        randomPlace.getName() +
-//                                "\n" + randomPlace.getDescription());
-//                return menuService.placeMenu(message);
-//        }
+    public SendMessage buttonStart(Update update) {
+
+        long chatId = update.getCallbackQuery().getMessage().getChatId();
+        ButtonCallback callback = ButtonCallback.valueOf(update.getCallbackQuery().getData());
+
+        log.info("Activate buttons in start menu for chat: {} and callback: {}", chatId, callback);
+        switch (callback) {
+            case SC_STORY:
+                return sendingService.sendMessage(chatId, storyService.getRandomStory().getBody());
+            case SC_PLACE:
+                PlaceDto randomPlace = placeService.getRandomStory();
+                SendMessage message = sendingService.sendMessage(chatId,
+                        randomPlace.getName() +
+                                "\n" + randomPlace.getDescription());
+                return menuService.placeMenu(message);
+        }
        return new SendMessage();
     }
 
     /**
      * Ответ на кнопки меню места
      * @param update {@link Update} из библиотеки телеграмма
-     * @param callbackData Ответ от кнопки
      * @return {@link SendPhoto}
      */
     @Override
-    public SendPhoto buttonPlace(Update update, String callbackData) throws IOException {
-//        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
-//        long chatId = update.getCallbackQuery().getMessage().getChatId();
-//        if (callbackData.equals(PHOTO_CALLBACK)) {
-//            return sendingService.sendPhoto(chatId, photoService.getPhotoPathById(14L));
-//        } else {
-//            return new SendPhoto();
-//        }
-      return new SendPhoto();
+    public SendPhoto buttonPlace(Update update) throws IOException {
+
+        ButtonCallback callback = ButtonCallback.valueOf(update.getCallbackQuery().getData());
+        long chatId = update.getCallbackQuery().getMessage().getChatId();
+
+        log.info("Activate buttons in place menu for chat: {} and callback: {}", chatId, callback);
+
+        if (callback.equals(PC_PHOTO)) {
+            return sendingService.sendPhoto(chatId, photoService.getPhotoPathById(14L));
+        }
+
+        return new SendPhoto();
     }
 
 }
