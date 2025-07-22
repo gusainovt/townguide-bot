@@ -22,4 +22,6 @@ public interface SendingService {
     SendPhoto sendPhoto(Long chatId, String path) throws IOException;
 
     SendMessage sendRandomStory(Long chatId);
+
+    SendMessage sendHelpText(Long chatId);
 }
