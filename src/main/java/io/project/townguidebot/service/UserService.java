@@ -12,4 +12,6 @@ public interface UserService {
     void registeredUser(Message msg, LanguageCode languageCode);
 
     Boolean isRegisteredUser(Long chatId);
+
+    String getNameByChatId(Long chatId);
 }

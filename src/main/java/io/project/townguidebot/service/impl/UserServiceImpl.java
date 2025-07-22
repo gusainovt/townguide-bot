@@ -68,5 +68,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsUserByChatId(chatId);
     }
 
+    @Override
+    public String getNameByChatId(Long chatId) {
+        log.info("Get user name for chat: {}", chatId);
+        return userRepository.getNameByChatId(chatId);
+    }
+
 
 }
