@@ -22,10 +22,6 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static io.project.townguidebot.service.constants.ErrorText.ERROR_PHOTO_NOT_FOUND;
-import static io.project.townguidebot.service.constants.ErrorText.ERROR_TEXT;
-import static io.project.townguidebot.service.constants.LogText.METHOD_CALLED;
-import static io.project.townguidebot.service.constants.LogText.WITH_ID;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
@@ -49,7 +45,7 @@ public class PhotoServiceImpl implements PhotoService {
      */
     @Override
     public void uploadPhoto(Long placeId, MultipartFile file) throws IOException {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName() + WITH_ID + placeId);
+        log.info("Upload photo for place: {}", placeId);
         Place place = placeMapper.toPlace(placeService.findPlaceById(placeId));
         place.setId(placeId);
         Path filePath = Path.of(photoDir, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) +
@@ -84,10 +80,10 @@ public class PhotoServiceImpl implements PhotoService {
      */
     @Override
     public ImagePreviewDto generateImagePreview(Long id) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Generate image preview for image: {}", id);
         Photo photo = photoRepository.findById(id).orElseThrow(()->{
-            PhotoNotFoundException placeEx = new PhotoNotFoundException(String.format(ERROR_PHOTO_NOT_FOUND, id));
-            log.error(ERROR_TEXT + placeEx.getMessage());
+            PhotoNotFoundException placeEx = new PhotoNotFoundException();
+            log.error("Photo not found with id: {}", id);
             return placeEx;
                 });
         return photoMapper.photoToImagePreviewDto(photo);
@@ -95,7 +91,7 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Override
     public String getPhotoPathById(Long id) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Get path photo by id: {}", id);
         Photo photo = photoRepository.findById(id).orElseThrow();
         String path = photo.getFilePath()
                 .replaceFirst("\\\\Users\\\\Huawei\\\\IdeaProjects\\\\Telegram_bots\\\\BorovskBot\\\\src\\\\main\\\\resources\\\\", "");
@@ -108,7 +104,7 @@ public class PhotoServiceImpl implements PhotoService {
      * @return Путь в виде строки
      */
     private String getExtension(String fileName) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Get extension file photo by name: {}", fileName);
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
