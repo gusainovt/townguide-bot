@@ -7,17 +7,19 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import java.io.IOException;
 
 public interface SendingService {
-    EditMessageText sendEditMessageText(String text, long chatId, long messageId);
+    EditMessageText sendEditMessageText(String text, Long chatId, Long messageId);
 
-    SendMessage sendMessage(long chatId, String textToSend);
+    SendMessage sendMessage(Long chatId, String textToSend);
 
-    SendMessage commandNotFound(long chatId);
+    SendMessage commandNotFound(Long chatId);
 
     SendPhoto sendStartPhoto(Long chatId, String caption) throws IOException;
 
-    SendPhoto startCommandReceived(long chatId);
+    SendPhoto startCommandReceived(Long chatId);
 
-    SendMessage sendWeather(long chatId);
+    SendMessage sendWeather(Long chatId);
 
     SendPhoto sendPhoto(Long chatId, String path) throws IOException;
+
+    SendMessage sendRandomStory(Long chatId);
 }

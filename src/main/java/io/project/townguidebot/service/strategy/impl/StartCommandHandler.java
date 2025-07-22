@@ -1,17 +1,19 @@
-package io.project.townguidebot.service.strategy;
+package io.project.townguidebot.service.strategy.impl;
 
 import io.project.townguidebot.model.CommandType;
 import io.project.townguidebot.service.SendingService;
+import io.project.townguidebot.service.strategy.CommandHandlerStrategy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+
 @Component
 @RequiredArgsConstructor
-public class DefaultCommandHandler implements CommandHandlerStrategy{
+public class StartCommandHandler implements CommandHandlerStrategy {
 
-    private final CommandType commandType = CommandType.DEFAULT;
+    private final CommandType commandType = CommandType.START;
 
     private final SendingService sendingService;
 
@@ -23,6 +25,8 @@ public class DefaultCommandHandler implements CommandHandlerStrategy{
 
     @Override
     public void handle(TelegramLongPollingBot bot, long chatId) throws TelegramApiException {
-        bot.execute(sendingService.commandNotFound(chatId));
+        bot.execute(sendingService.startCommandReceived(chatId));
     }
 }
+
+
