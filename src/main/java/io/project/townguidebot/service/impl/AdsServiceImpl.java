@@ -11,11 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static io.project.townguidebot.service.constants.ErrorText.ERROR_AD_NOT_FOUND;
-import static io.project.townguidebot.service.constants.ErrorText.ERROR_TEXT;
-import static io.project.townguidebot.service.constants.LogText.METHOD_CALLED;
-import static io.project.townguidebot.service.constants.LogText.WITH_ID;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -31,7 +26,7 @@ public class AdsServiceImpl implements io.project.townguidebot.service.AdsServic
      */
     @Override
     public List<AdDto> findAllAds() {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Find all ads...");
         return adMapper.toListAdsDto(adsRepository.findAll());
     }
 
@@ -42,11 +37,10 @@ public class AdsServiceImpl implements io.project.townguidebot.service.AdsServic
      */
     @Override
     public AdDto findAdById(long id) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName() + WITH_ID + id);
+        log.info("Find ad with id: {}", id);
         return adMapper.toAdDto(adsRepository.findById(id).orElseThrow(() -> {
-            AdNotFoundException adEx = new AdNotFoundException(String.format(ERROR_AD_NOT_FOUND, id));
-            log.error(ERROR_TEXT + adEx.getMessage());
-            return adEx;
+            log.error("Ad with id: {} not found", id);
+            return new AdNotFoundException();
         }));
     }
 
@@ -57,7 +51,7 @@ public class AdsServiceImpl implements io.project.townguidebot.service.AdsServic
      */
     @Override
     public AdDto createAd(AdDto adDto) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Created new ad...");
         Ad ad = adMapper.ToAd(adDto);
         return adMapper.toAdDto(adsRepository.save(ad));
     }
@@ -70,15 +64,14 @@ public class AdsServiceImpl implements io.project.townguidebot.service.AdsServic
      */
     @Override
     public AdDto updateAd(long id, AdDto adDto) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName() + WITH_ID + id);
+        log.info("Update ad with id: {}", id);
         if (adsRepository.existsById(id)) {
             Ad ad = adMapper.ToAd(adDto);
             ad.setId(id);
             return adMapper.toAdDto(adsRepository.save(ad));
         } else {
-            String message = String.format(ERROR_AD_NOT_FOUND, id);
-            log.error(ERROR_TEXT + message);
-            throw new AdNotFoundException(message);
+            log.error("Ad with id: {} not found", id);
+            throw new AdNotFoundException();
         }
     }
 
@@ -88,13 +81,12 @@ public class AdsServiceImpl implements io.project.townguidebot.service.AdsServic
      */
     @Override
     public void deleteAd(long id) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName() + WITH_ID + id);
+        log.info("Delete ad with id: {}", id);
         if (adsRepository.existsById(id)) {
             adsRepository.deleteById(id);
         } else {
-            String message = String.format(ERROR_AD_NOT_FOUND, id);
-            log.error(ERROR_TEXT + message);
-            throw new AdNotFoundException(message);
+            log.error("Ad with id: {} not found", id);
+            throw new AdNotFoundException();
         }
     }
 }
