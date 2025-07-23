@@ -26,7 +26,6 @@ public class SendingServiceImpl implements SendingService {
 
     private final MenuService menuService;
     private final WeatherService weatherService;
-    private final PhotoService photoService;
     private final UserService userService;
     private final StoryService storyService;
 

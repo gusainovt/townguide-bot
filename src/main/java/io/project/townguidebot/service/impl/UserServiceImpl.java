@@ -68,6 +68,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsUserByChatId(chatId);
     }
 
+    /**
+     * Получить имя пользователя по id чата
+     * @param chatId id чата
+     * @return имя пользователя {@link String}
+     */
+    @Transactional(readOnly = true)
     @Override
     public String getNameByChatId(Long chatId) {
         log.info("Get user name for chat: {}", chatId);
