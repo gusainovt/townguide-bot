@@ -29,7 +29,7 @@ public class StoryServiceImpl implements StoryService {
         log.info("Find random story...");
         return storyMapper.toStoryDto(storyRepository.findRandomStory().orElseThrow(() -> {
             log.error("Random story npt found");
-            return  new StoryNotFoundException();
+            return  new StoryNotFoundException("Random story npt found");
         }));
     }
 
@@ -53,7 +53,7 @@ public class StoryServiceImpl implements StoryService {
         log.info("Find story by id: {}", id);
         return storyMapper.toStoryDto(storyRepository.findById(id).orElseThrow(() -> {
             log.error("Story with id: {} not found", id);
-            return new StoryNotFoundException();
+            return new StoryNotFoundException(String.format("Story with id: %s not found", id));
         }));
     }
 
@@ -84,7 +84,7 @@ public class StoryServiceImpl implements StoryService {
             return storyMapper.toStoryDto(storyRepository.save(story));
         } else {
             log.error("Story with id: {} not found", id);
-            throw new StoryNotFoundException();
+            throw new StoryNotFoundException(String.format("Story with id: %s not found", id));
         }
     }
 
@@ -99,7 +99,7 @@ public class StoryServiceImpl implements StoryService {
             storyRepository.deleteById(id);
         } else {
             log.error("Story with id: {} not found", id);
-            throw new StoryNotFoundException();
+            throw new StoryNotFoundException(String.format("Story with id: %s not found", id));
         }
     }
 

@@ -30,7 +30,7 @@ public class PlaceServiceImpl implements PlaceService {
         log.info("Find place by id: {}", id);
         return placeMapper.toPlaceDto(placeRepository.findById(id).orElseThrow(() -> {
             log.error("Place with id: {} not found", id);
-            return new PlaceNotFoundException();
+            return new PlaceNotFoundException(String.format("Place with id: %s not found", id));
         }));
     }
 
@@ -63,7 +63,7 @@ public class PlaceServiceImpl implements PlaceService {
             return placeMapper.toPlaceDto(placeRepository.save(place));
         } else {
             log.error("Place with id: {} not found", id);
-            throw new PlaceNotFoundException();
+            throw new PlaceNotFoundException(String.format("Place with id: %s not found", id));
         }
     }
 
@@ -79,7 +79,7 @@ public class PlaceServiceImpl implements PlaceService {
             placeRepository.deleteById(id);
         } else {
             log.error("Place with id: {} not found", id);
-            throw new PlaceNotFoundException();
+            throw new PlaceNotFoundException(String.format("Place with id: %s not found", id));
         }
     }
 
@@ -93,7 +93,7 @@ public class PlaceServiceImpl implements PlaceService {
         log.info("Get random place");
         return placeMapper.toPlaceDto(placeRepository.findRandomPlace().orElseThrow(() -> {
                     log.error("Random place not found");
-                    return new PlaceNotFoundException();
+                    return new PlaceNotFoundException("Random place not found");
                 }));
     }
 

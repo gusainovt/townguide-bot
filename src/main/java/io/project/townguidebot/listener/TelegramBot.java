@@ -37,9 +37,13 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final CallbackService callbackService;
 
     private final List<CommandHandlerStrategy> commandStrategiesList;
+
+
     private final List<MenuStrategy> menuStrategyList;
 
     private Map<CommandType, CommandHandlerStrategy> commandHandlerStrategies;
+
+
     private Map<MenuType, MenuStrategy> menuStrategies;
 
     @PostConstruct
@@ -50,6 +54,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         menuStrategies = menuStrategyList.stream()
                 .collect(Collectors.toMap(MenuStrategy::getMenuType, s -> s));
 
+
+        //TODO: Вынести этот код в отдельный метод и вызывать его только после регистрации (добавить локализацию описаний).
 //        log.info("Initialization bot menu");
 //        List<BotCommand> listOfCommands = new ArrayList<>(List.of(
 //                new BotCommand(COMMAND_START, DESCRIPTION_START),

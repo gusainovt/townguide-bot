@@ -42,9 +42,10 @@ public class AdsServiceImpl implements io.project.townguidebot.service.AdsServic
         log.info("Find ad with id: {}", id);
         return adMapper.toAdDto(adsRepository.findById(id).orElseThrow(() -> {
             log.error("Ad with id: {} not found", id);
-            return new AdNotFoundException();
+            return new AdNotFoundException(String.format("Ad with id: %s not found", id));
         }));
     }
+
 
     /**
      * Создает новое объявление
@@ -75,7 +76,7 @@ public class AdsServiceImpl implements io.project.townguidebot.service.AdsServic
             return adMapper.toAdDto(adsRepository.save(ad));
         } else {
             log.error("Ad with id: {} not found", id);
-            throw new AdNotFoundException();
+            throw new AdNotFoundException(String.format("Ad with id: %s not found", id));
         }
     }
 
@@ -91,7 +92,7 @@ public class AdsServiceImpl implements io.project.townguidebot.service.AdsServic
             adsRepository.deleteById(id);
         } else {
             log.error("Ad with id: {} not found", id);
-            throw new AdNotFoundException();
+            throw new AdNotFoundException(String.format("Ad with id: %s not found", id));
         }
     }
 }

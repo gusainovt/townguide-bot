@@ -84,7 +84,7 @@ public class PhotoServiceImpl implements PhotoService {
         log.info("Generate image preview for image: {}", id);
         Photo photo = photoRepository.findById(id).orElseThrow(()->{
             log.error("Photo not found with id: {}", id);
-            return new PhotoNotFoundException();
+            return new PhotoNotFoundException(String.format("Photo not found with id: %s", id));
         });
         return photoMapper.photoToImagePreviewDto(photo);
     }
