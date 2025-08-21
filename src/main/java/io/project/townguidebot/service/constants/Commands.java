@@ -1,16 +1,7 @@
 package io.project.townguidebot.service.constants;
 
 public class Commands {
-    public static final String COMMAND_START = "/start";
-    public static final String COMMAND_MY_DATA = "/mydata";
-    public static final String COMMAND_DELETE_DATA = "/deletedata";
-    public static final String COMMAND_HELP = "/help";
-    public static final String COMMAND_SETTING = "/setting";
-    public static final String COMMAND_REGISTER = "/register";
-    public static final String COMMAND_SEND = "/send";
-    public static final String COMMAND_STORY = "/story";
-    public static final String COMMAND_ADD_PLACE = "/addPlace";
-    public static final String COMMAND_WEATHER = "/weather";
+
     public static final String DESCRIPTION_START = "запустить бота";
     public static final String DESCRIPTION_MY_DATA = "посмотреть свои данные";
     public static final String DESCRIPTION_DELETE_DATA = "удалить свои данные";

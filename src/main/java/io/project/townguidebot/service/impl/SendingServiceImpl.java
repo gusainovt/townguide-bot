@@ -2,10 +2,7 @@ package io.project.townguidebot.service.impl;
 
 import com.vdurmont.emoji.EmojiParser;
 import io.project.townguidebot.model.Weather;
-import io.project.townguidebot.service.MenuService;
-import io.project.townguidebot.service.PhotoService;
-import io.project.townguidebot.service.SendingService;
-import io.project.townguidebot.service.WeatherService;
+import io.project.townguidebot.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +17,6 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import java.io.File;
 import java.io.IOException;
 
-import static io.project.townguidebot.service.constants.LogText.METHOD_CALLED;
-import static io.project.townguidebot.service.constants.LogText.REPLIED_USER;
 import static io.project.townguidebot.service.constants.TelegramText.*;
 
 @Slf4j
@@ -31,7 +26,8 @@ public class SendingServiceImpl implements SendingService {
 
     private final MenuService menuService;
     private final WeatherService weatherService;
-    private final PhotoService photoService;
+    private final UserService userService;
+    private final StoryService storyService;
 
 
     @Value("${path.start-photo}")
@@ -45,12 +41,12 @@ public class SendingServiceImpl implements SendingService {
      * @return объект {@link EditMessageText}
      */
     @Override
-    public EditMessageText sendEditMessageText(String text, long chatId, long messageId) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+    public EditMessageText sendEditMessageText(String text, Long chatId, Long messageId) {
+        log.info("Edit message: {} for chat: {}", messageId, chatId);
         EditMessageText message = new EditMessageText();
         message.setChatId(chatId);
         message.setText(text);
-        message.setMessageId((int) messageId);
+        message.setMessageId(messageId.intValue());
         return message;
     }
 
@@ -61,8 +57,8 @@ public class SendingServiceImpl implements SendingService {
      * @return объект {@link SendMessage}
      */
     @Override
-    public SendMessage sendMessage(long chatId, String textToSend) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+    public SendMessage sendMessage(Long chatId, String textToSend) {
+        log.info("Sending message for chat: {}", chatId);
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(textToSend);
@@ -70,13 +66,13 @@ public class SendingServiceImpl implements SendingService {
     }
 
     /**
-     * Отправляет сообщение пользователю, что комманда не найдена
+     * Отправляет сообщение пользователю, что команда не найдена
      * @param chatId ID чата
      * @return объект {@link SendMessage}
      */
     @Override
-    public SendMessage commandNotFound(long chatId) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+    public SendMessage commandNotFound(Long chatId) {
+        log.info("Command not found for chat: {}", chatId);
         return sendMessage(chatId, EmojiParser.parseToUnicode(NOT_FOUND_COMMAND));
     }
 
@@ -89,7 +85,7 @@ public class SendingServiceImpl implements SendingService {
      */
     @Override
     public SendPhoto sendStartPhoto(Long chatId, String caption) throws IOException {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Sending start photo for chat: {}", chatId);
         File imageFile = new ClassPathResource(pathStartPhoto).getFile();
         InputFile imageInputFile = new InputFile().setMedia(imageFile);
         var message = new SendPhoto();
@@ -102,14 +98,13 @@ public class SendingServiceImpl implements SendingService {
     /**
      * Стартовое приветствие
      * @param chatId ID чата
-     * @param name Имя пользователя
      */
     @SneakyThrows
     @Override
-    public SendPhoto startCommandReceived(long chatId, String name) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+    public SendPhoto startCommandReceived(Long chatId) {
+        log.info("Hello message for chat: {}", chatId);
+        String name = userService.getNameByChatId(chatId);
         String answer = EmojiParser.parseToUnicode(HELLO + name + GREETING);
-        log.info(REPLIED_USER + name);
         SendPhoto sendPhoto = sendStartPhoto(chatId, answer);
         sendPhoto.setReplyMarkup(menuService.startMenu());
         return sendPhoto;
@@ -120,8 +115,8 @@ public class SendingServiceImpl implements SendingService {
      * @param chatId ID чата
      */
     @Override
-    public SendMessage sendWeather(long chatId){
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+    public SendMessage sendWeather(Long chatId){
+        log.info("Sending weather for chat: {}", chatId);
         Weather weather = weatherService.getWeather(NAME_CITY);
         return sendMessage(chatId,
                 String.format(TEXT_WEATHER,
@@ -139,12 +134,34 @@ public class SendingServiceImpl implements SendingService {
      */
     @Override
     public SendPhoto sendPhoto(Long chatId, String path) throws IOException {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Sending photo for chat: {}", chatId);
         File imageFile = new ClassPathResource(path).getFile();
         InputFile imageInputFile = new InputFile().setMedia(imageFile);
         var message = new SendPhoto();
         message.setChatId(chatId);
         message.setPhoto(imageInputFile);
         return message;
+    }
+
+    /**
+     * Отправляет рандомную историю пользователю
+     * @param chatId id чата
+     * @return объект {@link SendMessage}
+     */
+    @Override
+    public SendMessage sendRandomStory(Long chatId) {
+        log.info("Sending random story for chat: {}", chatId);
+        String storyText = storyService.getRandomStory().getBody();
+        return sendMessage(chatId, storyText);
+    }
+
+    /**
+     * Отправляет текс с руководством
+     * @param chatId id чата
+     * @return объект {@link SendMessage}
+     */
+    @Override
+    public SendMessage sendHelpText(Long chatId) {
+        return sendMessage(chatId, HELP_TEXT);
     }
 }

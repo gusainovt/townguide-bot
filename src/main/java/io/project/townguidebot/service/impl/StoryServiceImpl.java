@@ -12,11 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static io.project.townguidebot.service.constants.ErrorText.ERROR_STORY_NOT_FOUND;
-import static io.project.townguidebot.service.constants.ErrorText.ERROR_TEXT;
-import static io.project.townguidebot.service.constants.LogText.METHOD_CALLED;
-import static io.project.townguidebot.service.constants.LogText.WITH_ID;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -31,11 +26,10 @@ public class StoryServiceImpl implements StoryService {
      */
     @Override
     public StoryDto getRandomStory() {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Find random story...");
         return storyMapper.toStoryDto(storyRepository.findRandomStory().orElseThrow(() -> {
-            StoryNotFoundException storyEx = new StoryNotFoundException(String.format(ERROR_STORY_NOT_FOUND, "random"));
-            log.error(ERROR_TEXT + storyEx.getMessage());
-            return storyEx;
+            log.error("Random story npt found");
+            return  new StoryNotFoundException("Random story npt found");
         }));
     }
 
@@ -45,7 +39,7 @@ public class StoryServiceImpl implements StoryService {
      */
     @Override
     public List<StoryDto> findAllStories() {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Find all stories...");
         return storyMapper.toListStoriesDto(storyRepository.findAll());
     }
 
@@ -56,11 +50,10 @@ public class StoryServiceImpl implements StoryService {
      */
     @Override
     public StoryDto findStoryById(Long id) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName() + WITH_ID + id);
+        log.info("Find story by id: {}", id);
         return storyMapper.toStoryDto(storyRepository.findById(id).orElseThrow(() -> {
-            StoryNotFoundException storyEx = new StoryNotFoundException(String.format(ERROR_STORY_NOT_FOUND, id));
-            log.error(ERROR_TEXT + storyEx.getMessage());
-            return storyEx;
+            log.error("Story with id: {} not found", id);
+            return new StoryNotFoundException(String.format("Story with id: %s not found", id));
         }));
     }
 
@@ -71,7 +64,7 @@ public class StoryServiceImpl implements StoryService {
      */
     @Override
     public StoryDto createStory(StoryDto storyDto) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Create new story...");
         Story story = storyMapper.toStory(storyDto);
         return storyMapper.toStoryDto(storyRepository.save(story));
     }
@@ -84,15 +77,14 @@ public class StoryServiceImpl implements StoryService {
      */
     @Override
     public StoryDto updateStory(long id, StoryDto storyDto) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName() + WITH_ID + id);
+        log.info("Update story with id: {}", id);
         if (storyRepository.existsById(id)) {
             Story story = storyMapper.toStory(storyDto);
             story.setId(id);
             return storyMapper.toStoryDto(storyRepository.save(story));
         } else {
-            String message = String.format(ERROR_STORY_NOT_FOUND, id);
-            log.error(ERROR_TEXT + message);
-            throw new StoryNotFoundException(message);
+            log.error("Story with id: {} not found", id);
+            throw new StoryNotFoundException(String.format("Story with id: %s not found", id));
         }
     }
 
@@ -102,13 +94,12 @@ public class StoryServiceImpl implements StoryService {
      */
     @Override
     public void deleteStory(long id) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName() + WITH_ID + id);
+        log.info("Delete story with id: {}", id);
         if (storyRepository.existsById(id)) {
             storyRepository.deleteById(id);
         } else {
-            String message = String.format(ERROR_STORY_NOT_FOUND, id);
-            log.error(ERROR_TEXT + message);
-            throw new StoryNotFoundException(message);
+            log.error("Story with id: {} not found", id);
+            throw new StoryNotFoundException(String.format("Story with id: %s not found", id));
         }
     }
 

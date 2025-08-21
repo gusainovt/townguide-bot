@@ -8,13 +8,9 @@ import io.project.townguidebot.repository.AdsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
-import static io.project.townguidebot.service.constants.ErrorText.ERROR_AD_NOT_FOUND;
-import static io.project.townguidebot.service.constants.ErrorText.ERROR_TEXT;
-import static io.project.townguidebot.service.constants.LogText.METHOD_CALLED;
-import static io.project.townguidebot.service.constants.LogText.WITH_ID;
 
 @Service
 @Slf4j
@@ -22,16 +18,16 @@ import static io.project.townguidebot.service.constants.LogText.WITH_ID;
 public class AdsServiceImpl implements io.project.townguidebot.service.AdsService {
 
     private final AdsRepository adsRepository;
-
     private final AdMapper adMapper;
 
     /**
      * Находит все объявления в БД
      * @return список объявлений {@link Ad}
      */
+    @Transactional(readOnly = true)
     @Override
     public List<AdDto> findAllAds() {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Find all ads...");
         return adMapper.toListAdsDto(adsRepository.findAll());
     }
 
@@ -40,24 +36,26 @@ public class AdsServiceImpl implements io.project.townguidebot.service.AdsServic
      * @param id идентификатор объявления
      * @return найденное объявление {@link Ad}
      */
+    @Transactional(readOnly = true)
     @Override
     public AdDto findAdById(long id) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName() + WITH_ID + id);
+        log.info("Find ad with id: {}", id);
         return adMapper.toAdDto(adsRepository.findById(id).orElseThrow(() -> {
-            AdNotFoundException adEx = new AdNotFoundException(String.format(ERROR_AD_NOT_FOUND, id));
-            log.error(ERROR_TEXT + adEx.getMessage());
-            return adEx;
+            log.error("Ad with id: {} not found", id);
+            return new AdNotFoundException(String.format("Ad with id: %s not found", id));
         }));
     }
+
 
     /**
      * Создает новое объявление
      * @param adDto объект объявления {@link Ad}
      * @return созданное объявление {@link Ad}
      */
+    @Transactional
     @Override
     public AdDto createAd(AdDto adDto) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Created new ad...");
         Ad ad = adMapper.ToAd(adDto);
         return adMapper.toAdDto(adsRepository.save(ad));
     }
@@ -68,17 +66,17 @@ public class AdsServiceImpl implements io.project.townguidebot.service.AdsServic
      * @param adDto объект объявления {@link Ad}
      * @return обновленное объявление {@link Ad}
      */
+    @Transactional
     @Override
     public AdDto updateAd(long id, AdDto adDto) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName() + WITH_ID + id);
+        log.info("Update ad with id: {}", id);
         if (adsRepository.existsById(id)) {
             Ad ad = adMapper.ToAd(adDto);
             ad.setId(id);
             return adMapper.toAdDto(adsRepository.save(ad));
         } else {
-            String message = String.format(ERROR_AD_NOT_FOUND, id);
-            log.error(ERROR_TEXT + message);
-            throw new AdNotFoundException(message);
+            log.error("Ad with id: {} not found", id);
+            throw new AdNotFoundException(String.format("Ad with id: %s not found", id));
         }
     }
 
@@ -86,15 +84,15 @@ public class AdsServiceImpl implements io.project.townguidebot.service.AdsServic
      * Удаляет объявление по ID
      * @param id идентификатор объявления
      */
+    @Transactional
     @Override
     public void deleteAd(long id) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName() + WITH_ID + id);
+        log.info("Delete ad with id: {}", id);
         if (adsRepository.existsById(id)) {
             adsRepository.deleteById(id);
         } else {
-            String message = String.format(ERROR_AD_NOT_FOUND, id);
-            log.error(ERROR_TEXT + message);
-            throw new AdNotFoundException(message);
+            log.error("Ad with id: {} not found", id);
+            throw new AdNotFoundException(String.format("Ad with id: %s not found", id));
         }
     }
 }

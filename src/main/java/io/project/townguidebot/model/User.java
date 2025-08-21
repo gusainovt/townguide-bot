@@ -1,9 +1,6 @@
 package io.project.townguidebot.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -48,4 +45,8 @@ public class User {
 
     @Column(name = "pinned_message")
     private String pinnedMessage;
+
+    @Column(name = "language_code")
+    @Enumerated(EnumType.STRING)
+    private LanguageCode languageCode;
 }

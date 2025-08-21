@@ -11,8 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.project.townguidebot.service.constants.Buttons.*;
-import static io.project.townguidebot.service.constants.LogText.METHOD_CALLED;
+import static io.project.townguidebot.model.ButtonCallback.*;
 import static io.project.townguidebot.service.constants.TelegramText.REGISTER_QUESTION;
 
 @Service
@@ -27,19 +26,20 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     public InlineKeyboardMarkup startMenu() {
+        log.info("Generating start menu...");
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
 
         var getStory = new InlineKeyboardButton();
 
-        getStory.setText(START_STORY_BUTTON);
-        getStory.setCallbackData(STORY_CALLBACK);
+        getStory.setText("START_STORY_BUTTON");
+        getStory.setCallbackData(STORY.toString());
 
         var getPhoto = new InlineKeyboardButton();
 
-        getPhoto.setText(START_PLACE_BUTTON);
-        getPhoto.setCallbackData(PLACE_CALLBACK);
+        getPhoto.setText("START_PLACE_BUTTON");
+        getPhoto.setCallbackData(PLACE.toString());
 
         rowInLine.add(getStory);
         rowInLine.add(getPhoto);
@@ -65,18 +65,18 @@ public class MenuServiceImpl implements MenuService {
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
 
-        var yesButton = new InlineKeyboardButton();
+        var russianButton = new InlineKeyboardButton();
 
-        yesButton.setText(YES_BUTTON);
-        yesButton.setCallbackData(YES_CALLBACK);
+        russianButton.setText("Русский");
+        russianButton.setCallbackData(LANGUAGE_CODE_RU.toString());
 
-        var noButton = new InlineKeyboardButton();
+        var cancelButton = new InlineKeyboardButton();
 
-        noButton.setText(NO_BUTTON);
-        noButton.setCallbackData(NO_CALLBACK);
+        cancelButton.setText("Cancel");
+        cancelButton.setCallbackData(CANCEL.toString());
 
-        rowInLine.add(yesButton);
-        rowInLine.add(noButton);
+        rowInLine.add(russianButton);
+        rowInLine.add(cancelButton);
 
         rowsInLine.add(rowInLine);
 
@@ -92,15 +92,15 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     public SendMessage placeMenu(SendMessage message) {
-        log.info(METHOD_CALLED + Thread.currentThread().getStackTrace()[2].getMethodName());
+        log.info("Activate place menu");
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
 
         var photoButton = new InlineKeyboardButton();
 
-        photoButton.setText(PLACE_PHOTO_BUTTON);
-        photoButton.setCallbackData(PHOTO_CALLBACK);
+        photoButton.setText("PLACE_PHOTO_BUTTON");
+        photoButton.setCallbackData(PHOTO.toString());
 
         rowInLine.add(photoButton);
         rowsInLine.add(rowInLine);
