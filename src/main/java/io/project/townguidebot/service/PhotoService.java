@@ -1,13 +1,20 @@
 package io.project.townguidebot.service;
 
-import io.project.townguidebot.model.dto.ImagePreviewDto;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
+import io.project.townguidebot.model.Photo;
 
 public interface PhotoService {
-    void uploadPhoto(Long placeId, MultipartFile file) throws IOException;
-    ImagePreviewDto generateImagePreview(Long id);
 
-    String getPhotoPathById(Long id);
+    /**
+     * Получает ссылку на фото по id
+     * @param photoId id фото
+     * @return url картинки
+     */
+    String getPhotoUrl(Long photoId);
+
+    /**
+     * Сохраняет ссылку на фото в БД
+     * @param photo сущность Photo
+     * @return сущность Photo
+     */
+    Photo savePhoto(Photo photo);
 }
