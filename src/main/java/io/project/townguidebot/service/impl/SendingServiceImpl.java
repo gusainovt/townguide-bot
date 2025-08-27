@@ -6,7 +6,6 @@ import io.project.townguidebot.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -28,10 +27,6 @@ public class SendingServiceImpl implements SendingService {
     private final WeatherService weatherService;
     private final UserService userService;
     private final StoryService storyService;
-
-
-    @Value("${path.start-photo}")
-    private String pathStartPhoto;
 
     /**
      * Метод изменяет текст сообщения
@@ -86,12 +81,11 @@ public class SendingServiceImpl implements SendingService {
     @Override
     public SendPhoto sendStartPhoto(Long chatId, String caption) throws IOException {
         log.info("Sending start photo for chat: {}", chatId);
-        File imageFile = new ClassPathResource(pathStartPhoto).getFile();
-        InputFile imageInputFile = new InputFile().setMedia(imageFile);
+        String photoUrl = "https://res.cloudinary.com/dezwmxtpc/image/upload/v1756196617/places/1/zopw1n5x3wobenrgwuc3.png";
         var message = new SendPhoto();
         message.setChatId(chatId);
         message.setCaption(caption);
-        message.setPhoto(imageInputFile);
+        message.setPhoto(new InputFile(photoUrl));
         return message;
     }
 
