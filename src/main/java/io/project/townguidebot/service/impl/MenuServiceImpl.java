@@ -55,6 +55,7 @@ public class MenuServiceImpl implements MenuService {
      * @param chatId ID чата
      */
     @Override
+    @Deprecated
     public SendMessage registerMenu(long chatId) {
         log.info("Register menu culled in chat: {}", chatId);
         SendMessage message = new SendMessage();

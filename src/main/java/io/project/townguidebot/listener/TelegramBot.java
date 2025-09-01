@@ -101,13 +101,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         log.info("Starting bot for chat: {}", chatId);
 
-        if (!userService.isRegisteredUser(chatId) && !update.hasCallbackQuery()) {
-            execute(menuService.registerMenu(chatId));
-            return;
-        }
-
-        if (!userService.isRegisteredUser(chatId) && update.hasCallbackQuery()) {
-            execute(callbackService.buttonRegister(update));
+        if (!userService.isRegisteredUser(chatId)) {
+            userService.registeredUser(chatId, message.getChat());
         }
 
         if (update.hasMessage() && update.getMessage().hasText() && !update.hasCallbackQuery()) {
