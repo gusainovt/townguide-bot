@@ -17,11 +17,14 @@ public class City {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "name_eng")
+    @Column(name = "name_eng", nullable = false)
     private String nameEng;
+
+    @Column(name = "callback", nullable = false, unique = true)
+    private String callback;
 
     @Column(name = "photo")
     private String photo;
