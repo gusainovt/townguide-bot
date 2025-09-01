@@ -158,4 +158,20 @@ public class SendingServiceImpl implements SendingService {
     public SendMessage sendHelpText(Long chatId) {
         return sendMessage(chatId, HELP_TEXT);
     }
+
+    /**
+     * Стартовое меню города
+     * @param chatId ID чата
+     */
+    @SneakyThrows
+    @Override
+    public SendMessage cityMenuReceived(Long chatId) {
+        log.info("City menu for chat: {}", chatId);
+        String answer = "Добро пожаловать в город такой-то основанный тогда то и твой рот ебанный";
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(chatId);
+        sendMessage.setText(answer);
+        sendMessage.setReplyMarkup(menuService.cityMenu());
+        return sendMessage;
+    }
 }

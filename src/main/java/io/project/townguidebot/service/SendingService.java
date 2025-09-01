@@ -24,4 +24,7 @@ public interface SendingService {
     SendMessage sendRandomStory(Long chatId);
 
     SendMessage sendHelpText(Long chatId);
+
+    SendMessage cityMenuReceived(Long chatId);
+
 }

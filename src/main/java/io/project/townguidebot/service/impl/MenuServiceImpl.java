@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.project.townguidebot.model.ButtonCallback.*;
-import static io.project.townguidebot.service.constants.TelegramText.REGISTER_QUESTION;
 
 @Service
 @Slf4j
@@ -45,42 +44,6 @@ public class MenuServiceImpl implements MenuService {
         return markupInline;
     }
 
-    /**
-     * Регистрация пользователя
-     * @param chatId ID чата
-     */
-    @Override
-    @Deprecated
-    public SendMessage registerMenu(long chatId) {
-        log.info("Register menu culled in chat: {}", chatId);
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText(REGISTER_QUESTION);
-
-        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
-        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
-
-        var russianButton = new InlineKeyboardButton();
-
-        russianButton.setText("Русский");
-        russianButton.setCallbackData(LANGUAGE_CODE_RU.toString());
-
-        var cancelButton = new InlineKeyboardButton();
-
-        cancelButton.setText("Cancel");
-        cancelButton.setCallbackData(CANCEL.toString());
-
-        rowInLine.add(russianButton);
-        rowInLine.add(cancelButton);
-
-        rowsInLine.add(rowInLine);
-
-        markupInline.setKeyboard(rowsInLine);
-        message.setReplyMarkup(markupInline);
-        return message;
-    }
-
 
     /**
      * Меню места
@@ -104,5 +67,34 @@ public class MenuServiceImpl implements MenuService {
         markupInline.setKeyboard(rowsInLine);
         message.setReplyMarkup(markupInline);
         return message;
+    }
+
+    /**
+     * Вызов стартового меню
+     * @return объект {@link InlineKeyboardMarkup}
+     */
+    @Override
+    public InlineKeyboardMarkup cityMenu() {
+
+        log.info("Generating city menu...");
+        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInLine = new ArrayList<>(); var getStory = new InlineKeyboardButton();
+
+        getStory.setText("CITY_STORY_BUTTON");
+        getStory.setCallbackData(STORY.toString());
+
+        var getPhoto = new InlineKeyboardButton();
+
+        getPhoto.setText("CITY_PLACE_BUTTON");
+        getPhoto.setCallbackData(PLACE.toString());
+
+        rowInLine.add(getStory);
+        rowInLine.add(getPhoto);
+        rowsInLine.add(rowInLine);
+
+        markupInline.setKeyboard(rowsInLine);
+
+        return markupInline;
     }
 }
