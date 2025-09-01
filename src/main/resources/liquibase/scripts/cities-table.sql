@@ -5,6 +5,7 @@ create table cities
 (
     id    bigserial primary key,
     name  varchar(255) not null,
+    name_eng  varchar(255) not null,
     photo varchar(255)
 );
 
