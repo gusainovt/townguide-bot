@@ -24,4 +24,8 @@ public class Place {
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Photo> photo;
+
+    @ManyToOne
+    @JoinColumn(name = "city_id", nullable = false)
+    private City city;
 }
