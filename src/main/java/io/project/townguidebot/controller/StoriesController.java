@@ -85,9 +85,9 @@ public class StoriesController {
             @ApiResponse(responseCode = "404", description = "Случайная история не найдена"),
             @ApiResponse(responseCode = "500", description = "Ошибка сервера")
     })
-    @GetMapping("/random")
-    public ResponseEntity<StoryDto> getRandomStory() {
-        return ResponseEntity.ok(storyService.getRandomStory());
+    @GetMapping("/{chatId}/random")
+    public ResponseEntity<StoryDto> getRandomStory(@PathVariable Long chatId) {
+        return ResponseEntity.ok(storyService.getRandomStoryForCity(chatId));
     }
 
 }

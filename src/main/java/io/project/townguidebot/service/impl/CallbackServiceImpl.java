@@ -47,14 +47,13 @@ public class CallbackServiceImpl implements CallbackService {
      * @return {@link SendMessage}
      */
     @Override
-    public SendMessage buttonStart(Update update) {
+    public SendMessage buttonStart(String cityName, Update update) {
         Message message = update.getCallbackQuery().getMessage();
-        ButtonCallback callback = ButtonCallback.valueOf(update.getCallbackQuery().getData());
-
+        ButtonCallback callback = ButtonCallback.fromCallbackData(update.getCallbackQuery().getData());
         log.info("Activate buttons in start menu for chat: {} and callback: {}", message.getChatId(), callback);
 
         CallbackSendMessageStrategy callbackSendMessageStrategy = callbackSendMessageStrategies.get(callback);
-        return callbackSendMessageStrategy.handle(message);
+        return callbackSendMessageStrategy.handle(cityName, message);
 
     }
 
@@ -64,7 +63,7 @@ public class CallbackServiceImpl implements CallbackService {
      * @return {@link SendPhoto}
      */
     @Override
-    public SendPhoto buttonPlace(Update update) {
+    public SendPhoto buttonPlace(String cityName, Update update) {
 
         ButtonCallback callback = ButtonCallback.valueOf(update.getCallbackQuery().getData());
         long chatId = update.getCallbackQuery().getMessage().getChatId();
