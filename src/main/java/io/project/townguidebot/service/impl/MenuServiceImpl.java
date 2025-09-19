@@ -1,5 +1,6 @@
 package io.project.townguidebot.service.impl;
 
+import io.project.townguidebot.model.ButtonCallback;
 import io.project.townguidebot.model.City;
 import io.project.townguidebot.service.CityService;
 import io.project.townguidebot.service.MenuService;
@@ -36,7 +37,7 @@ public class MenuServiceImpl implements MenuService {
         for (City city : cities) {
             InlineKeyboardButton button = new InlineKeyboardButton();
             button.setText(city.getName());
-            button.setCallbackData(city.getCallback());
+            button.setCallbackData(ButtonCallback.CITY.name() + ":" + city.getNameEng());
             rowsInLine.add(List.of(button));
         }
 
@@ -79,14 +80,15 @@ public class MenuServiceImpl implements MenuService {
         log.info("Generating city menu...");
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
-        List<InlineKeyboardButton> rowInLine = new ArrayList<>(); var getStory = new InlineKeyboardButton();
+        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+        var getStory = new InlineKeyboardButton();
 
-        getStory.setText("CITY_STORY_BUTTON");
+        getStory.setText("История");
         getStory.setCallbackData(STORY.toString());
 
         var getPhoto = new InlineKeyboardButton();
 
-        getPhoto.setText("CITY_PLACE_BUTTON");
+        getPhoto.setText("Место");
         getPhoto.setCallbackData(PLACE.toString());
 
         rowInLine.add(getStory);

@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 public interface CallbackService {
-    SendMessage buttonStart(Update update);
-    SendPhoto buttonPlace(Update update);
+    SendMessage buttonStart(String cityName, Update update);
+    SendPhoto buttonPlace(String cityName, Update update);
 
 }

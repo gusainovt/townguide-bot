@@ -5,7 +5,7 @@ import io.project.townguidebot.model.dto.StoryDto;
 import java.util.List;
 
 public interface StoryService {
-    StoryDto getRandomStory();
+    StoryDto getRandomStoryForCity(Long chatId);
     List<StoryDto> findAllStories();
     StoryDto findStoryById(Long id);
     StoryDto createStory(StoryDto storyDto);

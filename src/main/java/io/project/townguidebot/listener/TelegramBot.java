@@ -6,6 +6,7 @@ import io.project.townguidebot.model.CommandType;
 import io.project.townguidebot.model.MenuType;
 import io.project.townguidebot.model.util.ButtonCallbackUtils;
 import io.project.townguidebot.service.CallbackService;
+import io.project.townguidebot.service.CityService;
 import io.project.townguidebot.service.MenuService;
 import io.project.townguidebot.service.UserService;
 import io.project.townguidebot.service.strategy.CommandHandlerStrategy;
@@ -35,6 +36,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final UserService userService;
     private final MenuService menuService;
     private final CallbackService callbackService;
+    private final CityService cityService;
 
     private final List<CommandHandlerStrategy> commandStrategiesList;
 
@@ -42,7 +44,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final List<MenuStrategy> menuStrategyList;
 
     private Map<CommandType, CommandHandlerStrategy> commandHandlerStrategies;
-
 
     private Map<MenuType, MenuStrategy> menuStrategies;
 
@@ -102,23 +103,26 @@ public class TelegramBot extends TelegramLongPollingBot {
         log.info("Starting bot for chat: {}", chatId);
 
         if (!userService.isRegisteredUser(chatId)) {
+            log.info("Starting registered user for chat: {}", chatId);
             userService.registeredUser(chatId, message.getChat());
         }
 
         if (update.hasMessage() && update.getMessage().hasText() && !update.hasCallbackQuery()) {
             String messageText = update.getMessage().getText();
-
+            log.info("Handle strategy for command: {}", messageText);
             CommandHandlerStrategy commandHandlerStrategy = commandHandlerStrategies.get(CommandType.fromString(messageText));
             commandHandlerStrategy.handle(this, chatId);
         }
 
         if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
-            ButtonCallback buttonCallback = ButtonCallback.valueOf(callbackData);
+            ButtonCallback buttonCallback = ButtonCallback.fromCallbackData(callbackData);
             MenuType menuType = ButtonCallbackUtils.getMenuType(buttonCallback);
+            String city = cityService.selectedCity(callbackData, chatId);
 
+            log.info("Handle strategy menu for button callback: {} and type menu: {}", buttonCallback, menuType);
             MenuStrategy menuStrategy = menuStrategies.get(menuType);
-            menuStrategy.handle(this, update);
+            menuStrategy.handle(this, update, city);
         }
     }
 

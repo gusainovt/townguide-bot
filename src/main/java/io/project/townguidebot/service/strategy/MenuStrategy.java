@@ -7,5 +7,5 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public interface MenuStrategy {
     MenuType getMenuType();
-    void handle(TelegramLongPollingBot bot, Update update) throws TelegramApiException;
+    void handle(TelegramLongPollingBot bot, Update update, String cityName) throws TelegramApiException;
 }

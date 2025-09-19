@@ -27,7 +27,7 @@ public class PlaceHandler implements CallbackSendMessageStrategy {
     }
 
     @Override
-    public SendMessage handle(Message message) {
+    public SendMessage handle(String cityName, Message message) {
         long chatId = message.getChatId();
         PlaceDto randomPlace = placeService.getRandomStory();
         SendMessage sendMessage = sendingService.sendMessage(chatId,

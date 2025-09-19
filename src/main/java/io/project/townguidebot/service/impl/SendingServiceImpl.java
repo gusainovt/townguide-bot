@@ -27,6 +27,7 @@ public class SendingServiceImpl implements SendingService {
     private final WeatherService weatherService;
     private final UserService userService;
     private final StoryService storyService;
+    private final CityService cityService;
 
     /**
      * Метод изменяет текст сообщения
@@ -97,6 +98,7 @@ public class SendingServiceImpl implements SendingService {
     @Override
     public SendPhoto startCommandReceived(Long chatId) {
         log.info("Hello message for chat: {}", chatId);
+        cityService.unselectedCityForChat(chatId);
         String name = userService.getNameByChatId(chatId);
         String answer = EmojiParser.parseToUnicode(HELLO + name + GREETING);
         SendPhoto sendPhoto = sendStartPhoto(chatId, answer);
@@ -110,8 +112,9 @@ public class SendingServiceImpl implements SendingService {
      */
     @Override
     public SendMessage sendWeather(Long chatId){
-        log.info("Sending weather for chat: {}", chatId);
-        Weather weather = weatherService.getWeather(NAME_CITY);
+        String cityName = cityService.getSelectedCityForChat(chatId);
+        log.info("Sending weather for chat: {} and city: {}", chatId, cityName);
+        Weather weather = weatherService.getWeather(cityName);
         return sendMessage(chatId,
                 String.format(TEXT_WEATHER,
                         weather.getMain().getTemp().toBigInteger(),
@@ -145,7 +148,7 @@ public class SendingServiceImpl implements SendingService {
     @Override
     public SendMessage sendRandomStory(Long chatId) {
         log.info("Sending random story for chat: {}", chatId);
-        String storyText = storyService.getRandomStory().getBody();
+        String storyText = storyService.getRandomStoryForCity(chatId).getBody();
         return sendMessage(chatId, storyText);
     }
 
@@ -167,10 +170,11 @@ public class SendingServiceImpl implements SendingService {
     @Override
     public SendMessage cityMenuReceived(Long chatId) {
         log.info("City menu for chat: {}", chatId);
-        String answer = "Добро пожаловать в город такой-то основанный тогда то и твой рот ебанный";
+        String descriptionCity = cityService.getDescriptionSelectedCity(chatId);
+
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
-        sendMessage.setText(answer);
+        sendMessage.setText(descriptionCity);
         sendMessage.setReplyMarkup(menuService.cityMenu());
         return sendMessage;
     }
