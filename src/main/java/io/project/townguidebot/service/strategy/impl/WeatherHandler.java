@@ -4,17 +4,18 @@ import io.project.townguidebot.model.ButtonCallback;
 import io.project.townguidebot.service.SendingService;
 import io.project.townguidebot.service.strategy.CallbackSendMessageStrategy;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
-public class StoryHandler implements CallbackSendMessageStrategy {
+public class WeatherHandler implements CallbackSendMessageStrategy {
 
-    private final ButtonCallback buttonCallback = ButtonCallback.STORY;
+    private final ButtonCallback buttonCallback = ButtonCallback.WEATHER;
     private final SendingService sendingService;
-
 
     @Override
     public ButtonCallback getButtonCallback() {
@@ -24,6 +25,6 @@ public class StoryHandler implements CallbackSendMessageStrategy {
     @Override
     public SendMessage handle(Message message) {
         long chatId = message.getChatId();
-        return sendingService.sendRandomStory(chatId);
+        return sendingService.sendWeather(chatId);
     }
 }

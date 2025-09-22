@@ -91,8 +91,14 @@ public class MenuServiceImpl implements MenuService {
         getPhoto.setText("Место");
         getPhoto.setCallbackData(PLACE.toString());
 
+        var getWeather = new InlineKeyboardButton();
+
+        getWeather.setText("Погода");
+        getWeather.setCallbackData(WEATHER.toString());
+
         rowInLine.add(getStory);
         rowInLine.add(getPhoto);
+        rowInLine.add(getWeather);
         rowsInLine.add(rowInLine);
 
         markupInline.setKeyboard(rowsInLine);
