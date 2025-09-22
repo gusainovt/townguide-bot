@@ -10,7 +10,11 @@ public enum ButtonCallback {
     @Menu(MenuType.START)
     PLACE,
     @Menu(MenuType.CITY)
-    CITY;
+    CITY,
+    @Menu(MenuType.START)
+    WEATHER,
+    @Menu(MenuType.START)
+    SELECT_CITY;
 
     public static ButtonCallback fromCallbackData(String callbackData) {
         if (callbackData.contains(":")) {

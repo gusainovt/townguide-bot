@@ -183,4 +183,19 @@ public class SendingServiceImpl implements SendingService {
         sendMessage.setReplyMarkup(menuService.cityMenu());
         return sendMessage;
     }
+
+    /**
+     * Меню выбора города
+     * @param chatId ID чата
+     */
+    @SneakyThrows
+    @Override
+    public SendMessage selectCityCommandReceived(Long chatId) {
+        log.info("Menu fo selected city: {}", chatId);
+        cityService.unselectedCityForChat(chatId);
+        SendMessage sendPhoto = sendMessage(chatId, SELECT_CITY);
+        sendPhoto.setReplyMarkup(menuService.startMenu());
+        return sendPhoto;
+    }
+
 }

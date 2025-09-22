@@ -27,4 +27,6 @@ public interface SendingService {
 
     SendMessage cityMenuReceived(Long chatId);
 
+    SendMessage selectCityCommandReceived(Long chatId);
+
 }

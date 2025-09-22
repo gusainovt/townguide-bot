@@ -6,5 +6,5 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 public interface CallbackSendMessageStrategy {
     ButtonCallback getButtonCallback();
-    SendMessage handle(String cityName, Message message);
+    SendMessage handle(Message message);
 }

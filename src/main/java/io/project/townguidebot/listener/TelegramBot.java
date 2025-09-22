@@ -118,11 +118,11 @@ public class TelegramBot extends TelegramLongPollingBot {
             String callbackData = update.getCallbackQuery().getData();
             ButtonCallback buttonCallback = ButtonCallback.fromCallbackData(callbackData);
             MenuType menuType = ButtonCallbackUtils.getMenuType(buttonCallback);
-            String city = cityService.selectedCity(callbackData, chatId);
+            cityService.selectedCity(callbackData, chatId);
 
             log.info("Handle strategy menu for button callback: {} and type menu: {}", buttonCallback, menuType);
             MenuStrategy menuStrategy = menuStrategies.get(menuType);
-            menuStrategy.handle(this, update, city);
+            menuStrategy.handle(this, update);
         }
     }
 

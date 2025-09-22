@@ -22,7 +22,7 @@ public class PlaceMenuStrategy implements MenuStrategy {
     }
 
     @Override
-    public void handle(TelegramLongPollingBot bot, Update update, String cityName) throws TelegramApiException {
-        bot.execute(callbackService.buttonPlace(cityName, update));
+    public void handle(TelegramLongPollingBot bot, Update update) throws TelegramApiException {
+        bot.execute(callbackService.buttonPlace(update));
     }
 }

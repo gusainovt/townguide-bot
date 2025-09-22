@@ -22,7 +22,7 @@ public class CityHandler implements CallbackSendMessageStrategy {
     }
 
     @Override
-    public SendMessage handle(String cityName, Message message) {
+    public SendMessage handle(Message message) {
         return sendingService.cityMenuReceived(message.getChatId());
     }
 }
