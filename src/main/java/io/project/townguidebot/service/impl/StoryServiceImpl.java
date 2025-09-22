@@ -30,10 +30,11 @@ public class StoryServiceImpl implements StoryService {
     public StoryDto getRandomStoryForCity(Long chatId) {
         String cityName = cityService.getSelectedCityForChat(chatId);
         log.info("Find random story city: {} for chat: {}", cityName, chatId);
-        return storyMapper.toStoryDto(storyRepository.findRandomStory().orElseThrow(() -> {
-            log.error("Random story not found");
+        Story story = storyRepository.findRandomStoryByNameCity(cityName).orElseThrow(() -> {
+            log.error("Random story for city: {} not found", cityName);
             return  new StoryNotFoundException("Random story not found");
-        }));
+        });
+        return storyMapper.toStoryDto(story);
     }
 
     /**
