@@ -112,11 +112,13 @@ public class SendingServiceImpl implements SendingService {
      */
     @Override
     public SendMessage sendWeather(Long chatId){
-        String cityName = cityService.getSelectedCityForChat(chatId);
-        log.info("Sending weather for chat: {} and city: {}", chatId, cityName);
-        Weather weather = weatherService.getWeather(cityName);
+        String cityNameEng = cityService.getSelectedCityForChat(chatId);
+        log.info("Sending weather for chat: {} and city: {}", chatId, cityNameEng);
+        Weather weather = weatherService.getWeather(cityNameEng);
+        String nameCity = cityService.getCityNameByNameEng(cityNameEng);
         return sendMessage(chatId,
                 String.format(TEXT_WEATHER,
+                        nameCity,
                         weather.getMain().getTemp().toBigInteger(),
                         weather.getMain().getFeels_like().toBigInteger(),
                         weather.getWind().getSpeed().toString()));
@@ -149,7 +151,11 @@ public class SendingServiceImpl implements SendingService {
     public SendMessage sendRandomStory(Long chatId) {
         log.info("Sending random story for chat: {}", chatId);
         String storyText = storyService.getRandomStoryForCity(chatId).getBody();
-        return sendMessage(chatId, storyText);
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(chatId);
+        sendMessage.setText(storyText);
+        sendMessage.setReplyMarkup(menuService.cityMenu());
+        return sendMessage;
     }
 
     /**
@@ -171,7 +177,6 @@ public class SendingServiceImpl implements SendingService {
     public SendMessage cityMenuReceived(Long chatId) {
         log.info("City menu for chat: {}", chatId);
         String descriptionCity = cityService.getDescriptionSelectedCity(chatId);
-
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
         sendMessage.setText(descriptionCity);
