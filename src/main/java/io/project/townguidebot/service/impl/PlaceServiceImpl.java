@@ -5,6 +5,7 @@ import io.project.townguidebot.mapper.PlaceMapper;
 import io.project.townguidebot.model.Place;
 import io.project.townguidebot.model.dto.PlaceDto;
 import io.project.townguidebot.repository.PlaceRepository;
+import io.project.townguidebot.service.CityService;
 import io.project.townguidebot.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ public class PlaceServiceImpl implements PlaceService {
 
     private final PlaceRepository placeRepository;
     private final PlaceMapper placeMapper;
+    private final CityService cityService;
 
     /**
      * Находит место по ID
@@ -89,9 +91,10 @@ public class PlaceServiceImpl implements PlaceService {
      */
     @Transactional(readOnly = true)
     @Override
-    public PlaceDto getRandomStory() {
-        log.info("Get random place");
-        return placeMapper.toPlaceDto(placeRepository.findRandomPlace().orElseThrow(() -> {
+    public PlaceDto getRandomStoryByChatId(Long chatId) {
+        log.info("Get random place for chat: {}", chatId);
+        String cityName = cityService.getSelectedCityForChat(chatId);
+        return placeMapper.toPlaceDto(placeRepository.findRandomPlace(cityName).orElseThrow(() -> {
                     log.error("Random place not found");
                     return new PlaceNotFoundException("Random place not found");
                 }));

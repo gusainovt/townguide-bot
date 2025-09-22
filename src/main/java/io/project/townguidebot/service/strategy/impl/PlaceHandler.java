@@ -29,7 +29,7 @@ public class PlaceHandler implements CallbackSendMessageStrategy {
     @Override
     public SendMessage handle(Message message) {
         long chatId = message.getChatId();
-        PlaceDto randomPlace = placeService.getRandomStory();
+        PlaceDto randomPlace = placeService.getRandomStoryByChatId(chatId);
         SendMessage sendMessage = sendingService.sendMessage(chatId,
                 randomPlace.getName() +
                         "\n" + randomPlace.getDescription());
