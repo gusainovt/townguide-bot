@@ -57,7 +57,6 @@ public class CityServiceImpl implements CityService {
         } else {
             return cityForChat.get(chatId);
         }
-
         log.info("Select city: {} for chat: {}", cityName, chatId);
         String name = cityForChat.putIfAbsent(chatId, cityName);
         return name == null ? cityForChat.get(chatId) : name;
@@ -74,4 +73,16 @@ public class CityServiceImpl implements CityService {
         }
         );
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getCityNameByNameEng(String nameEng) {
+        log.info("Find name city by english name: {}", nameEng);
+        return cityRepository.findCityNameByNameEng(nameEng).orElseThrow(()->{
+            log.error("Name city for english name: {} not found", nameEng);
+            return new CityNotFoundException(String.format("City with name: %s not found", nameEng));
+        });
+    }
+
+
 }

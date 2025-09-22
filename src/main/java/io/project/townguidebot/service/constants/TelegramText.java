@@ -11,17 +11,11 @@ public class TelegramText {
             "Нажми " + WEATHER + " чтобы посмотреть погоду в Боровске;\n\n" +
             "Нажми " + SETTING + " чтобы перейти в настройки.\n\n";
 
-
-
     public static final String HELLO = "Привет, ";
     public static final String GREETING = "! Рад знакомству!:rocket: \nВыбери город: ";
-    public static final String NAME_CITY = "borovsk";
-    public static final String REGISTER_QUESTION = "Select language: ";
-    public static final String REGISTER_CONFIRMATION = "Ты зарегистррирован!";
-    public static final String REGISTER_CANCEL = "Отмена регистрации...";
     public static final String NOT_FOUND_COMMAND = "Извини, это пока не работает:cry:";
     public static final String TEXT_WEATHER =
-            "Погода в Боровске  " +
+            "%s погода: " +
                     "\nТемпература: %s градусов; " +
                     "\nОшущается как: %s градусов; " +
                     "\nСкорость ветра: %s м/с.";
