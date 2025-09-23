@@ -72,7 +72,7 @@ public class CallbackServiceImpl implements CallbackService {
 
         if (callback.equals(PHOTO)) {
             try {
-                return sendingService.sendPhoto(chatId, photoService.getPhotoUrl(1L));
+                return sendingService.sendPhoto(chatId, photoService.getAllPhotoByPlace(1L).get(0).getUrl());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

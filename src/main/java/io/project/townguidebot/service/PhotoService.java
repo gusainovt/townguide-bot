@@ -2,6 +2,8 @@ package io.project.townguidebot.service;
 
 import io.project.townguidebot.model.Photo;
 
+import java.util.List;
+
 public interface PhotoService {
 
     /**
@@ -17,4 +19,6 @@ public interface PhotoService {
      * @return сущность Photo
      */
     Photo savePhoto(Photo photo);
+
+    List<Photo> getAllPhotoByPlace(Long placeId);
 }

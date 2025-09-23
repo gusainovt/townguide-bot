@@ -19,7 +19,7 @@ public interface SendingService {
 
     SendMessage sendWeather(Long chatId);
 
-    SendPhoto sendPhoto(Long chatId, String path) throws IOException;
+    SendPhoto sendPhoto(Long chatId, String urlPhoto) throws IOException;
 
     SendMessage sendRandomStory(Long chatId);
 
