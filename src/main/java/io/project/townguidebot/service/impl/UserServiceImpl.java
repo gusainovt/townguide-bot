@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.Chat;
-import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -35,7 +34,8 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Регистрация пользователя
-     * @param msg {@link Message} из библиотеки телеграмма
+     * @param chatId чат айди
+     * @param chat {@link Chat} из библиотеки телеграм
      */
     @Override
     @Transactional

@@ -79,15 +79,15 @@ public class StoriesController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Получить случайную историю", description = "Возвращает случайную историю о городе Боровск.")
+    @Operation(summary = "Получить случайную историю", description = "Возвращает случайную историю о городе")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Случайная история успешно возвращена"),
             @ApiResponse(responseCode = "404", description = "Случайная история не найдена"),
             @ApiResponse(responseCode = "500", description = "Ошибка сервера")
     })
-    @GetMapping("/{chatId}/random")
-    public ResponseEntity<StoryDto> getRandomStory(@PathVariable Long chatId) {
-        return ResponseEntity.ok(storyService.getRandomStoryForCity(chatId));
+    @GetMapping("/{cityName}/random")
+    public ResponseEntity<StoryDto> getRandomStory(@PathVariable String cityName) {
+        return ResponseEntity.ok(storyService.getRandomStoryForCity(cityName));
     }
 
 }

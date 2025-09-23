@@ -17,3 +17,7 @@ INSERT INTO commands (command_type, description) VALUES
      ('REGISTER', 'регистрация'),
      ('JOKE', 'рандомная шутка'),
      ('WEATHER', 'погода в Боровске');
+
+
+-- changeset gusainovt:003-drop-commands-table
+DROP TABLE IF EXISTS commands;

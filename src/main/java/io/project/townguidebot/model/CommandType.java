@@ -9,14 +9,11 @@ import java.util.Arrays;
 @Getter
 public enum CommandType {
     START("/start"),
-    MY_DATA("/mydata"),
-    DELETE_DATA("/deletedata"),
     HELP("/help"),
-    SETTING("/setting"),
-    SEND("/send"),
     STORY("/story"),
-    ADD_PLACE("/addPlace"),
     WEATHER("/weather"),
+    SELECT("/select"),
+    PLACE("/place"),
     DEFAULT("default");
 
     private final String value;

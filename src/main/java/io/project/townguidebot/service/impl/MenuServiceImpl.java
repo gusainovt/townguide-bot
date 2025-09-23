@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.project.townguidebot.model.ButtonCallback.*;
+import static io.project.townguidebot.service.constants.NameButtons.*;
 
 @Service
 @Slf4j
@@ -59,7 +60,7 @@ public class MenuServiceImpl implements MenuService {
 
         var photoButton = new InlineKeyboardButton();
 
-        photoButton.setText("Фотография");
+        photoButton.setText(PHOTO_BUTTON);
         photoButton.setCallbackData(PHOTO.toString());
 
         rowInLine.add(photoButton);
@@ -84,12 +85,12 @@ public class MenuServiceImpl implements MenuService {
         List<InlineKeyboardButton> rowInLine2 = new ArrayList<>();
         var getStory = new InlineKeyboardButton();
 
-        getStory.setText("История");
+        getStory.setText(STORY_BUTTON);
         getStory.setCallbackData(STORY.toString());
 
         var getPhoto = new InlineKeyboardButton();
 
-        getPhoto.setText("Место");
+        getPhoto.setText(PLACE_BUTTON);
         getPhoto.setCallbackData(PLACE.toString());
 
         rowInLine1.add(getStory);
@@ -97,12 +98,12 @@ public class MenuServiceImpl implements MenuService {
 
         var getWeather = new InlineKeyboardButton();
 
-        getWeather.setText("Погода");
+        getWeather.setText(WEATHER_BUTTON);
         getWeather.setCallbackData(WEATHER.toString());
 
         var selectCity = new InlineKeyboardButton();
 
-        selectCity.setText("Выбрать город");
+        selectCity.setText(SELECT_CITY_BUTTON);
         selectCity.setCallbackData(SELECT_CITY.toString());
 
         rowInLine2.add(getWeather);

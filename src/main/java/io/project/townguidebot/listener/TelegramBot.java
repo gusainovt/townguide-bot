@@ -5,9 +5,8 @@ import io.project.townguidebot.model.ButtonCallback;
 import io.project.townguidebot.model.CommandType;
 import io.project.townguidebot.model.MenuType;
 import io.project.townguidebot.model.util.ButtonCallbackUtils;
-import io.project.townguidebot.service.CallbackService;
 import io.project.townguidebot.service.CityService;
-import io.project.townguidebot.service.MenuService;
+import io.project.townguidebot.service.CommandService;
 import io.project.townguidebot.service.UserService;
 import io.project.townguidebot.service.strategy.CommandHandlerStrategy;
 import io.project.townguidebot.service.strategy.MenuStrategy;
@@ -34,18 +33,15 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private final BotConfig config;
     private final UserService userService;
-    private final MenuService menuService;
-    private final CallbackService callbackService;
     private final CityService cityService;
+    private final CommandService commandService;
 
     private final List<CommandHandlerStrategy> commandStrategiesList;
-
-
     private final List<MenuStrategy> menuStrategyList;
 
     private Map<CommandType, CommandHandlerStrategy> commandHandlerStrategies;
-
     private Map<MenuType, MenuStrategy> menuStrategies;
+
 
     @PostConstruct
     public void init() {
@@ -55,26 +51,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         menuStrategies = menuStrategyList.stream()
                 .collect(Collectors.toMap(MenuStrategy::getMenuType, s -> s));
 
-
-        //TODO: Вынести этот код в отдельный метод и вызывать его только после регистрации (добавить локализацию описаний).
-//        log.info("Initialization bot menu");
-//        List<BotCommand> listOfCommands = new ArrayList<>(List.of(
-//                new BotCommand(COMMAND_START, DESCRIPTION_START),
-//                new BotCommand(COMMAND_MY_DATA, DESCRIPTION_MY_DATA),
-//                new BotCommand(COMMAND_DELETE_DATA, DESCRIPTION_DELETE_DATA),
-//                new BotCommand(COMMAND_HELP, DESCRIPTION_HELP),
-//                new BotCommand(COMMAND_SETTING, DESCRIPTION_SETTING),
-//                new BotCommand(COMMAND_REGISTER, DESCRIPTION_REGISTER),
-//                new BotCommand(COMMAND_STORY, DESCRIPTION_JOKE),
-//                new BotCommand(COMMAND_WEATHER, DESCRIPTION_WEATHER)
-//        ));
-//        try {
-//            this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
-//
-//        } catch (TelegramApiException e) {
-//            log.error(ERROR_SETTING + e.getMessage());
-//        }
-
+        commandService.initCommands(this);
     }
 
     @Override
@@ -125,10 +102,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             menuStrategy.handle(this, update);
         }
     }
-
-
-
-
 
 }
 

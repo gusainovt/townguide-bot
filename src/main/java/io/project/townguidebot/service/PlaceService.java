@@ -8,5 +8,5 @@ public interface PlaceService {
     PlaceDto createPlace(PlaceDto placeDto);
     PlaceDto updatePlace(Long id, PlaceDto placeDto);
     void deletePlace(Long id);
-    PlaceDto getRandomStoryByChatId(Long chatId) ;
+    PlaceDto getRandomPlaceByCity(String cityName) ;
 }

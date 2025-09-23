@@ -3,13 +3,13 @@ package io.project.townguidebot.service.constants;
 import static io.project.townguidebot.model.CommandType.*;
 
 public class TelegramText {
-    public static final String HELP_TEXT = "Этот бот-путеводитель познакомит тебя с историческим городом Боровском.\n\n" +
+    public static final String HELP_TEXT = "Этот бот-путеводитель познакомит тебя. Расскажет тебе о выбранном городе. \n\n" +
             "В боте поддерживаются следующие команды: \n\n " +
-            "Нажми " + START + " чтобы увидеть приветсвие; \n\n" +
-            "Нажми " + MY_DATA + " чтобы увидеть данные, котрые хранит бот о тебе;\n\n" +
-            "Нажми " + DELETE_DATA + " чтобы удалить данные о себе;\n\n" +
-            "Нажми " + WEATHER + " чтобы посмотреть погоду в Боровске;\n\n" +
-            "Нажми " + SETTING + " чтобы перейти в настройки.\n\n";
+            START.getValue() + " - запустить бота; \n\n" +
+            SELECT.getValue() + " - выбрать город; \n\n" +
+            STORY.getValue() + " - история о выбранном городе;\n\n" +
+            PLACE.getValue() + " - интересное место в выбранном городе;\n\n" +
+            WEATHER.getValue() + " - посмотреть погоду выбранном городе.";
 
     public static final String HELLO = "Привет, ";
     public static final String GREETING = "! Рад знакомству!:rocket: \nВыбери город: ";
@@ -21,5 +21,13 @@ public class TelegramText {
                     "\nСкорость ветра: %s м/с.";
 
     public static final String SELECT_CITY = "Выбери город: ";
+    public static final String CITY_UNSELECTED = ":scream_cat: Нужно выбрать город..";
 
+    //описание команд
+    public static final String START_DESCRIPTION = "запустить бота";
+    public static final String HELP_DESCRIPTION = "информация как пользоваться этим ботом";
+    public static final String STORY_DESCRIPTION = "история о выбранном городе";
+    public static final String WEATHER_DESCRIPTION = "посмотреть погоду выбранном городе";
+    public static final String SELECT_DESCRIPTION = "выбрать город";
+    public static final String PLACE_DESCRIPTION = "интересное место в выбранном городе";
 }
