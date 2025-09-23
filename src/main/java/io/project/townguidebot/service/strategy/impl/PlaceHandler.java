@@ -23,6 +23,6 @@ public class PlaceHandler implements CallbackSendMessageStrategy {
     @Override
     public SendMessage handle(Message message) {
         long chatId = message.getChatId();
-        return sendingService.sendRandomPlace(chatId);
+        return sendingService.sendMenuPlaces(chatId);
     }
 }

@@ -22,6 +22,7 @@ public class TelegramText {
 
     public static final String SELECT_CITY = "Выбери город: ";
     public static final String CITY_UNSELECTED = ":scream_cat: Нужно выбрать город..";
+    public static final String SELECT_PLACE = "Выбери место: ";
 
     //описание команд
     public static final String START_DESCRIPTION = "запустить бота";
