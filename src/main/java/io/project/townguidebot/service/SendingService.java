@@ -29,4 +29,7 @@ public interface SendingService {
 
     SendMessage selectCityCommandReceived(Long chatId);
 
+    SendMessage sendRandomPlace(Long chatId);
+
+    SendMessage cityNotSelected(Long chatId);
 }

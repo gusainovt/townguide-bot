@@ -2,6 +2,7 @@ package io.project.townguidebot.service.impl;
 
 import com.vdurmont.emoji.EmojiParser;
 import io.project.townguidebot.model.Weather;
+import io.project.townguidebot.model.dto.PlaceDto;
 import io.project.townguidebot.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -15,6 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 import static io.project.townguidebot.service.constants.TelegramText.*;
 
@@ -28,6 +30,7 @@ public class SendingServiceImpl implements SendingService {
     private final UserService userService;
     private final StoryService storyService;
     private final CityService cityService;
+    private final PlaceService placeService;
 
     /**
      * Метод изменяет текст сообщения
@@ -68,9 +71,22 @@ public class SendingServiceImpl implements SendingService {
      */
     @Override
     public SendMessage commandNotFound(Long chatId) {
-        log.info("Command not found for chat: {}", chatId);
+        log.warn("Command not found for chat: {}", chatId);
         return sendMessage(chatId, EmojiParser.parseToUnicode(NOT_FOUND_COMMAND));
     }
+
+    /**
+     * Отправляет сообщение пользователю, что город не выбран
+     * @param chatId ID чата
+     * @return объект {@link SendMessage}
+     */
+    @Override
+    public SendMessage cityNotSelected(Long chatId) {
+        log.warn("City not select for chat: {}", chatId);
+        return sendMessage(chatId, EmojiParser.parseToUnicode(CITY_UNSELECTED));
+    }
+
+
 
     /**
      * Отправляет стартовую фотографию в чат
@@ -112,16 +128,19 @@ public class SendingServiceImpl implements SendingService {
      */
     @Override
     public SendMessage sendWeather(Long chatId){
-        String cityNameEng = cityService.getSelectedCityForChat(chatId);
-        log.info("Sending weather for chat: {} and city: {}", chatId, cityNameEng);
-        Weather weather = weatherService.getWeather(cityNameEng);
-        String nameCity = cityService.getCityNameByNameEng(cityNameEng);
-        return sendMessage(chatId,
-                String.format(TEXT_WEATHER,
-                        nameCity,
-                        weather.getMain().getTemp().toBigInteger(),
-                        weather.getMain().getFeels_like().toBigInteger(),
-                        weather.getWind().getSpeed().toString()));
+        return Optional.ofNullable(cityService.getSelectedCityForChat(chatId))
+                .map(cityNameEng -> {
+                    log.info("Sending weather for chat: {} and city: {}", chatId, cityNameEng);
+                    Weather weather = weatherService.getWeather(cityNameEng);
+                    String nameCity = cityService.getCityNameByNameEng(cityNameEng);
+                    return sendMessage(chatId,
+                            String.format(TEXT_WEATHER,
+                                    nameCity,
+                                    weather.getMain().getTemp().toBigInteger(),
+                                    weather.getMain().getFeels_like().toBigInteger(),
+                                    weather.getWind().getSpeed().toString()));
+                })
+                .orElseGet(()-> cityNotSelected(chatId));
     }
 
     /**
@@ -149,13 +168,17 @@ public class SendingServiceImpl implements SendingService {
      */
     @Override
     public SendMessage sendRandomStory(Long chatId) {
-        log.info("Sending random story for chat: {}", chatId);
-        String storyText = storyService.getRandomStoryForCity(chatId).getBody();
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(chatId);
-        sendMessage.setText(storyText);
-        sendMessage.setReplyMarkup(menuService.cityMenu());
-        return sendMessage;
+        return Optional.ofNullable(cityService.getSelectedCityForChat(chatId))
+                        .map(cityName -> {
+                            log.info("Sending random story for chat: {}", chatId);
+                            String storyText = storyService.getRandomStoryForCity(cityName).getBody();
+                            SendMessage sendMessage = new SendMessage();
+                            sendMessage.setChatId(chatId);
+                            sendMessage.setText(storyText);
+                            sendMessage.setReplyMarkup(menuService.cityMenu());
+                            return sendMessage;
+                        })
+                        .orElseGet(()-> cityNotSelected(chatId));
     }
 
     /**
@@ -196,6 +219,24 @@ public class SendingServiceImpl implements SendingService {
         SendMessage sendPhoto = sendMessage(chatId, SELECT_CITY);
         sendPhoto.setReplyMarkup(menuService.startMenu());
         return sendPhoto;
+    }
+
+    /**
+     * Отправляет рандомное место пользователю
+     * @param chatId id чата
+     * @return объект {@link SendMessage}
+     */
+    @Override
+    public SendMessage sendRandomPlace(Long chatId) {
+        return Optional.ofNullable(cityService.getSelectedCityForChat(chatId))
+                .map(cityName->{
+                    PlaceDto randomPlace = placeService.getRandomPlaceByCity(cityName);
+                    SendMessage sendMessage = sendMessage(chatId,
+                            randomPlace.getName() +
+                                    "\n" + randomPlace.getDescription());
+                    return menuService.placeMenu(sendMessage);
+                })
+                .orElseGet(()-> cityNotSelected(chatId));
     }
 
 }
