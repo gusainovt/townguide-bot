@@ -25,6 +25,6 @@ public class PlaceCommandHandler implements CommandHandlerStrategy {
     @Override
     public void handle(TelegramLongPollingBot bot, long chatId) throws TelegramApiException {
         log.info("Place command handle for chat: {}", chatId);
-        bot.execute(sendingService.sendRandomStory(chatId));
+        bot.execute(sendingService.sendRandomPlace(chatId));
     }
 }
