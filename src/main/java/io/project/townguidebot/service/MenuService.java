@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 
 public interface MenuService {
     InlineKeyboardMarkup startMenu();
-    SendMessage placeMenu(SendMessage message);
+    SendMessage placeMenu(SendMessage message, String cityName);
     InlineKeyboardMarkup cityMenu();
+    SendMessage photoMenu(SendMessage message);
 }

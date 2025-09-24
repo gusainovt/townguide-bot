@@ -5,12 +5,17 @@ import io.project.townguidebot.mapper.PlaceMapper;
 import io.project.townguidebot.model.Place;
 import io.project.townguidebot.model.dto.PlaceDto;
 import io.project.townguidebot.repository.PlaceRepository;
-import io.project.townguidebot.service.CityService;
 import io.project.townguidebot.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static io.project.townguidebot.service.constants.Prefixes.PLACE_PREFIX;
 
 @Service
 @Slf4j
@@ -19,7 +24,7 @@ public class PlaceServiceImpl implements PlaceService {
 
     private final PlaceRepository placeRepository;
     private final PlaceMapper placeMapper;
-    private final CityService cityService;
+    private final Map<Long, Long> placeForChat = new ConcurrentHashMap<>();
 
     /**
      * Находит место по ID
@@ -97,6 +102,40 @@ public class PlaceServiceImpl implements PlaceService {
                     log.error("Random place not found");
                     return new PlaceNotFoundException("Random place not found");
                 }));
+    }
+
+    @Override
+    public Long getSelectedPlaceForChat(Long chatId) {
+        log.info("Get selected city for chat: {}", chatId);
+        return placeForChat.get(chatId);
+    }
+
+    @Override
+    public void unselectedPlaceForChat(Long chatId) {
+        placeForChat.remove(chatId);
+    }
+
+
+    @Override
+    public Long selectedPlace(String callbackData, Long chatId) {
+        Long placeId;
+        if (callbackData.startsWith(PLACE_PREFIX)) {
+            placeId = Long.parseLong(callbackData.substring(PLACE_PREFIX.length()));
+        } else {
+            return placeForChat.get(chatId);
+        }
+        log.info("Select city: {} for chat: {}", placeId, chatId);
+        Long id = placeForChat.putIfAbsent(chatId, placeId);
+        return id == null ? placeForChat.get(chatId) : id;
+    }
+
+    @Override
+    public List<Place> getPlacesByNameCity(String cityName) {
+        log.info("Find places by city name: {}", cityName);
+        return placeRepository.findPlacesByCityName(cityName).orElseThrow(() -> {
+            log.error("Places by city: {} not found", cityName);
+            return new PlaceNotFoundException(String.format("Places by city: %s not found", cityName));
+        });
     }
 
 }

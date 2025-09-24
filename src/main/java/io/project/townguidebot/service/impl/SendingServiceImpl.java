@@ -7,14 +7,12 @@ import io.project.townguidebot.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -146,18 +144,16 @@ public class SendingServiceImpl implements SendingService {
     /**
      * Отправляет фотографию в чат
      * @param chatId ID чата
-     * @param path путь к фотографии
+     * @param urlPhoto путь к фотографии
      * @return объект {@link SendPhoto}
      * @throws IOException ошибка ввода/вывода
      */
     @Override
-    public SendPhoto sendPhoto(Long chatId, String path) throws IOException {
+    public SendPhoto sendPhoto(Long chatId, String urlPhoto) throws IOException {
         log.info("Sending photo for chat: {}", chatId);
-        File imageFile = new ClassPathResource(path).getFile();
-        InputFile imageInputFile = new InputFile().setMedia(imageFile);
         var message = new SendPhoto();
         message.setChatId(chatId);
-        message.setPhoto(imageInputFile);
+        message.setPhoto(new InputFile(urlPhoto));
         return message;
     }
 
@@ -234,9 +230,53 @@ public class SendingServiceImpl implements SendingService {
                     SendMessage sendMessage = sendMessage(chatId,
                             randomPlace.getName() +
                                     "\n" + randomPlace.getDescription());
-                    return menuService.placeMenu(sendMessage);
+                    return menuService.photoMenu(sendMessage);
                 })
                 .orElseGet(()-> cityNotSelected(chatId));
     }
 
+    /**
+     * Отправляет меню выбора места пользователю
+     * @param chatId id чата
+     * @return объект {@link SendMessage}
+     */
+    @Override
+    public SendMessage sendMenuPlaces(Long chatId) {
+        log.info("Sending place menu fo chat: {}", chatId);
+        return Optional.ofNullable(cityService.getSelectedCityForChat(chatId))
+                .map(cityName->{
+                    SendMessage sendMessage = sendMessage(chatId, SELECT_PLACE);
+                    return menuService.placeMenu(sendMessage, cityName);
+                })
+                .orElseGet(()-> cityNotSelected(chatId));
+    }
+
+    /**
+     * Отправляет выбранное место пользователю
+     * @param chatId id чата
+     * @return объект {@link SendMessage}
+     */
+    @Override
+    public SendMessage sendSelectedPlace(Long chatId) {
+        return Optional.ofNullable(placeService.getSelectedPlaceForChat(chatId))
+                .map(placeId ->{
+                    PlaceDto place = placeService.findPlaceById(placeId);
+                    SendMessage sendMessage = sendMessage(chatId,
+                            place.getName() +
+                                    "\n" + place.getDescription());
+                    return menuService.photoMenu(sendMessage);
+                })
+                .orElseGet(()-> placeNotSelected(chatId));
+    }
+
+    /**
+     * Отправляет сообщение пользователю, что место не выбрано
+     * @param chatId ID чата
+     * @return объект {@link SendMessage}
+     */
+    @Override
+    public SendMessage placeNotSelected(Long chatId) {
+        log.warn("Place not select for chat: {}", chatId);
+        return sendMessage(chatId, EmojiParser.parseToUnicode(PLACE_UNSELECTED));
+    }
 }

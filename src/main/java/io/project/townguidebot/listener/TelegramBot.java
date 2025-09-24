@@ -7,6 +7,7 @@ import io.project.townguidebot.model.MenuType;
 import io.project.townguidebot.model.util.ButtonCallbackUtils;
 import io.project.townguidebot.service.CityService;
 import io.project.townguidebot.service.CommandService;
+import io.project.townguidebot.service.PlaceService;
 import io.project.townguidebot.service.UserService;
 import io.project.townguidebot.service.strategy.CommandHandlerStrategy;
 import io.project.townguidebot.service.strategy.MenuStrategy;
@@ -34,6 +35,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final BotConfig config;
     private final UserService userService;
     private final CityService cityService;
+    private final PlaceService placeService;
     private final CommandService commandService;
 
     private final List<CommandHandlerStrategy> commandStrategiesList;
@@ -96,6 +98,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             ButtonCallback buttonCallback = ButtonCallback.fromCallbackData(callbackData);
             MenuType menuType = ButtonCallbackUtils.getMenuType(buttonCallback);
             cityService.selectedCity(callbackData, chatId);
+            placeService.selectedPlace(callbackData, chatId);
 
             log.info("Handle strategy menu for button callback: {} and type menu: {}", buttonCallback, menuType);
             MenuStrategy menuStrategy = menuStrategies.get(menuType);

@@ -2,8 +2,10 @@ package io.project.townguidebot.service.impl;
 
 import io.project.townguidebot.model.ButtonCallback;
 import io.project.townguidebot.model.City;
+import io.project.townguidebot.model.Place;
 import io.project.townguidebot.service.CityService;
 import io.project.townguidebot.service.MenuService;
+import io.project.townguidebot.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import static io.project.townguidebot.service.constants.NameButtons.*;
 public class MenuServiceImpl implements MenuService {
 
     private final CityService cityService;
+    private final PlaceService placeService;
 
     /**
      * Вызов стартового меню
@@ -52,19 +55,18 @@ public class MenuServiceImpl implements MenuService {
      * @param message сообщение с местом
      */
     @Override
-    public SendMessage placeMenu(SendMessage message) {
+    public SendMessage placeMenu(SendMessage message, String cityName) {
         log.info("Activate place menu");
+        List<Place> places = placeService.getPlacesByNameCity(cityName);
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
-        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
 
-        var photoButton = new InlineKeyboardButton();
-
-        photoButton.setText(PHOTO_BUTTON);
-        photoButton.setCallbackData(PHOTO.toString());
-
-        rowInLine.add(photoButton);
-        rowsInLine.add(rowInLine);
+        for (Place place : places) {
+            InlineKeyboardButton button = new InlineKeyboardButton();
+            button.setText(place.getName());
+            button.setCallbackData(PLACE.name() + ":" + place.getId());
+            rowsInLine.add(List.of(button));
+        }
 
         markupInline.setKeyboard(rowsInLine);
         message.setReplyMarkup(markupInline);
@@ -91,7 +93,7 @@ public class MenuServiceImpl implements MenuService {
         var getPhoto = new InlineKeyboardButton();
 
         getPhoto.setText(PLACE_BUTTON);
-        getPhoto.setCallbackData(PLACE.toString());
+        getPhoto.setCallbackData(SELECT_PLACE.toString());
 
         rowInLine1.add(getStory);
         rowInLine1.add(getPhoto);
@@ -116,4 +118,26 @@ public class MenuServiceImpl implements MenuService {
 
         return markupInline;
     }
+
+    @Override
+    public SendMessage photoMenu(SendMessage message) {
+        log.info("Generating photo menu...");
+        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+
+        var photoButton = new InlineKeyboardButton();
+
+        photoButton.setText(PHOTO_BUTTON);
+        photoButton.setCallbackData(PHOTO.toString());
+
+        rowInLine.add(photoButton);
+        rowsInLine.add(rowInLine);
+
+        markupInline.setKeyboard(rowsInLine);
+        message.setReplyMarkup(markupInline);
+        return message;
+    }
+
+
 }

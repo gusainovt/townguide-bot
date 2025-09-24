@@ -10,9 +10,9 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
 @RequiredArgsConstructor
-public class PlaceHandler implements CallbackSendMessageStrategy {
+public class SelectPlaceHandler implements CallbackSendMessageStrategy {
 
-    private final ButtonCallback buttonCallback = ButtonCallback.PLACE;
+    private final ButtonCallback buttonCallback = ButtonCallback.SELECT_PLACE;
     private final SendingService sendingService;
 
     @Override
@@ -23,6 +23,6 @@ public class PlaceHandler implements CallbackSendMessageStrategy {
     @Override
     public SendMessage handle(Message message) {
         long chatId = message.getChatId();
-        return sendingService.sendSelectedPlace(chatId);
+        return sendingService.sendMenuPlaces(chatId);
     }
 }
