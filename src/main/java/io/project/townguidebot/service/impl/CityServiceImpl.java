@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static io.project.townguidebot.service.constants.Prefixes.CITY_PREFIX;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -52,8 +54,8 @@ public class CityServiceImpl implements CityService {
     @Override
     public String selectedCity(String callbackData, Long chatId) {
         String cityName;
-        if (callbackData.contains(":")) {
-            cityName = callbackData.split(":", 2)[1];
+        if (callbackData.startsWith(CITY_PREFIX)) {
+            cityName = callbackData.substring(CITY_PREFIX.length());
         } else {
             return cityForChat.get(chatId);
         }

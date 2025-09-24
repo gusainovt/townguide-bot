@@ -251,5 +251,32 @@ public class SendingServiceImpl implements SendingService {
                 .orElseGet(()-> cityNotSelected(chatId));
     }
 
+    /**
+     * Отправляет выбранное место пользователю
+     * @param chatId id чата
+     * @return объект {@link SendMessage}
+     */
+    @Override
+    public SendMessage sendSelectedPlace(Long chatId) {
+        return Optional.ofNullable(placeService.getSelectedPlaceForChat(chatId))
+                .map(placeId ->{
+                    PlaceDto place = placeService.findPlaceById(placeId);
+                    SendMessage sendMessage = sendMessage(chatId,
+                            place.getName() +
+                                    "\n" + place.getDescription());
+                    return menuService.photoMenu(sendMessage);
+                })
+                .orElseGet(()-> placeNotSelected(chatId));
+    }
 
+    /**
+     * Отправляет сообщение пользователю, что место не выбрано
+     * @param chatId ID чата
+     * @return объект {@link SendMessage}
+     */
+    @Override
+    public SendMessage placeNotSelected(Long chatId) {
+        log.warn("Place not select for chat: {}", chatId);
+        return sendMessage(chatId, EmojiParser.parseToUnicode(PLACE_UNSELECTED));
+    }
 }
