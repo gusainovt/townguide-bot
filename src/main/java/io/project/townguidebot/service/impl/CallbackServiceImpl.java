@@ -3,6 +3,7 @@ package io.project.townguidebot.service.impl;
 import io.project.townguidebot.model.ButtonCallback;
 import io.project.townguidebot.service.CallbackService;
 import io.project.townguidebot.service.PhotoService;
+import io.project.townguidebot.service.PlaceService;
 import io.project.townguidebot.service.SendingService;
 import io.project.townguidebot.service.strategy.CallbackSendMessageStrategy;
 import jakarta.annotation.PostConstruct;
@@ -17,6 +18,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.project.townguidebot.model.ButtonCallback.PHOTO;
@@ -28,6 +30,7 @@ public class CallbackServiceImpl implements CallbackService {
 
     private final SendingService sendingService;
     private final PhotoService photoService;
+    private final PlaceService placeService;
 
     private final List<CallbackSendMessageStrategy> callbackSendMessageStrategyList;
     private Map<ButtonCallback, CallbackSendMessageStrategy> callbackSendMessageStrategies;
@@ -71,11 +74,15 @@ public class CallbackServiceImpl implements CallbackService {
         log.info("Activate buttons in place menu for chat: {} and callback: {}", chatId, callback);
 
         if (callback.equals(PHOTO)) {
-            try {
-                return sendingService.sendPhoto(chatId, photoService.getAllPhotoByPlace(1L).get(0).getUrl());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            return Optional.ofNullable(placeService.getSelectedPlaceForChat(chatId))
+                    .map(placeId -> {
+                        try {
+                            return sendingService.sendPhoto(chatId, photoService.getAllPhotoByPlace(placeId).get(0).getUrl());
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .orElseThrow();
         }
 
         return new SendPhoto();
