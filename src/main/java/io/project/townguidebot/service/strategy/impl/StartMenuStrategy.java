@@ -1,6 +1,6 @@
 package io.project.townguidebot.service.strategy.impl;
 
-import io.project.townguidebot.model.MenuType;
+import io.project.townguidebot.model.enums.MenuType;
 import io.project.townguidebot.service.CallbackService;
 import io.project.townguidebot.service.strategy.MenuStrategy;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import static io.project.townguidebot.model.MenuType.START;
+import static io.project.townguidebot.model.enums.MenuType.START;
 
 @Component
 @RequiredArgsConstructor

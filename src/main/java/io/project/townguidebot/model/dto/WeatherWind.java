@@ -1,4 +1,4 @@
-package io.project.townguidebot.model;
+package io.project.townguidebot.model.dto;
 
 import lombok.Data;
 import java.math.BigDecimal;

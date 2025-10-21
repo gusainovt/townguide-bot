@@ -1,6 +1,6 @@
 package io.project.townguidebot.service.strategy.impl;
 
-import io.project.townguidebot.model.MenuType;
+import io.project.townguidebot.model.enums.MenuType;
 import io.project.townguidebot.service.CallbackService;
 import io.project.townguidebot.service.strategy.MenuStrategy;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +15,12 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Slf4j
 public class CityMenuStrategy implements MenuStrategy {
 
-    private final MenuType menuType = MenuType.CITY;
+    private static final MenuType MENU_TYPE = MenuType.CITY;
     private final CallbackService callbackService;
 
     @Override
     public MenuType getMenuType() {
-        return menuType;
+        return MENU_TYPE;
     }
 
     @Override

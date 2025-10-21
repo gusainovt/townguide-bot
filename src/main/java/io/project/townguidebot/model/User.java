@@ -1,5 +1,6 @@
 package io.project.townguidebot.model;
 
+import io.project.townguidebot.model.enums.LanguageCode;
 import jakarta.persistence.*;
 import lombok.Data;
 

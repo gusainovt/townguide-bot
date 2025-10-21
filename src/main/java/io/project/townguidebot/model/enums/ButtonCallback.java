@@ -1,4 +1,4 @@
-package io.project.townguidebot.model;
+package io.project.townguidebot.model.enums;
 
 import io.project.townguidebot.annotation.Menu;
 

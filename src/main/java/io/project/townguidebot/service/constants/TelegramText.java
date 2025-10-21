@@ -1,6 +1,6 @@
 package io.project.townguidebot.service.constants;
 
-import static io.project.townguidebot.model.CommandType.*;
+import static io.project.townguidebot.model.enums.CommandType.*;
 
 public class TelegramText {
     public static final String HELP_TEXT = "Этот бот-путеводитель познакомит тебя. Расскажет тебе о выбранном городе. \n\n" +

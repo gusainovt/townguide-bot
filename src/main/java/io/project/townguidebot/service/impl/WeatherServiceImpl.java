@@ -1,6 +1,6 @@
 package io.project.townguidebot.service.impl;
 
-import io.project.townguidebot.model.Weather;
+import io.project.townguidebot.model.dto.Weather;
 import io.project.townguidebot.service.WeatherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

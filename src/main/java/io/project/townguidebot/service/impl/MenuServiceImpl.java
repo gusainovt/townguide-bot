@@ -1,6 +1,6 @@
 package io.project.townguidebot.service.impl;
 
-import io.project.townguidebot.model.ButtonCallback;
+import io.project.townguidebot.model.enums.ButtonCallback;
 import io.project.townguidebot.model.City;
 import io.project.townguidebot.model.Place;
 import io.project.townguidebot.service.CityService;
@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.project.townguidebot.model.ButtonCallback.*;
+import static io.project.townguidebot.model.enums.ButtonCallback.*;
 import static io.project.townguidebot.service.constants.NameButtons.*;
 
 @Service
