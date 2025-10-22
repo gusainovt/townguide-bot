@@ -1,4 +1,4 @@
-package io.project.townguidebot.model.dto;
+package io.project.townguidebot.dto;
 
 import lombok.Data;
 
@@ -7,6 +7,6 @@ import java.math.BigDecimal;
 public class WeatherMain {
     private BigDecimal temp;
     private BigDecimal humidity;
-    private BigDecimal feels_like;
+    private BigDecimal feelsLike;
 
 }

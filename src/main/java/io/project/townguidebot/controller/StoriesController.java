@@ -1,6 +1,6 @@
 package io.project.townguidebot.controller;
 
-import io.project.townguidebot.model.dto.StoryDto;
+import io.project.townguidebot.dto.StoryDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

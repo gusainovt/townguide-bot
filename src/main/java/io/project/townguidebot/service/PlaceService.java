@@ -1,7 +1,7 @@
 package io.project.townguidebot.service;
 
 import io.project.townguidebot.model.Place;
-import io.project.townguidebot.model.dto.PlaceDto;
+import io.project.townguidebot.dto.PlaceDto;
 
 import java.util.List;
 

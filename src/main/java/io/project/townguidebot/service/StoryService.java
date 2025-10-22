@@ -1,6 +1,6 @@
 package io.project.townguidebot.service;
 
-import io.project.townguidebot.model.dto.StoryDto;
+import io.project.townguidebot.dto.StoryDto;
 
 import java.util.List;
 

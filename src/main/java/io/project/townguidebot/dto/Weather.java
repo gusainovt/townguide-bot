@@ -1,4 +1,4 @@
-package io.project.townguidebot.model.dto;
+package io.project.townguidebot.dto;
 
 import lombok.Data;
 

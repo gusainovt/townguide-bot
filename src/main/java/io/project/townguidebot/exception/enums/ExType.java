@@ -1,4 +1,4 @@
-package io.project.townguidebot.model.dto;
+package io.project.townguidebot.exception.enums;
 
 public enum ExType {
     AD_NOT_FOUND,

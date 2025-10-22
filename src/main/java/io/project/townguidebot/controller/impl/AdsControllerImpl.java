@@ -1,7 +1,7 @@
 package io.project.townguidebot.controller.impl;
 
 import io.project.townguidebot.controller.AdsController;
-import io.project.townguidebot.model.dto.AdDto;
+import io.project.townguidebot.dto.AdDto;
 import io.project.townguidebot.service.AdsService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
