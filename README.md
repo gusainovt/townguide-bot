@@ -4,7 +4,7 @@
 [![Ссылка на бота](https://img.shields.io/badge/Telegram-@Borovsk__bot-blue?logo=telegram)](https://t.me/Borovsk_bot)
 
 # Стек 
-- **Java 11** - основной язык разработки
+- **Java 17** - основной язык разработки
 - **Spring Boot 3** - фреймворк
 - **PostgreSQL** - база данных
 - **Cloudinary** - хостинг изображений
