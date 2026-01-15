@@ -59,7 +59,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public String getBotUsername() {
         log.info("Get bot name...");
-        return config.getBotName();
+        return config.getName();
     }
 
     @Override

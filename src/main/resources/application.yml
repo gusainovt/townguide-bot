@@ -1,0 +1,10 @@
+spring:
+  profiles:
+    active: prod
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+
+  liquibase:
+    change-log: classpath:liquibase/changelog-master.yml

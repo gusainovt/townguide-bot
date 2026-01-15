@@ -1,0 +1,21 @@
+telegram:
+  bot:
+    name: ${BOT_NAME}
+    token: ${BOT_TOKEN}
+    owner: ${BOT_OWNER}
+
+weather-forecast-service:
+  url: ${WEATHER_URL:https://api.openweathermap.org/data/2.5/weather?q={city}&units=metric&appid={apikey}}
+  api-key: ${WEATHER_API_KEY}
+
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+cloudinary:
+  cloud_name: ${CLOUD_NAME}
+  api_key: ${CLOUDINARY_API_KEY}
+  api_secret: ${CLOUDINARY_API_SECRET}
+
