@@ -14,22 +14,19 @@
 	<name>townguide-bot</name>
 	<description>townguide-bot</description>
 	<properties>
-		<java.version>11</java.version>
-		<telegram.version>6.5.0</telegram.version>
+		<java.version>21</java.version>
+		<telegram.version>6.9.7.1</telegram.version>
 		<lombok.version>1.18.30</lombok.version>
 		<org.mapstruct.version>1.6.0</org.mapstruct.version>
 		<emoji.version>5.1.1</emoji.version>
 		<javax.activation.version>1.1.1</javax.activation.version>
+		<javax.xml.bind.version>2.3.0</javax.xml.bind.version>
 		<openapi.version>2.0.4</openapi.version>
 		<jackson.version>2.14.1</jackson.version>
 		<java-websocket.version>1.5.3</java-websocket.version>
+		<cloudinary.version>1.36.0</cloudinary.version>
+		<jsonwebtoken.version>0.12.3</jsonwebtoken.version>
 	</properties>
-	<repositories>
-		<repository>
-			<id>jitpack.io</id>
-			<url>https://jitpack.io</url>
-		</repository>
-	</repositories>
 	<dependencies>
 
 		<!--Телеграм -->
@@ -106,7 +103,7 @@
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
-			<version>2.3.0</version>
+			<version>${javax.xml.bind.version}</version>
 		</dependency>
 
 		<dependency>
@@ -155,7 +152,30 @@
 		<dependency>
 			<groupId>com.cloudinary</groupId>
 			<artifactId>cloudinary-http44</artifactId>
-			<version>1.36.0</version>
+			<version>${cloudinary.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jsonwebtoken.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>${jsonwebtoken.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>${jsonwebtoken.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 
 	</dependencies>

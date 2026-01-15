@@ -61,6 +61,13 @@ erDiagram
 	    character_varying user_name
 	}
 	
+	 admin_users {
+        bigint id PK
+        character_varying username
+        character_varying password_hash
+        character_varying role
+    }
+	
 	places }o--|| cities : "city_id"
 	stories }o--|| cities : "city_id"
 	photos }o--|| places : "place_id"

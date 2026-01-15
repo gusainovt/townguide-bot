@@ -13,3 +13,5 @@ databaseChangeLog:
       file: liquibase/scripts/commands-table.sql
   - include:
       file: liquibase/scripts/cities-table.sql
+  - include:
+      file: liquibase/scripts/admin-users.sql

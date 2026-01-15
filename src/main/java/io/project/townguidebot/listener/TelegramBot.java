@@ -1,6 +1,7 @@
 package io.project.townguidebot.listener;
 
 import io.project.townguidebot.config.BotConfig;
+import io.project.townguidebot.exception.EmptyMessageException;
 import io.project.townguidebot.model.enums.ButtonCallback;
 import io.project.townguidebot.model.enums.CommandType;
 import io.project.townguidebot.model.enums.MenuType;
@@ -11,7 +12,11 @@ import io.project.townguidebot.service.PlaceService;
 import io.project.townguidebot.service.UserService;
 import io.project.townguidebot.service.strategy.CommandHandlerStrategy;
 import io.project.townguidebot.service.strategy.MenuStrategy;
+import io.project.townguidebot.service.util.MessageExtractor;
 import jakarta.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -19,11 +24,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Component
@@ -76,7 +76,10 @@ public class TelegramBot extends TelegramLongPollingBot {
     @SneakyThrows
     public void onUpdateReceived(Update update) {
 
-        Message message = Optional.ofNullable(update.getMessage()).orElseGet(() -> update.getCallbackQuery().getMessage());
+        Message message = MessageExtractor.extract(update).orElseThrow(()->{
+            log.error("Message is empty or not found");
+            return new EmptyMessageException("Message is empty or not found");
+        });
 
         long chatId = message.getChatId();
 

@@ -1,11 +1,13 @@
 package io.project.townguidebot.service.impl;
 
+import io.project.townguidebot.exception.EmptyMessageException;
 import io.project.townguidebot.model.enums.ButtonCallback;
 import io.project.townguidebot.service.CallbackService;
 import io.project.townguidebot.service.PhotoService;
 import io.project.townguidebot.service.PlaceService;
 import io.project.townguidebot.service.SendingService;
 import io.project.townguidebot.service.strategy.CallbackSendMessageStrategy;
+import io.project.townguidebot.service.util.MessageExtractor;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +53,10 @@ public class CallbackServiceImpl implements CallbackService {
      */
     @Override
     public SendMessage buttonStart(Update update) {
-        Message message = update.getCallbackQuery().getMessage();
+        Message message = MessageExtractor.extract(update).orElseThrow(()->{
+                log.error("Message is empty or not found");
+                return new EmptyMessageException("Message is empty or not found");
+        });
         ButtonCallback callback = ButtonCallback.fromCallbackData(update.getCallbackQuery().getData());
         log.info("Activate buttons in start menu for chat: {} and callback: {}", message.getChatId(), callback);
 
