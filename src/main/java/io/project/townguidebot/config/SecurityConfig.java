@@ -1,7 +1,7 @@
 package io.project.townguidebot.config;
 
 import io.project.townguidebot.security.JwtFilter;
-import io.project.townguidebot.security.service.impl.AdminUserDetailsService;
+import io.project.townguidebot.security.service.AdminUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +38,7 @@ public class SecurityConfig {
                 "/v3/api-docs/**"
             ).permitAll()
             .requestMatchers("/auth/**").permitAll()
-            .anyRequest().hasRole("ADMIN")
+            .anyRequest().hasAnyAuthority("ADMIN")
         )
         .userDetailsService(userDetailsService)
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

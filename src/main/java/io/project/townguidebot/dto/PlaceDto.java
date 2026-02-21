@@ -6,6 +6,8 @@ import lombok.Data;
 @Schema(description = "Описание места в Боровске")
 @Data
 public class PlaceDto {
+
+    private Long id;
     @Schema(description = "Название места", example = "Пафнутейский монастырь")
     private String name;
     @Schema(description = "Описание места", example = "Пафнутейский монастырь — это исторический монастырь с богатой историей.")

@@ -1,4 +1,4 @@
-package io.project.townguidebot.security.service.impl;
+package io.project.townguidebot.security.service;
 
 import io.project.townguidebot.security.model.AdminUser;
 import io.project.townguidebot.security.repository.AdminUserRepository;

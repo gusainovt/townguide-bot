@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RequestMapping("/places")
-@Tag(name = "Места")
+@RequestMapping("/api/v1/places")
+@Tag(name = "Places")
 public interface PlaceController {
 
   @Operation(summary = "Получить место по ID", description = "Возвращает место по указанному идентификатору.")

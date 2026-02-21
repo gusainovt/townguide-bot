@@ -1,5 +1,6 @@
 package io.project.townguidebot.service;
 
+import io.project.townguidebot.dto.response.CityResponse;
 import io.project.townguidebot.model.City;
 
 import java.util.List;

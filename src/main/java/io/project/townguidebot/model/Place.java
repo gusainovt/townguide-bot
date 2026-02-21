@@ -22,7 +22,12 @@ public class Place {
     @Column(name = "description", length = 25500)
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL)
+
+    @OneToMany(
+        mappedBy = "place",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
     private List<Photo> photo;
 
     @ManyToOne

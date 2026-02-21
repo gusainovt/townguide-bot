@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RequestMapping("/users")
-@Tag(name = "Пользователи")
+@RequestMapping("/api/v1/users")
+@Tag(name = "Users")
 public interface UserController {
 
   @Operation(summary = "Получить пользователей по заданным полям", description = "Возвращает список всех пользователей подходящих под фильтр")

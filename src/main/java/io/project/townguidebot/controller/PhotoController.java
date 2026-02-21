@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
-@RequestMapping("/photos")
-@Tag(name = "Фотографии")
+@RequestMapping("/api/v1/photos")
+@Tag(name = "Photos")
 public interface PhotoController {
 
   @Operation(summary = "Сохранить фотографию", description = "Сохраняет фотографию для указанного места.")

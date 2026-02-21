@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RequestMapping("/stories")
-@Tag(name = "Истории")
+@RequestMapping("/api/v1/stories")
+@Tag(name = "Stories")
 public interface StoriesController {
 
   @Operation(summary = "Получить все истории", description = "Возвращает список всех историй о городе Боровск.")

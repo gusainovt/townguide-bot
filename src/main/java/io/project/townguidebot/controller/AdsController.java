@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RequestMapping("/ads")
-@Tag(name = "Объявления")
+@RequestMapping("/api/v1/ads")
+@Tag(name = "Ads")
 public interface AdsController {
 
   @Operation(summary = "Получить все объявления", description = "Возвращает список всех объявлений.")
