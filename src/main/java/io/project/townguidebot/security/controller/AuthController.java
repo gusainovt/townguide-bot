@@ -22,12 +22,12 @@ public class AuthController {
   @PostMapping("/login")
   public TokenResponse login(@RequestBody LoginRequest request) {
 
-    authenticationManager.authenticate(
+    var authentication = authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             request.getUsername(), request.getPassword())
     );
 
-    String token = jwtProvider.generateToken(request.getUsername());
+    String token = jwtProvider.generateToken(authentication.getName());
     return new TokenResponse(token);
   }
 }
