@@ -1,0 +1,22 @@
+spring:
+  liquibase:
+    enabled: true
+
+telegram:
+  bot:
+    name: test-bot
+    token: test-token
+    owner: 1
+
+weather-forecast-service:
+  url: http://localhost:0/weather?city={city}&apiKey={apiKey}
+  api-key: test-api-key
+
+cloudinary:
+  cloud_name: test
+  api_key: test
+  api_secret: test
+
+jwt:
+  secret: "0123456789abcdef0123456789abcdef"
+

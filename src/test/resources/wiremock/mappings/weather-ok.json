@@ -1,0 +1,9 @@
+{
+  "request": { "method": "GET", "urlPath": "/weather" },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "application/json" },
+    "bodyFileName": "weather-ok-response.json"
+  }
+}
+

@@ -13,7 +13,6 @@ import io.project.townguidebot.exception.StoryNotFoundException;
 import io.project.townguidebot.exception.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -32,7 +31,7 @@ public class GlobalExceptionHandler  {
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
-        return ResponseEntity.of(Optional.of(errorResponse));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(PhotoNotFoundException.class)
@@ -44,7 +43,7 @@ public class GlobalExceptionHandler  {
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
-        return ResponseEntity.of(Optional.of(errorResponse));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(PlaceNotFoundException.class)
@@ -56,7 +55,7 @@ public class GlobalExceptionHandler  {
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
-        return ResponseEntity.of(Optional.of(errorResponse));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(StoryNotFoundException.class)
@@ -68,7 +67,7 @@ public class GlobalExceptionHandler  {
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
-        return ResponseEntity.of(Optional.of(errorResponse));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(PhotoUploadException.class)
@@ -80,7 +79,7 @@ public class GlobalExceptionHandler  {
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
-        return ResponseEntity.of(Optional.of(errorResponse));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
 }

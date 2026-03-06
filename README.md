@@ -72,3 +72,10 @@ erDiagram
 	stories }o--|| cities : "city_id"
 	photos }o--|| places : "place_id"
 ```
+
+# Тесты
+
+## Интеграционные тесты (Testcontainers + WireMock)
+
+- Запуск: `mvn test -Dtest=*IT`
+- Нужен запущенный Docker (Testcontainers поднимет PostgreSQL и WireMock в контейнерах).
