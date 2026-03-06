@@ -126,8 +126,6 @@ class TelegramBotTest {
 
         when(userService.isRegisteredUser(10L)).thenReturn(false);
 
-        when(update.hasMessage()).thenReturn(false);
-
         bot.onUpdateReceived(update);
 
         verify(userService).registeredUser(10L, chat);
@@ -135,6 +133,46 @@ class TelegramBotTest {
 
     @Test
     void onUpdateReceived_WhenCommandMessage_ShouldHandleCommandStrategy() throws Exception {
+        Update update = org.mockito.Mockito.mock(Update.class);
+        Message message = org.mockito.Mockito.mock(Message.class);
+
+        when(update.getMessage()).thenReturn(message);
+        when(update.hasCallbackQuery()).thenReturn(false);
+        when(update.hasMessage()).thenReturn(true);
+        when(message.hasText()).thenReturn(true);
+        when(message.getText()).thenReturn("/start");
+        when(message.getChatId()).thenReturn(10L);
+
+        when(userService.isRegisteredUser(10L)).thenReturn(true);
+
+        bot.onUpdateReceived(update);
+
+        verify(startStrategy).handle(bot, 10L);
+        verify(defaultStrategy, never()).handle(any(), anyLong());
+    }
+
+    @Test
+    void onUpdateReceived_WhenUnknownCommand_ShouldFallbackToDefaultStrategy() throws Exception {
+        Update update = org.mockito.Mockito.mock(Update.class);
+        Message message = org.mockito.Mockito.mock(Message.class);
+
+        when(update.getMessage()).thenReturn(message);
+        when(update.hasCallbackQuery()).thenReturn(false);
+        when(update.hasMessage()).thenReturn(true);
+        when(message.hasText()).thenReturn(true);
+        when(message.getText()).thenReturn("/unknown");
+        when(message.getChatId()).thenReturn(10L);
+
+        when(userService.isRegisteredUser(10L)).thenReturn(true);
+
+        bot.onUpdateReceived(update);
+
+        verify(defaultStrategy).handle(bot, 10L);
+        verify(startStrategy, never()).handle(any(), anyLong());
+    }
+
+    @Test
+    void onUpdateReceived_WhenNotRegisteredAndCommandMessage_ShouldRegisterThenHandleCommand() throws Exception {
         Update update = org.mockito.Mockito.mock(Update.class);
         Message message = org.mockito.Mockito.mock(Message.class);
         Chat chat = org.mockito.Mockito.mock(Chat.class);
@@ -147,12 +185,12 @@ class TelegramBotTest {
         when(message.getChatId()).thenReturn(10L);
         when(message.getChat()).thenReturn(chat);
 
-        when(userService.isRegisteredUser(10L)).thenReturn(true);
+        when(userService.isRegisteredUser(10L)).thenReturn(false);
 
         bot.onUpdateReceived(update);
 
+        verify(userService).registeredUser(10L, chat);
         verify(startStrategy).handle(bot, 10L);
-        verify(defaultStrategy, never()).handle(any(), anyLong());
     }
 
     @Test
@@ -160,7 +198,6 @@ class TelegramBotTest {
         Update update = org.mockito.Mockito.mock(Update.class);
         CallbackQuery callbackQuery = org.mockito.Mockito.mock(CallbackQuery.class);
         Message message = org.mockito.Mockito.mock(Message.class);
-        Chat chat = org.mockito.Mockito.mock(Chat.class);
 
         when(update.getMessage()).thenReturn(null);
         when(update.hasCallbackQuery()).thenReturn(true);
@@ -168,7 +205,6 @@ class TelegramBotTest {
         when(callbackQuery.getData()).thenReturn("CITY:moscow");
         when(callbackQuery.getMessage()).thenReturn(message);
         when(message.getChatId()).thenReturn(10L);
-        when(message.getChat()).thenReturn(chat);
 
         when(userService.isRegisteredUser(10L)).thenReturn(true);
 

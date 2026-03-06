@@ -5,6 +5,7 @@ import io.project.townguidebot.mapper.PlaceMapper;
 import io.project.townguidebot.model.Place;
 import io.project.townguidebot.dto.PlaceDto;
 import io.project.townguidebot.repository.PlaceRepository;
+import io.project.townguidebot.service.CityService;
 import io.project.townguidebot.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ public class PlaceServiceImpl implements PlaceService {
 
     private final PlaceRepository placeRepository;
     private final PlaceMapper placeMapper;
+    private final CityService cityService;
     private final Map<Long, Long> placeForChat = new ConcurrentHashMap<>();
 
     /**
@@ -51,6 +53,7 @@ public class PlaceServiceImpl implements PlaceService {
     public PlaceDto createPlace(PlaceDto placeDto) {
         log.info("Create new palace...");
         Place place = placeMapper.toPlace(placeDto);
+        place.setCity(cityService.findCityById(placeDto.getCityId()));
         return placeMapper.toPlaceDto(placeRepository.save(place));
     }
 
@@ -64,14 +67,16 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public PlaceDto updatePlace(Long id, PlaceDto placeDto) {
         log.info("Updating place by id: {}", id);
-        if (placeRepository.existsById(id)) {
-            Place place = placeMapper.toPlace(placeDto);
-            place.setId(id);
-            return placeMapper.toPlaceDto(placeRepository.save(place));
-        } else {
+        Place existing = placeRepository.findById(id).orElseThrow(() -> {
             log.error("Place with id: {} not found", id);
-            throw new PlaceNotFoundException(String.format("Place with id: %s not found", id));
-        }
+            return new PlaceNotFoundException(String.format("Place with id: %s not found", id));
+        });
+
+        existing.setName(placeDto.getName());
+        existing.setDescription(placeDto.getDescription());
+        existing.setCity(cityService.findCityById(placeDto.getCityId()));
+
+        return placeMapper.toPlaceDto(placeRepository.save(existing));
     }
 
     /**

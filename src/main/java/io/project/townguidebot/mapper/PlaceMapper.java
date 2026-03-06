@@ -13,11 +13,13 @@ public interface PlaceMapper {
     @Mappings({
             @Mapping(target = "photo", ignore = true),
             @Mapping(target = "id", ignore = true),
+            @Mapping(target = "city", ignore = true),
             @Mapping(source = "name", target = "name"),
             @Mapping(source = "description", target = "description")
     })
     Place toPlace(PlaceDto placeDto);
 
+    @Mapping(source = "city.id", target = "cityId")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
     PlaceDto toPlaceDto(Place place);

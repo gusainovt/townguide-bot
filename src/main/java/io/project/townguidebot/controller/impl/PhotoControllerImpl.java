@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -17,7 +18,7 @@ public class PhotoControllerImpl implements PhotoController {
     private final CloudinaryService cloudinaryService;
 
     @Override
-    public ResponseEntity<String> savePhoto(Long placeId, MultipartFile multipartFile) throws IOException {
+    public ResponseEntity<String> savePhoto(Long placeId, @RequestPart("file") MultipartFile multipartFile) throws IOException {
         cloudinaryService.uploadPhoto(multipartFile, placeId);
         return ResponseEntity.ok().build();
     }

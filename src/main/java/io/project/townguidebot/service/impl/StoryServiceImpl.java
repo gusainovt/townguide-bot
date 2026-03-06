@@ -69,6 +69,7 @@ public class StoryServiceImpl implements StoryService {
     public StoryDto createStory(StoryDto storyDto) {
         log.info("Create new story...");
         Story story = storyMapper.toStory(storyDto);
+        story.setCity(cityService.findCityById(storyDto.getCityId()));
         return storyMapper.toStoryDto(storyRepository.save(story));
     }
 
@@ -81,14 +82,15 @@ public class StoryServiceImpl implements StoryService {
     @Override
     public StoryDto updateStory(long id, StoryDto storyDto) {
         log.info("Update story with id: {}", id);
-        if (storyRepository.existsById(id)) {
-            Story story = storyMapper.toStory(storyDto);
-            story.setId(id);
-            return storyMapper.toStoryDto(storyRepository.save(story));
-        } else {
+        Story existing = storyRepository.findById(id).orElseThrow(() -> {
             log.error("Story with id: {} not found", id);
-            throw new StoryNotFoundException(String.format("Story with id: %s not found", id));
-        }
+            return new StoryNotFoundException(String.format("Story with id: %s not found", id));
+        });
+
+        existing.setBody(storyDto.getBody());
+        existing.setCity(cityService.findCityById(storyDto.getCityId()));
+
+        return storyMapper.toStoryDto(storyRepository.save(existing));
     }
 
     /**

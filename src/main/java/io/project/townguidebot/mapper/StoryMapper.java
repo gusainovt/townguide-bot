@@ -10,8 +10,11 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface StoryMapper {
+    @Mapping(source = "city.id", target = "cityId")
     StoryDto toStoryDto(Story story);
+
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "city", ignore = true)
     Story toStory(StoryDto storyDto);
     List<StoryDto> toListStoriesDto(List<Story> story);
 }
