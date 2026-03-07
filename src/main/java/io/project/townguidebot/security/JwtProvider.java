@@ -1,5 +1,6 @@
 package io.project.townguidebot.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -12,42 +13,71 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtProvider {
 
+  private static final String TOKEN_TYPE_CLAIM = "tokenType";
   private final SecretKey key;
+  private final long accessTokenExpiration;
+  private final long refreshTokenExpiration;
 
-  private final long expiration = 86400000; // 24h
-
-  public JwtProvider(@Value("${jwt.secret}") String secret) {
+  public JwtProvider(
+      @Value("${jwt.secret}") String secret,
+      @Value("${jwt.access-expiration-ms:900000}") long accessTokenExpiration,
+      @Value("${jwt.refresh-expiration-ms:604800000}") long refreshTokenExpiration
+  ) {
     this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    this.accessTokenExpiration = accessTokenExpiration;
+    this.refreshTokenExpiration = refreshTokenExpiration;
   }
 
-  public String generateToken(String username) {
+  public String generateAccessToken(String username) {
+    return generateToken(username, TokenType.ACCESS, accessTokenExpiration);
+  }
+
+  public String generateRefreshToken(String username) {
+    return generateToken(username, TokenType.REFRESH, refreshTokenExpiration);
+  }
+
+  public String getUsername(String token) {
+    return parseClaims(token).getSubject();
+  }
+
+  public boolean validateAccessToken(String token) {
+    return validateToken(token, TokenType.ACCESS);
+  }
+
+  public boolean validateRefreshToken(String token) {
+    return validateToken(token, TokenType.REFRESH);
+  }
+
+  private String generateToken(String username, TokenType type, long expirationMillis) {
     return Jwts.builder()
-        .subject(username)
-        .issuedAt(new Date())
-        .expiration(new Date(System.currentTimeMillis() + expiration))
+        .setSubject(username)
+        .claim(TOKEN_TYPE_CLAIM, type.name())
+        .setIssuedAt(new Date())
+        .setExpiration(new Date(System.currentTimeMillis() + expirationMillis))
         .signWith(key)
         .compact();
   }
 
-  public String getUsername(String token) {
-    return Jwts.parser()
-        .verifyWith(key)
-        .build()
-        .parseSignedClaims(token)
-        .getPayload()
-        .getSubject();
-  }
-
-  public boolean validateToken(String token) {
+  private boolean validateToken(String token, TokenType expectedType) {
     try {
-      Jwts.parser()
-          .verifyWith(key)      // ← ВАЖНО
-          .build()
-          .parseSignedClaims(token);
-
-      return true;
-    } catch (JwtException | IllegalArgumentException e) {
+      Claims claims = parseClaims(token);
+      String tokenType = claims.get(TOKEN_TYPE_CLAIM, String.class);
+      return expectedType.name().equals(tokenType);
+    } catch (JwtException | IllegalArgumentException | NullPointerException e) {
       return false;
     }
+  }
+
+  private Claims parseClaims(String token) {
+    return Jwts.parser()
+        .setSigningKey(key)
+        .build()
+        .parseClaimsJws(token)
+        .getBody();
+  }
+
+  private enum TokenType {
+    ACCESS,
+    REFRESH
   }
 }
