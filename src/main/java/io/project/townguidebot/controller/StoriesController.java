@@ -1,6 +1,7 @@
 package io.project.townguidebot.controller;
 
 import io.project.townguidebot.dto.StoryDto;
+import io.project.townguidebot.dto.request.StoryRq;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -44,7 +45,7 @@ public interface StoriesController {
       @ApiResponse(responseCode = "500", description = "Ошибка сервера")
   })
   @PostMapping
-  ResponseEntity<StoryDto> createStory(@RequestBody StoryDto storyDto);
+  ResponseEntity<StoryDto> createStory(@RequestBody StoryRq req);
 
   @Operation(summary = "Обновить существующую историю", description = "Обновляет историю по указанному идентификатору.")
   @ApiResponses(value = {

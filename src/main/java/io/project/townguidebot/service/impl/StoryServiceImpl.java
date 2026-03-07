@@ -1,5 +1,6 @@
 package io.project.townguidebot.service.impl;
 
+import io.project.townguidebot.dto.request.StoryRq;
 import io.project.townguidebot.exception.StoryNotFoundException;
 import io.project.townguidebot.mapper.StoryMapper;
 import io.project.townguidebot.model.Story;
@@ -62,14 +63,15 @@ public class StoryServiceImpl implements StoryService {
 
     /**
      * Создает новую историю
-     * @param storyDto объект истории {@link StoryDto}
+     *
+     * @param req {@link StoryRq}
      * @return созданная история {@link StoryDto}
      */
     @Override
-    public StoryDto createStory(StoryDto storyDto) {
+    public StoryDto createStory(StoryRq req) {
         log.info("Create new story...");
-        Story story = storyMapper.toStory(storyDto);
-        story.setCity(cityService.findCityById(storyDto.getCityId()));
+        Story story = storyMapper.toStory(req);
+        story.setCity(cityService.findCityById(req.getCityId()));
         return storyMapper.toStoryDto(storyRepository.save(story));
     }
 

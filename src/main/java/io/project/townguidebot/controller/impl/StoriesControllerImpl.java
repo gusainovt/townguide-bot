@@ -2,6 +2,7 @@ package io.project.townguidebot.controller.impl;
 
 import io.project.townguidebot.controller.StoriesController;
 import io.project.townguidebot.dto.StoryDto;
+import io.project.townguidebot.dto.request.StoryRq;
 import io.project.townguidebot.service.StoryService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,8 @@ public class StoriesControllerImpl implements StoriesController {
     }
 
     @Override
-    public ResponseEntity<StoryDto> createStory(StoryDto storyDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(storyService.createStory(storyDto));
+    public ResponseEntity<StoryDto> createStory(StoryRq req) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(storyService.createStory(req));
     }
 
     @Override
