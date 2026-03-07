@@ -1,15 +1,23 @@
-# Описание
-Телеграм-бот, который рассказывает истории о выбранном городе, показывает фотографии интересных мест и отображает погоду.  
+# TownGuide Telegram Bot
+Телеграм-бот, который рассказывает исторические факты о городах, показывает фотографии достопримечательностей и отображает текущую погоду.
 Ссылка на бота:  
 [![Ссылка на бота](https://img.shields.io/badge/Telegram-@Borovsk__bot-blue?logo=telegram)](https://t.me/Borovsk_bot)
 
-# Стек 
-- **Java 17** - основной язык разработки
-- **Spring Boot 3** - фреймворк
-- **PostgreSQL** - база данных
-- **Cloudinary** - хостинг изображений
-- **Railway** - хостинг и deployment
-- **Telegram Bot API** - интеграция с Telegram
+## Админ-панель
+
+Android приложение для управления контентом бота  
+(добавление городов, историй и фотографий)
+
+[![Admin App](https://img.shields.io/badge/GitHub-Admin_App-black?logo=github)](https://github.com/gusainovt/townguide-android)
+
+# Технологический стек
+
+| Java 17 | основной язык разработки |
+|-----------|-------------|
+| Spring Boot | backend framework |
+| PostgreSQL | база данных |
+| Cloudinary | хранение изображений |
+| Railway | деплой |
 
 # Структура базы данных
 ```mermaid
@@ -72,6 +80,34 @@ erDiagram
 	stories }o--|| cities : "city_id"
 	photos }o--|| places : "place_id"
 ```
+# Запуск приложения через Docker
+
+## Требования
+
+Перед запуском должны быть установлены:
+
+- **Docker**
+- **Docker Compose**
+- **Git**
+
+Проверить установку можно командами:
+
+```bash
+docker -v
+docker compose -v
+git -v
+```
+
+## Запуск
+
+1. Клонировать репозиторий
+`git clone https://github.com/gusainovt/townguide-bot.git`
+2. Перейти в директорию проекта
+`cd townguide-bot`
+3. Запустить контейнеры
+`docker compose up --build`
+
+Docker поднимет два контейнера (приложение и БД) 
 
 # Тесты
 
