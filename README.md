@@ -3,6 +3,17 @@
 Ссылка на бота:  
 [![Ссылка на бота](https://img.shields.io/badge/Telegram-@Borovsk__bot-blue?logo=telegram)](https://t.me/Borovsk_bot)
 
+## Содержание
+
+- [Админ-панель](#админ-панель)
+- [Технологический стек](#технологический-стек)
+- [Структура базы данных](#структура-базы-данных)
+- [Запуск приложения через Docker](#запуск-приложения-через-docker)
+  - [Требования](#требования)
+  - [Запуск](#запуск)
+- [Тесты](#тесты)
+  - [Интеграционные тесты (Testcontainers + WireMock)](#интеграционные-тесты-testcontainers--wiremock)
+
 ## Админ-панель
 
 Android приложение для управления контентом бота  
@@ -29,6 +40,8 @@ erDiagram
 	    character_varying name
 	    character_varying name_eng
 	    character_varying photo
+	    timestamp created_at
+	    timestamp updated_at
 	}
 	
 	photos {
@@ -38,6 +51,8 @@ erDiagram
 	    bigint place_id FK
 	    character_varying public_id
 	    character_varying url
+	    timestamp created_at
+	    timestamp updated_at
 	}
 	
 	places {
@@ -45,12 +60,16 @@ erDiagram
 	    bigint city_id FK
 	    character_varying description
 	    character_varying name
+	    timestamp created_at
+	    timestamp updated_at
 	}
 	
 	stories {
 	    integer id PK
 	    character_varying body
 	    bigint city_id FK
+	    timestamp created_at
+	    timestamp updated_at
 	}
 	
 	users {
@@ -67,6 +86,8 @@ erDiagram
 	    text pinned_message
 	    timestamp_without_time_zone registered_at
 	    character_varying user_name
+	    timestamp created_at
+	    timestamp updated_at
 	}
 	
 	 admin_users {
@@ -74,7 +95,16 @@ erDiagram
         character_varying username
         character_varying password_hash
         character_varying role
+        timestamp created_at
+        timestamp updated_at
     }
+
+	ads {
+	    integer id PK
+	    text ad
+	    timestamp created_at
+	    timestamp updated_at
+	}
 	
 	places }o--|| cities : "city_id"
 	stories }o--|| cities : "city_id"
