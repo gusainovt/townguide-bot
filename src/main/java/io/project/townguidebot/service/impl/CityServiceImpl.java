@@ -1,11 +1,13 @@
 package io.project.townguidebot.service.impl;
 
+import io.project.townguidebot.dto.request.CityCreateRq;
 import io.project.townguidebot.dto.response.CityResponse;
 import io.project.townguidebot.exception.CityNotFoundException;
 import io.project.townguidebot.mapper.CityMapper;
 import io.project.townguidebot.model.City;
 import io.project.townguidebot.repository.CityRepository;
 import io.project.townguidebot.service.CityService;
+import io.project.townguidebot.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static io.project.townguidebot.model.enums.ButtonCallback.CITY;
 import static io.project.townguidebot.service.constants.Prefixes.CITY_PREFIX;
 
 @Service
@@ -23,14 +26,15 @@ import static io.project.townguidebot.service.constants.Prefixes.CITY_PREFIX;
 public class CityServiceImpl implements CityService {
 
     private final CityRepository cityRepository;
+    private final CityMapper cityMapper;
 
     private final Map<Long, String> cityForChat = new ConcurrentHashMap<>();
 
     @Override
     @Transactional(readOnly = true)
-    public List<City> getAllCity() {
+    public List<CityResponse> getAllCity() {
         log.info("Get all cities...");
-        return cityRepository.findAll();
+        return cityMapper.toListCityResponse(cityRepository.findAll());
     }
 
     @Override
@@ -88,5 +92,21 @@ public class CityServiceImpl implements CityService {
         });
     }
 
-
+    /**
+     * Создание города без фотографии, места и истории
+     *
+     * @param req {@link CityCreateRq}
+     * @return {@link CityResponse}
+     */
+    @Override
+    public CityResponse create(CityCreateRq req) {
+        log.info("Create city: {}", req.getName());
+        City city = cityRepository.save(City.builder()
+            .name(req.getName())
+            .nameEng(req.getNameEng())
+            .description(req.getDescription())
+            .callback(CITY.toString())
+            .build());
+        return cityMapper.toCityResponse(city);
+    }
 }

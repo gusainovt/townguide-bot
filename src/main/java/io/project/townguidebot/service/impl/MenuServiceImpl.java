@@ -1,7 +1,7 @@
 package io.project.townguidebot.service.impl;
 
 import io.project.townguidebot.model.enums.ButtonCallback;
-import io.project.townguidebot.model.City;
+import io.project.townguidebot.dto.response.CityResponse;
 import io.project.townguidebot.model.Place;
 import io.project.townguidebot.service.CityService;
 import io.project.townguidebot.service.MenuService;
@@ -34,11 +34,11 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public InlineKeyboardMarkup startMenu() {
         log.info("Generating start menu...");
-        List<City> cities = cityService.getAllCity();
+        List<CityResponse> cities = cityService.getAllCity();
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
 
-        for (City city : cities) {
+        for (CityResponse city : cities) {
             InlineKeyboardButton button = new InlineKeyboardButton();
             button.setText(city.getName());
             button.setCallbackData(ButtonCallback.CITY.name() + ":" + city.getNameEng());

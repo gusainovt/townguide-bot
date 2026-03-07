@@ -1,6 +1,7 @@
 package io.project.townguidebot.controller.impl;
 
 import io.project.townguidebot.controller.CityController;
+import io.project.townguidebot.dto.request.CityCreateRq;
 import io.project.townguidebot.dto.response.CityResponse;
 import io.project.townguidebot.mapper.CityMapper;
 import io.project.townguidebot.model.City;
@@ -17,11 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class CityControllerImpl implements CityController {
 
   private final CityService cityService;
-  private final CityMapper cityMapper;
 
   @Override
   public List<CityResponse> findAllCities() {
-    List<City> cities = cityService.getAllCity();
-    return cityMapper.toListCityResponse(cities);
+    return cityService.getAllCity();
+  }
+
+  @Override
+  public CityResponse create(CityCreateRq req) {
+    return cityService.create(req);
   }
 }

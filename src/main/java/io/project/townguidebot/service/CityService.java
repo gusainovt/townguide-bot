@@ -1,5 +1,6 @@
 package io.project.townguidebot.service;
 
+import io.project.townguidebot.dto.request.CityCreateRq;
 import io.project.townguidebot.dto.response.CityResponse;
 import io.project.townguidebot.model.City;
 
@@ -7,7 +8,7 @@ import java.util.List;
 
 public interface CityService {
 
-    List<City> getAllCity();
+    List<CityResponse> getAllCity();
 
     String getSelectedCityForChat(Long chatId);
 
@@ -20,4 +21,6 @@ public interface CityService {
     String getDescriptionSelectedCity(Long chatId);
 
     String getCityNameByNameEng(String nameEng);
+
+    CityResponse create(CityCreateRq req);
 }

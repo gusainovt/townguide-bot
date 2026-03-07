@@ -1,9 +1,10 @@
 package io.project.townguidebot.service.impl;
 
-import io.project.townguidebot.model.City;
+import io.project.townguidebot.dto.response.CityResponse;
 import io.project.townguidebot.model.Place;
 import io.project.townguidebot.service.CityService;
 import io.project.townguidebot.service.PlaceService;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,8 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-
-import java.util.List;
 
 import static io.project.townguidebot.model.enums.ButtonCallback.CITY;
 import static io.project.townguidebot.model.enums.ButtonCallback.PHOTO;
@@ -47,12 +46,14 @@ class MenuServiceImplTest {
 
     @Test
     void startMenu_ShouldBuildButtonsForAllCities() {
-        City moscow = new City();
-        moscow.setName("Москва");
-        moscow.setNameEng("moscow");
-        City spb = new City();
-        spb.setName("Санкт-Петербург");
-        spb.setNameEng("saint_petersburg");
+        CityResponse moscow = CityResponse.builder()
+                .name("Moscow")
+                .nameEng("moscow")
+                .build();
+        CityResponse spb = CityResponse.builder()
+                .name("Saint Petersburg")
+                .nameEng("saint_petersburg")
+                .build();
 
         when(cityService.getAllCity()).thenReturn(List.of(moscow, spb));
 
@@ -148,4 +149,3 @@ class MenuServiceImplTest {
         assertEquals(PHOTO.toString(), photoButton.getCallbackData());
     }
 }
-

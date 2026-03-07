@@ -1,11 +1,15 @@
 package io.project.townguidebot.service.impl;
 
+import io.project.townguidebot.dto.request.CityCreateRq;
+import io.project.townguidebot.dto.response.CityResponse;
 import io.project.townguidebot.exception.CityNotFoundException;
+import io.project.townguidebot.mapper.CityMapper;
 import io.project.townguidebot.model.City;
 import io.project.townguidebot.repository.CityRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,7 +21,9 @@ import static io.project.townguidebot.service.constants.Prefixes.CITY_PREFIX;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,6 +32,9 @@ class CityServiceImplTest {
 
     @Mock
     private CityRepository cityRepository;
+
+    @Mock
+    private CityMapper cityMapper;
 
     @InjectMocks
     private CityServiceImpl cityService;
@@ -46,13 +55,16 @@ class CityServiceImplTest {
     @Test
     void getAllCity_ShouldReturnAllCities() {
         List<City> cities = List.of(city);
+        List<CityResponse> responses = List.of(CityResponse.builder().id(CITY_ID).name(city.getName()).build());
         when(cityRepository.findAll()).thenReturn(cities);
+        when(cityMapper.toListCityResponse(cities)).thenReturn(responses);
 
-        List<City> result = cityService.getAllCity();
+        List<CityResponse> result = cityService.getAllCity();
 
         assertNotNull(result);
-        assertEquals(cities, result);
+        assertEquals(responses, result);
         verify(cityRepository).findAll();
+        verify(cityMapper).toListCityResponse(cities);
     }
 
     @Test
@@ -178,5 +190,43 @@ class CityServiceImplTest {
 
         assertEquals("City with name: moscow not found", exception.getMessage());
         verify(cityRepository).findCityNameByNameEng(city.getNameEng());
+    }
+
+    @Test
+    void create_ShouldBuildCallbackSaveAndReturnResponse() {
+        CityCreateRq req = new CityCreateRq();
+        req.setName("Moscow");
+        req.setNameEng("moscow");
+        req.setDescription("Capital city");
+
+        City savedCity = new City();
+        savedCity.setId(CITY_ID);
+        savedCity.setName(req.getName());
+        savedCity.setNameEng(req.getNameEng());
+        savedCity.setDescription(req.getDescription());
+        savedCity.setCallback(CITY_PREFIX + req.getNameEng());
+
+        CityResponse response = CityResponse.builder()
+                .id(CITY_ID)
+                .name(req.getName())
+                .nameEng(req.getNameEng())
+                .description(req.getDescription())
+                .callback(CITY_PREFIX + req.getNameEng())
+                .build();
+
+        when(cityRepository.save(any(City.class))).thenReturn(savedCity);
+        when(cityMapper.toCityResponse(savedCity)).thenReturn(response);
+
+        CityResponse result = cityService.create(req);
+
+        assertSame(response, result);
+        ArgumentCaptor<City> captor = ArgumentCaptor.forClass(City.class);
+        verify(cityRepository).save(captor.capture());
+        City cityToSave = captor.getValue();
+        assertEquals("Moscow", cityToSave.getName());
+        assertEquals("moscow", cityToSave.getNameEng());
+        assertEquals("Capital city", cityToSave.getDescription());
+        assertEquals("CITY:moscow", cityToSave.getCallback());
+        verify(cityMapper).toCityResponse(savedCity);
     }
 }

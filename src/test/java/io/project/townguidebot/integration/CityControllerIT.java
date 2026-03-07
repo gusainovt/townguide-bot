@@ -1,9 +1,9 @@
 package io.project.townguidebot.integration;
 
+import io.project.townguidebot.dto.request.CityCreateRq;
 import io.project.townguidebot.dto.response.CityResponse;
 import io.project.townguidebot.model.City;
 import io.project.townguidebot.repository.CityRepository;
-import io.project.townguidebot.service.CommandService;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
@@ -95,5 +95,31 @@ class CityControllerIT extends AbstractIntegrationTest {
         assertTrue(byNameEng.containsKey("moscow"));
         assertTrue(byNameEng.containsKey("kazan"));
         assertNull(byNameEng.get("kazan").getPhoto());
+    }
+
+    @Test
+    void create_ShouldPersistCityAndReturnMappedResponse() {
+        CityCreateRq req = new CityCreateRq();
+        req.setName("Borovsk");
+        req.setNameEng("borovsk");
+        req.setDescription("Historic town");
+
+        ResponseEntity<CityResponse> resp = restTemplate.postForEntity("/api/v1/city", req, CityResponse.class);
+
+        assertEquals(200, resp.getStatusCode().value());
+        assertNotNull(resp.getBody());
+        assertNotNull(resp.getBody().getId());
+        assertEquals("Borovsk", resp.getBody().getName());
+        assertEquals("borovsk", resp.getBody().getNameEng());
+        assertEquals("Historic town", resp.getBody().getDescription());
+        assertEquals("CITY:borovsk", resp.getBody().getCallback());
+        assertEquals(1, cityRepository.count());
+
+        City savedCity = cityRepository.findAll().getFirst();
+        assertEquals("Borovsk", savedCity.getName());
+        assertEquals("borovsk", savedCity.getNameEng());
+        assertEquals("Historic town", savedCity.getDescription());
+        assertEquals("CITY:borovsk", savedCity.getCallback());
+        assertNull(savedCity.getPhoto());
     }
 }
