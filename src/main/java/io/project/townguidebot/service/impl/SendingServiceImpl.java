@@ -12,7 +12,7 @@ import static io.project.townguidebot.service.constants.TelegramText.TEXT_WEATHE
 import com.vdurmont.emoji.EmojiParser;
 import io.project.townguidebot.client.WeatherClient;
 import io.project.townguidebot.dto.PlaceDto;
-import io.project.townguidebot.dto.Weather;
+import io.project.townguidebot.dto.WeatherInfo;
 import io.project.townguidebot.service.CityService;
 import io.project.townguidebot.service.MenuService;
 import io.project.townguidebot.service.PlaceService;
@@ -141,14 +141,14 @@ public class SendingServiceImpl implements SendingService {
         return Optional.ofNullable(cityService.getSelectedCityForChat(chatId))
                 .map(cityNameEng -> {
                     log.info("Sending weather for chat: {} and city: {}", chatId, cityNameEng);
-                    Weather weather = weatherClient.getWeather(cityNameEng);
+                    WeatherInfo weather = weatherClient.getWeather(cityNameEng);
                     String nameCity = cityService.getCityNameByNameEng(cityNameEng);
                     return sendMessage(chatId,
                             String.format(TEXT_WEATHER,
                                     nameCity,
-                                    weather.getMain().getTemp().toBigInteger(),
-                                    weather.getMain().getFeelsLike().toBigInteger(),
-                                    weather.getWind().getSpeed().toString()));
+                                    weather.getTemp().toBigInteger(),
+                                    weather.getFeelsLike().toBigInteger(),
+                                    weather.getWindSpeed().toString()));
                 })
                 .orElseGet(()-> cityNotSelected(chatId));
     }

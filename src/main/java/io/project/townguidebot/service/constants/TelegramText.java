@@ -18,11 +18,11 @@ public class TelegramText {
     public static final String NOT_FOUND_COMMAND = "Извини, это пока не работает:cry:";
     public static final String TEXT_WEATHER =
            """
-              %s погода:
-                Температура: %s градусов;
-                Ощущается как: %s градусов;
-                Скорость ветра: %s м/с.
-            """;
+           %s погода:
+           Температура: %s градусов
+           Ощущается как: %s градусов
+           Скорость ветра: %s м/с
+           """;
 
     public static final String SELECT_CITY = "Выбери город: ";
     public static final String CITY_UNSELECTED = ":scream_cat: Нужно выбрать город..";

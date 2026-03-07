@@ -1,6 +1,7 @@
 package io.project.townguidebot.client;
 
 import io.project.townguidebot.dto.Weather;
+import io.project.townguidebot.dto.WeatherInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,19 +23,21 @@ public class WeatherClient {
     private String apiKey;
 
     private final RestTemplate restTemplate;
+    private final WeatherResponseAdapter weatherResponseAdapter;
 
     /**
      * Возвращает погоду по названию города
      * @param city название города
      * @return объект {@link Weather}
      */
-    public Weather getWeather(String city) {
+    public WeatherInfo getWeather(String city) {
         log.info("Get weather for city: {}", city);
-        return restTemplate.exchange(
+        Weather weather = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 new HttpEntity<>(HttpHeaders.EMPTY),
                 Weather.class, city, apiKey
         ).getBody();
+        return weatherResponseAdapter.adapt(weather, city);
     }
 }

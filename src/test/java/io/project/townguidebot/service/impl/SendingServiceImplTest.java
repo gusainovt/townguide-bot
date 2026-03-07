@@ -4,14 +4,14 @@ import com.vdurmont.emoji.EmojiParser;
 import io.project.townguidebot.client.WeatherClient;
 import io.project.townguidebot.dto.PlaceDto;
 import io.project.townguidebot.dto.StoryDto;
-import io.project.townguidebot.dto.Weather;
-import io.project.townguidebot.dto.WeatherMain;
-import io.project.townguidebot.dto.WeatherWind;
+import io.project.townguidebot.dto.WeatherInfo;
 import io.project.townguidebot.service.CityService;
 import io.project.townguidebot.service.MenuService;
 import io.project.townguidebot.service.PlaceService;
 import io.project.townguidebot.service.StoryService;
 import io.project.townguidebot.service.UserService;
+import java.io.IOException;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -22,9 +22,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-
-import java.io.IOException;
-import java.math.BigDecimal;
 
 import static io.project.townguidebot.service.constants.TelegramText.CITY_UNSELECTED;
 import static io.project.townguidebot.service.constants.TelegramText.HELP_TEXT;
@@ -165,20 +162,17 @@ class SendingServiceImplTest {
         when(cityService.getSelectedCityForChat(10L)).thenReturn("moscow");
         when(cityService.getCityNameByNameEng("moscow")).thenReturn("Москва");
 
-        WeatherMain main = new WeatherMain();
-        main.setTemp(BigDecimal.valueOf(11.2));
-        main.setFeelsLike(BigDecimal.valueOf(9.7));
-        WeatherWind wind = new WeatherWind();
-        wind.setSpeed(BigDecimal.valueOf(3.4));
-        Weather weather = new Weather();
-        weather.setMain(main);
-        weather.setWind(wind);
+        WeatherInfo weather = WeatherInfo.builder()
+                .temp(BigDecimal.valueOf(11.2))
+                .feelsLike(BigDecimal.valueOf(9.7))
+                .windSpeed(BigDecimal.valueOf(3.4))
+                .build();
         when(weatherClient.getWeather("moscow")).thenReturn(weather);
 
         SendMessage result = service.sendWeather(10L);
 
         assertEquals(
-                String.format(TEXT_WEATHER, "Москва", main.getTemp().toBigInteger(), main.getFeelsLike().toBigInteger(), wind.getSpeed().toString()),
+                String.format(TEXT_WEATHER, "Москва", weather.getTemp().toBigInteger(), weather.getFeelsLike().toBigInteger(), weather.getWindSpeed().toString()),
                 result.getText()
         );
         verify(weatherClient).getWeather("moscow");
@@ -355,4 +349,3 @@ class SendingServiceImplTest {
         assertEquals("10", captor.getValue().getChatId());
     }
 }
-
