@@ -12,7 +12,7 @@ import lombok.*;
 @RequiredArgsConstructor
 @EqualsAndHashCode
 @Table(name = "photos")
-public class Photo {
+public class Photo extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

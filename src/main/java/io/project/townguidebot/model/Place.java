@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "places")
-public class Place {
+public class Place extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +21,6 @@ public class Place {
 
     @Column(name = "description", length = 25500)
     private String description;
-
 
     @OneToMany(
         mappedBy = "place",

@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @Entity
 @Data
 @Table(name = "users")
-public class User {
+public class User extends AuditableEntity {
 
     @Id
     private Long chatId;
