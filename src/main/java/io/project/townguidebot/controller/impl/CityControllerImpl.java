@@ -3,8 +3,6 @@ package io.project.townguidebot.controller.impl;
 import io.project.townguidebot.controller.CityController;
 import io.project.townguidebot.dto.request.CityCreateRq;
 import io.project.townguidebot.dto.response.CityResponse;
-import io.project.townguidebot.mapper.CityMapper;
-import io.project.townguidebot.model.City;
 import io.project.townguidebot.service.CityService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

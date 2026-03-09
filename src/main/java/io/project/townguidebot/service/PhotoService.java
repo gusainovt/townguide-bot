@@ -1,5 +1,6 @@
 package io.project.townguidebot.service;
 
+import io.project.townguidebot.dto.UploadPhotoResult;
 import io.project.townguidebot.model.Photo;
 
 import java.util.List;
@@ -15,10 +16,12 @@ public interface PhotoService {
 
     /**
      * Сохраняет ссылку на фото в БД
-     * @param photo сущность Photo
+     *
+     * @param placeId Идентификатор места
+     * @param uploadPhoto Данные от Cloudinary
      * @return сущность Photo
      */
-    Photo savePhoto(Photo photo);
+    Photo savePhoto(Long placeId, UploadPhotoResult uploadPhoto);
 
     List<Photo> getAllPhotoByPlace(Long placeId);
 }

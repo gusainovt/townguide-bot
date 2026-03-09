@@ -1,6 +1,6 @@
 package io.project.townguidebot.service;
 
-import io.project.townguidebot.model.Photo;
+import io.project.townguidebot.dto.UploadPhotoResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ public interface CloudinaryService {
      * @param file фото
      * @return сущность Photo
      */
-    Photo uploadPhoto (MultipartFile file, Long placeId) throws IOException;
+    UploadPhotoResult uploadPhoto (MultipartFile file, Long placeId) throws IOException;
 
     /**
      * Удаляет фото из Cloudinary

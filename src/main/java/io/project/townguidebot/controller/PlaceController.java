@@ -1,10 +1,14 @@
 package io.project.townguidebot.controller;
 
 import io.project.townguidebot.dto.PlaceDto;
+import io.project.townguidebot.dto.request.PlaceCreateRq;
+import io.project.townguidebot.dto.response.PlaceCreateRs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.io.IOException;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/api/v1/places")
 @Tag(name = "Places")
@@ -27,14 +33,20 @@ public interface PlaceController {
   @GetMapping("/{id}")
   ResponseEntity<PlaceDto> getPlaceById(@PathVariable Long id);
 
-  @Operation(summary = "Создать новое место", description = "Создает новое место на основе переданных данных.")
-  @ApiResponses(value = {
+  @Operation(
+      summary = "Создать новое место c фотографией",
+      description = "Создает новое место и загружает фотографию"
+  )
+  @ApiResponses({
       @ApiResponse(responseCode = "201", description = "Место успешно создано"),
-      @ApiResponse(responseCode = "400", description = "Ошибка в данных места"),
+      @ApiResponse(responseCode = "400", description = "Ошибка в данных"),
       @ApiResponse(responseCode = "500", description = "Ошибка сервера")
   })
-  @PostMapping
-  ResponseEntity<PlaceDto> createPlace(@RequestBody PlaceDto placeDto);
+  @PostMapping(
+      consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+  )
+  ResponseEntity<PlaceCreateRs> create(@RequestPart("data") PlaceCreateRq req, @RequestPart("file") MultipartFile file)
+      throws IOException;
 
   @Operation(summary = "Обновить существующее место", description = "Обновляет место по указанному идентификатору.")
   @ApiResponses(value = {

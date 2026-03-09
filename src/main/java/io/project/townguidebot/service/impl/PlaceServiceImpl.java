@@ -1,12 +1,18 @@
 package io.project.townguidebot.service.impl;
 
+import io.project.townguidebot.dto.UploadPhotoResult;
+import io.project.townguidebot.dto.request.PlaceCreateRq;
+import io.project.townguidebot.dto.response.PlaceCreateRs;
 import io.project.townguidebot.exception.PlaceNotFoundException;
 import io.project.townguidebot.mapper.PlaceMapper;
 import io.project.townguidebot.model.Place;
 import io.project.townguidebot.dto.PlaceDto;
 import io.project.townguidebot.repository.PlaceRepository;
 import io.project.townguidebot.service.CityService;
+import io.project.townguidebot.service.CloudinaryService;
+import io.project.townguidebot.service.PhotoService;
 import io.project.townguidebot.service.PlaceService;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.web.multipart.MultipartFile;
 
 import static io.project.townguidebot.service.constants.Prefixes.PLACE_PREFIX;
 
@@ -26,10 +33,14 @@ public class PlaceServiceImpl implements PlaceService {
     private final PlaceRepository placeRepository;
     private final PlaceMapper placeMapper;
     private final CityService cityService;
+    private final CloudinaryService cloudinaryService;
+    private final PhotoService photoService;
+
     private final Map<Long, Long> placeForChat = new ConcurrentHashMap<>();
 
     /**
      * Находит место по ID
+     *
      * @param id идентификатор места
      * @return найденное место {@link PlaceDto}
      */
@@ -44,21 +55,8 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     /**
-     * Создает новое место
-     * @param placeDto объект места {@link PlaceDto}
-     * @return созданное место {@link PlaceDto}
-     */
-    @Transactional
-    @Override
-    public PlaceDto createPlace(PlaceDto placeDto) {
-        log.info("Create new palace...");
-        Place place = placeMapper.toPlace(placeDto);
-        place.setCity(cityService.findCityById(placeDto.getCityId()));
-        return placeMapper.toPlaceDto(placeRepository.save(place));
-    }
-
-    /**
      * Обновляет существующее место
+     *
      * @param id идентификатор места
      * @param placeDto объект места {@link PlaceDto}
      * @return обновленное место {@link PlaceDto}
@@ -81,6 +79,7 @@ public class PlaceServiceImpl implements PlaceService {
 
     /**
      * Удаляет место по ID
+     *
      * @param id идентификатор места
      */
     @Transactional
@@ -97,6 +96,7 @@ public class PlaceServiceImpl implements PlaceService {
 
     /**
      * Находит место в БД по рандомному ID
+     *
      * @return История {@link Place}
      */
     @Transactional(readOnly = true)
@@ -143,4 +143,22 @@ public class PlaceServiceImpl implements PlaceService {
         });
     }
 
+    /**
+     * Создает новое место с фотографией
+     *
+     * @param req {@link PlaceCreateRq}
+     * @param file {@link MultipartFile}
+     * @return {@link PlaceCreateRs}
+     * @throws IOException Ошибка при обработке файла
+     */
+    @Override
+    public PlaceCreateRs create(PlaceCreateRq req, MultipartFile file) throws IOException {
+        log.info("Create new palace with photo...");
+        Place place = placeMapper.to(req);
+        place.setCity(cityService.findCityById(req.getCityId()));
+        placeRepository.save(place);
+        UploadPhotoResult uploadResult = cloudinaryService.uploadPhoto(file, place.getId());
+        photoService.savePhoto(place.getId(), uploadResult);
+        return placeMapper.toRs(place);
+    }
 }

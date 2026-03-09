@@ -2,12 +2,16 @@ package io.project.townguidebot.controller.impl;
 
 import io.project.townguidebot.controller.PlaceController;
 import io.project.townguidebot.dto.PlaceDto;
+import io.project.townguidebot.dto.request.PlaceCreateRq;
+import io.project.townguidebot.dto.response.PlaceCreateRs;
 import io.project.townguidebot.service.PlaceService;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Slf4j
@@ -23,10 +27,11 @@ public class PlaceControllerImpl implements PlaceController {
     }
 
     @Override
-    public ResponseEntity<PlaceDto> createPlace(PlaceDto placeDto) {
-        PlaceDto createdPlace = placeService.createPlace(placeDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdPlace);
+    public ResponseEntity<PlaceCreateRs> create(PlaceCreateRq req, MultipartFile file)
+        throws IOException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(placeService.create(req, file));
     }
+
 
     @Override
     public ResponseEntity<PlaceDto> updatePlace(Long id, PlaceDto placeDto) {
