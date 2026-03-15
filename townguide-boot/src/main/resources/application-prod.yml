@@ -24,7 +24,7 @@ jwt:
 
 logging:
   level:
-    root: ${LOGGING_LEVEL}
-    io.project.townguidebot.service: ${LOGGING_LEVEL_SERVICE}
-    io.project.townguidebot.security: ${LOGGING_LEVEL_SECURITY}
-    io.project.townguidebot.listener: ${LOGGING_LEVEL_LISTENER}
+    root: ${LOGGING_LEVEL:ERROR}
+    io.project.townguidebot.service: ${LOGGING_LEVEL_SERVICE:ERROR}
+    io.project.townguidebot.security: ${LOGGING_LEVEL_SECURITY:ERROR}
+    io.project.townguidebot.listener: ${LOGGING_LEVEL_LISTENER:ERROR}
