@@ -1,6 +1,8 @@
 package io.project.townguidebot.config;
 
 import io.project.townguidebot.security.JwtFilter;
+import io.project.townguidebot.security.handler.RestAccessDeniedHandler;
+import io.project.townguidebot.security.handler.RestAuthenticationEntryPoint;
 import io.project.townguidebot.security.service.AdminUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -23,13 +25,18 @@ public class SecurityConfig {
 
   private final JwtFilter jwtFilter;
   private final AdminUserDetailsService userDetailsService;
+  private final RestAuthenticationEntryPoint authenticationEntryPoint;
+  private final RestAccessDeniedHandler accessDeniedHandler;
 
   @Bean
   SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     return http
         .csrf(AbstractHttpConfigurer::disable)
-        .sessionManagement(s ->
-            s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .exceptionHandling(ex -> ex
+            .authenticationEntryPoint(authenticationEntryPoint)
+            .accessDeniedHandler(accessDeniedHandler)
+        )
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(
                 "/swagger-ui.html",
@@ -37,7 +44,8 @@ public class SecurityConfig {
                 "/v3/api-docs",
                 "/v3/api-docs/**"
             ).permitAll()
-            .requestMatchers("/auth/**").permitAll()
+            .requestMatchers("/auth/login", "/auth/refresh").permitAll()
+            .requestMatchers("/auth/me", "/auth/change-password").authenticated()
             .anyRequest().hasRole("ADMIN")
         )
         .userDetailsService(userDetailsService)

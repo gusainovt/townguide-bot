@@ -25,6 +25,15 @@ public class AdminUser extends AuditableEntity {
   @Column(unique = true, nullable = false)
   private String username;
 
+  @Column
+  private String login;
+
+  @Column
+  private String name;
+
+  @Column
+  private String fullName;
+
   @Column(nullable = false)
   private String passwordHash;
 
@@ -32,6 +41,7 @@ public class AdminUser extends AuditableEntity {
   private Role role;
 
   public enum Role {
-    ADMIN
+    ADMIN,
+    USER
   }
 }

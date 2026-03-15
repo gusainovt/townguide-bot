@@ -16,4 +16,6 @@ databaseChangeLog:
   - include:
       file: liquibase/scripts/admin-users.sql
   - include:
+      file: liquibase/scripts/admin-users-profile.sql
+  - include:
       file: liquibase/scripts/audit-columns.sql
