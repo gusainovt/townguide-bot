@@ -59,13 +59,13 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        log.info("Get bot name...");
+        log.debug("Get bot name");
         return config.getName();
     }
 
     @Override
     public String getBotToken() {
-        log.info("Get bot token...");
+        log.debug("Get bot token");
         return config.getToken();
     }
 
@@ -78,16 +78,16 @@ public class TelegramBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
 
         Message message = MessageExtractor.extract(update).orElseThrow(()->{
-            log.error("Message is empty or not found");
+            log.warn("Message is empty or not found");
             return new EmptyMessageException("Message is empty or not found");
         });
 
         long chatId = message.getChatId();
 
-        log.info("Starting bot for chat: {}", chatId);
+        log.debug("Processing update for chat: {}", chatId);
 
         if (!userService.isRegisteredUser(chatId)) {
-            log.info("Starting registered user for chat: {}", chatId);
+            log.debug("Register user for chat: {}", chatId);
             userService.registeredUser(chatId, TelegramChatDto.builder()
                     .firstName(message.getChat().getFirstName())
                     .lastName(message.getChat().getLastName())
@@ -97,7 +97,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         if (update.hasMessage() && update.getMessage().hasText() && !update.hasCallbackQuery()) {
             String messageText = update.getMessage().getText();
-            log.info("Handle strategy for command: {}", messageText);
+            log.debug("Handle strategy for command: {}", messageText);
             CommandHandlerStrategy commandHandlerStrategy = commandHandlerStrategies.get(CommandType.fromString(messageText));
             commandHandlerStrategy.handle(this, chatId);
         }
@@ -109,7 +109,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             cityService.selectedCity(callbackData, chatId);
             placeService.selectedPlace(callbackData, chatId);
 
-            log.info("Handle strategy menu for button callback: {} and type menu: {}", buttonCallback, menuType);
+            log.debug("Handle strategy menu for button callback: {} and type menu: {}", buttonCallback, menuType);
             MenuStrategy menuStrategy = menuStrategies.get(menuType);
             menuStrategy.handle(this, update);
         }

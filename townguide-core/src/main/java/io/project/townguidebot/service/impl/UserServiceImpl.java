@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public List<User> findAllUsers() {
-        log.info("Finding all users...");
+        log.debug("Finding all users");
         return userRepository.findAll();
     }
 
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void registeredUser(Long chatId, TelegramChatDto chat) {
-        log.info("Start registration for user: {}", chatId);
+        log.debug("Start registration for user: {}", chatId);
         User user = new User();
 
         user.setChatId(chatId);
@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
         user.setLanguageCode(LanguageCode.RU);
 
         userRepository.save(user);
-        log.info("Successfully registered user: {}", user);
+        log.debug("Successfully registered user with chatId: {}", chatId);
     }
 
     /**
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public Boolean isRegisteredUser(Long chatId) {
-        log.info("Checking for user in database...");
+        log.debug("Checking for user in database by chatId: {}", chatId);
         //TODO: Добавить кеширование
         return userRepository.existsUserByChatId(chatId);
     }
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public String getNameByChatId(Long chatId) {
-        log.info("Get user name for chat: {}", chatId);
+        log.debug("Get user name for chat: {}", chatId);
         return userRepository.getNameByChatId(chatId);
     }
 
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
         int page = userFilterRequest.getPage();
         int size = userFilterRequest.getSize();
 
-        log.info("Get users by filter page: {}, size {}", page, size);
+        log.debug("Get users by filter page: {}, size {}", page, size);
         Pageable pageable = PageRequest.of(page, size);
         Specification<User> specification = UserSpecification.filterBy(userFilterRequest);
 

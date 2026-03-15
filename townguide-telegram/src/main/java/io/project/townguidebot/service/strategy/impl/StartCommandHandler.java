@@ -27,7 +27,7 @@ public class StartCommandHandler implements CommandHandlerStrategy {
 
     @Override
     public void handle(TelegramLongPollingBot bot, long chatId) throws TelegramApiException {
-        log.info("Start command handle and remove city for chat: {}", chatId);
+        log.debug("Start command handle and remove city for chat: {}", chatId);
         bot.execute(sendingService.startCommandReceived(chatId));
     }
 }

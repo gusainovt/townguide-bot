@@ -54,11 +54,11 @@ public class CallbackServiceImpl implements CallbackService {
     @Override
     public SendMessage buttonStart(Update update) {
         Message message = MessageExtractor.extract(update).orElseThrow(()->{
-                log.error("Message is empty or not found");
+                log.warn("Message is empty or not found");
                 return new EmptyMessageException("Message is empty or not found");
         });
         ButtonCallback callback = ButtonCallback.fromCallbackData(update.getCallbackQuery().getData());
-        log.info("Activate buttons in start menu for chat: {} and callback: {}", message.getChatId(), callback);
+        log.debug("Activate buttons in start menu for chat: {} and callback: {}", message.getChatId(), callback);
 
         CallbackSendMessageStrategy callbackSendMessageStrategy = callbackSendMessageStrategies.get(callback);
         return callbackSendMessageStrategy.handle(message);
@@ -76,7 +76,7 @@ public class CallbackServiceImpl implements CallbackService {
         ButtonCallback callback = ButtonCallback.valueOf(update.getCallbackQuery().getData());
         long chatId = update.getCallbackQuery().getMessage().getChatId();
 
-        log.info("Activate buttons in place menu for chat: {} and callback: {}", chatId, callback);
+        log.debug("Activate buttons in place menu for chat: {} and callback: {}", chatId, callback);
 
         if (callback.equals(PHOTO)) {
             return Optional.ofNullable(placeService.getSelectedPlaceForChat(chatId))

@@ -33,13 +33,13 @@ public class CityServiceImpl implements CityService {
     @Override
     @Transactional(readOnly = true)
     public List<CityResponse> getAllCity() {
-        log.info("Get all cities...");
+        log.debug("Get all cities");
         return cityMapper.toListCityResponse(cityRepository.findAll());
     }
 
     @Override
     public String getSelectedCityForChat(Long chatId) {
-        log.info("Get selected city for chat: {}", chatId);
+        log.debug("Get selected city for chat: {}", chatId);
         return cityForChat.get(chatId);
     }
 
@@ -52,7 +52,7 @@ public class CityServiceImpl implements CityService {
     @Transactional(readOnly = true)
     public City findCityById(Long id) {
         return cityRepository.findById(id).orElseThrow(()->{
-                    log.error("City with id: {} not found", id);
+                    log.warn("City with id: {} not found", id);
                     return new CityNotFoundException(String.format("City with id: %s not found", id));
                 });
     }
@@ -65,7 +65,7 @@ public class CityServiceImpl implements CityService {
         } else {
             return cityForChat.get(chatId);
         }
-        log.info("Select city: {} for chat: {}", cityName, chatId);
+        log.debug("Select city: {} for chat: {}", cityName, chatId);
         String name = cityForChat.putIfAbsent(chatId, cityName);
         return name == null ? cityForChat.get(chatId) : name;
     }
@@ -74,9 +74,9 @@ public class CityServiceImpl implements CityService {
     @Transactional(readOnly = true)
     public String getDescriptionSelectedCity(Long chatId) {
         String nameCity = getSelectedCityForChat(chatId);
-        log.info("Find city with name: {} in database", nameCity);
+        log.debug("Find city with name: {} in database", nameCity);
         return cityRepository.findDescriptionByNameEng(nameCity).orElseThrow(()->{
-            log.error("City with name: {} not found", nameCity);
+            log.warn("City with name: {} not found", nameCity);
             return new CityNotFoundException(String.format("City with name: %s not found", nameCity));
         }
         );
@@ -85,9 +85,9 @@ public class CityServiceImpl implements CityService {
     @Override
     @Transactional(readOnly = true)
     public String getCityNameByNameEng(String nameEng) {
-        log.info("Find name city by english name: {}", nameEng);
+        log.debug("Find name city by english name: {}", nameEng);
         return cityRepository.findCityNameByNameEng(nameEng).orElseThrow(()->{
-            log.error("Name city for english name: {} not found", nameEng);
+            log.warn("Name city for english name: {} not found", nameEng);
             return new CityNotFoundException(String.format("City with name: %s not found", nameEng));
         });
     }
@@ -100,7 +100,7 @@ public class CityServiceImpl implements CityService {
      */
     @Override
     public CityResponse create(CityCreateRq req) {
-        log.info("Create city: {}", req.getName());
+        log.debug("Create city: {}", req.getName());
         City city = cityRepository.save(City.builder()
             .name(req.getName())
             .nameEng(req.getNameEng())

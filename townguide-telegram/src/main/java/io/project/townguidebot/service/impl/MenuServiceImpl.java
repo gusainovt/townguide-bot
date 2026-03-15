@@ -33,7 +33,7 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     public InlineKeyboardMarkup startMenu() {
-        log.info("Generating start menu...");
+        log.debug("Generating start menu");
         List<CityResponse> cities = cityService.getAllCity();
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
@@ -56,7 +56,7 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     public SendMessage placeMenu(SendMessage message, String cityName) {
-        log.info("Activate place menu");
+        log.debug("Activate place menu");
         List<Place> places = placeService.getPlacesByNameCity(cityName);
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
@@ -80,7 +80,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public InlineKeyboardMarkup cityMenu() {
 
-        log.info("Generating city menu...");
+        log.debug("Generating city menu");
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInLine1 = new ArrayList<>();
@@ -121,7 +121,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public SendMessage photoMenu(SendMessage message) {
-        log.info("Generating photo menu...");
+        log.debug("Generating photo menu");
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();

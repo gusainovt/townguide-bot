@@ -47,9 +47,9 @@ public class PlaceServiceImpl implements PlaceService {
     @Transactional(readOnly = true)
     @Override
     public PlaceDto findPlaceById(Long id) {
-        log.info("Find place by id: {}", id);
+        log.debug("Find place by id: {}", id);
         return placeMapper.toPlaceDto(placeRepository.findById(id).orElseThrow(() -> {
-            log.error("Place with id: {} not found", id);
+            log.warn("Place with id: {} not found", id);
             return new PlaceNotFoundException(String.format("Place with id: %s not found", id));
         }));
     }
@@ -64,9 +64,9 @@ public class PlaceServiceImpl implements PlaceService {
     @Transactional
     @Override
     public PlaceDto updatePlace(Long id, PlaceDto placeDto) {
-        log.info("Updating place by id: {}", id);
+        log.debug("Updating place by id: {}", id);
         Place existing = placeRepository.findById(id).orElseThrow(() -> {
-            log.error("Place with id: {} not found", id);
+            log.warn("Place with id: {} not found", id);
             return new PlaceNotFoundException(String.format("Place with id: %s not found", id));
         });
 
@@ -85,11 +85,11 @@ public class PlaceServiceImpl implements PlaceService {
     @Transactional
     @Override
     public void deletePlace(Long id) {
-        log.info("Delete place with id: {}", id);
+        log.debug("Delete place with id: {}", id);
         if (placeRepository.existsById(id)) {
             placeRepository.deleteById(id);
         } else {
-            log.error("Place with id: {} not found", id);
+            log.warn("Place with id: {} not found", id);
             throw new PlaceNotFoundException(String.format("Place with id: %s not found", id));
         }
     }
@@ -102,16 +102,16 @@ public class PlaceServiceImpl implements PlaceService {
     @Transactional(readOnly = true)
     @Override
     public PlaceDto getRandomPlaceByCity(String cityName) {
-        log.info("Get random place for city: {}", cityName);
+        log.debug("Get random place for city: {}", cityName);
         return placeMapper.toPlaceDto(placeRepository.findRandomPlace(cityName).orElseThrow(() -> {
-                    log.error("Random place not found");
+                    log.warn("Random place not found for city: {}", cityName);
                     return new PlaceNotFoundException("Random place not found");
                 }));
     }
 
     @Override
     public Long getSelectedPlaceForChat(Long chatId) {
-        log.info("Get selected city for chat: {}", chatId);
+        log.debug("Get selected place for chat: {}", chatId);
         return placeForChat.get(chatId);
     }
 
@@ -129,16 +129,16 @@ public class PlaceServiceImpl implements PlaceService {
         } else {
             return placeForChat.get(chatId);
         }
-        log.info("Select city: {} for chat: {}", placeId, chatId);
+        log.debug("Select place: {} for chat: {}", placeId, chatId);
         Long id = placeForChat.putIfAbsent(chatId, placeId);
         return id == null ? placeForChat.get(chatId) : id;
     }
 
     @Override
     public List<Place> getPlacesByNameCity(String cityName) {
-        log.info("Find places by city name: {}", cityName);
+        log.debug("Find places by city name: {}", cityName);
         return placeRepository.findPlacesByCityName(cityName).orElseThrow(() -> {
-            log.error("Places by city: {} not found", cityName);
+            log.warn("Places by city: {} not found", cityName);
             return new PlaceNotFoundException(String.format("Places by city: %s not found", cityName));
         });
     }
@@ -153,7 +153,7 @@ public class PlaceServiceImpl implements PlaceService {
      */
     @Override
     public PlaceCreateRs create(PlaceCreateRq req, UploadedFile file) throws IOException {
-        log.info("Create new palace with photo...");
+        log.debug("Create new place with photo");
         Place place = placeMapper.to(req);
         place.setCity(cityService.findCityById(req.getCityId()));
         placeRepository.save(place);

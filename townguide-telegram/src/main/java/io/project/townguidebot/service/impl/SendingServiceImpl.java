@@ -51,7 +51,7 @@ public class SendingServiceImpl implements SendingService {
      */
     @Override
     public EditMessageText sendEditMessageText(String text, Long chatId, Long messageId) {
-        log.info("Edit message: {} for chat: {}", messageId, chatId);
+        log.debug("Edit message: {} for chat: {}", messageId, chatId);
         EditMessageText message = new EditMessageText();
         message.setChatId(chatId);
         message.setText(text);
@@ -67,7 +67,7 @@ public class SendingServiceImpl implements SendingService {
      */
     @Override
     public SendMessage sendMessage(Long chatId, String textToSend) {
-        log.info("Sending message for chat: {}", chatId);
+        log.debug("Sending message for chat: {}", chatId);
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(textToSend);
@@ -107,7 +107,7 @@ public class SendingServiceImpl implements SendingService {
      */
     @Override
     public SendPhoto sendStartPhoto(Long chatId, String caption) throws IOException {
-        log.info("Sending start photo for chat: {}", chatId);
+        log.debug("Sending start photo for chat: {}", chatId);
         String photoUrl = "https://res.cloudinary.com/dezwmxtpc/image/upload/v1756196617/places/1/zopw1n5x3wobenrgwuc3.png";
         var message = new SendPhoto();
         message.setChatId(chatId);
@@ -123,7 +123,7 @@ public class SendingServiceImpl implements SendingService {
     @SneakyThrows
     @Override
     public SendPhoto startCommandReceived(Long chatId) {
-        log.info("Hello message for chat: {}", chatId);
+        log.debug("Build start message for chat: {}", chatId);
         cityService.unselectedCityForChat(chatId);
         String name = userService.getNameByChatId(chatId);
         String answer = EmojiParser.parseToUnicode(HELLO + name + GREETING);
@@ -140,7 +140,7 @@ public class SendingServiceImpl implements SendingService {
     public SendMessage sendWeather(Long chatId){
         return Optional.ofNullable(cityService.getSelectedCityForChat(chatId))
                 .map(cityNameEng -> {
-                    log.info("Sending weather for chat: {} and city: {}", chatId, cityNameEng);
+                    log.debug("Sending weather for chat: {} and city: {}", chatId, cityNameEng);
                     WeatherInfo weather = weatherClient.getWeather(cityNameEng);
                     String nameCity = cityService.getCityNameByNameEng(cityNameEng);
                     return sendMessage(chatId,
@@ -162,7 +162,7 @@ public class SendingServiceImpl implements SendingService {
      */
     @Override
     public SendPhoto sendPhoto(Long chatId, String urlPhoto) throws IOException {
-        log.info("Sending photo for chat: {}", chatId);
+        log.debug("Sending photo for chat: {}", chatId);
         var message = new SendPhoto();
         message.setChatId(chatId);
         message.setPhoto(new InputFile(urlPhoto));
@@ -178,7 +178,7 @@ public class SendingServiceImpl implements SendingService {
     public SendMessage sendRandomStory(Long chatId) {
         return Optional.ofNullable(cityService.getSelectedCityForChat(chatId))
                         .map(cityName -> {
-                            log.info("Sending random story for chat: {}", chatId);
+                            log.debug("Sending random story for chat: {}", chatId);
                             String storyText = storyService.getRandomStoryForCity(cityName).getBody();
                             SendMessage sendMessage = new SendMessage();
                             sendMessage.setChatId(chatId);
@@ -206,7 +206,7 @@ public class SendingServiceImpl implements SendingService {
     @SneakyThrows
     @Override
     public SendMessage cityMenuReceived(Long chatId) {
-        log.info("City menu for chat: {}", chatId);
+        log.debug("Build city menu for chat: {}", chatId);
         String descriptionCity = cityService.getDescriptionSelectedCity(chatId);
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
@@ -222,7 +222,7 @@ public class SendingServiceImpl implements SendingService {
     @SneakyThrows
     @Override
     public SendMessage selectCityCommandReceived(Long chatId) {
-        log.info("Menu fo selected city: {}", chatId);
+        log.debug("Build select city menu for chat: {}", chatId);
         cityService.unselectedCityForChat(chatId);
         SendMessage sendPhoto = sendMessage(chatId, SELECT_CITY);
         sendPhoto.setReplyMarkup(menuService.startMenu());
@@ -254,7 +254,7 @@ public class SendingServiceImpl implements SendingService {
      */
     @Override
     public SendMessage sendMenuPlaces(Long chatId) {
-        log.info("Sending place menu fo chat: {}", chatId);
+        log.debug("Sending place menu for chat: {}", chatId);
         return Optional.ofNullable(cityService.getSelectedCityForChat(chatId))
                 .map(cityName->{
                     SendMessage sendMessage = sendMessage(chatId, SELECT_PLACE);

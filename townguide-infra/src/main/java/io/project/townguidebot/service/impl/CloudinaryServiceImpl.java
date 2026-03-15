@@ -23,7 +23,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
 
     @Override
     public UploadPhotoResult uploadPhoto(UploadedFile file, Long placeId) {
-        log.info("Upload photo for place {}", placeId);
+        log.debug("Upload photo for place {}", placeId);
         try {
             Map uploadResult = cloudinary.uploader().upload(file.bytes(),
                     ObjectUtils.asMap(
@@ -47,7 +47,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
 
     @Override
     public void deletePhoto(String publicId) throws IOException {
-        log.info("Deleting photo from Cloudinary: {}", publicId);
+        log.debug("Deleting photo from Cloudinary: {}", publicId);
         try {
             cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
         } catch (IOException e) {

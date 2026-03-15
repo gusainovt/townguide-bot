@@ -33,7 +33,7 @@ public class WeatherClient implements WeatherService {
      */
     @Override
     public WeatherInfo getWeather(String city) {
-        log.info("Get weather for city: {}", city);
+        log.debug("Get weather for city: {}", city);
         Weather weather = restTemplate.exchange(
                 url,
                 HttpMethod.GET,

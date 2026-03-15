@@ -29,9 +29,9 @@ public class StoryServiceImpl implements StoryService {
      */
     @Override
     public StoryDto getRandomStoryForCity(String cityName) {
-        log.info("Find random story for city: {}", cityName);
+        log.debug("Find random story for city: {}", cityName);
         Story story = storyRepository.findRandomStoryByNameCity(cityName).orElseThrow(() -> {
-            log.error("Random story for city: {} not found", cityName);
+            log.warn("Random story for city: {} not found", cityName);
             return  new StoryNotFoundException("Random story not found");
         });
         return storyMapper.toStoryDto(story);
@@ -43,7 +43,7 @@ public class StoryServiceImpl implements StoryService {
      */
     @Override
     public List<StoryDto> findAllStories() {
-        log.info("Find all stories...");
+        log.debug("Find all stories");
         return storyMapper.toListStoriesDto(storyRepository.findAll());
     }
 
@@ -54,9 +54,9 @@ public class StoryServiceImpl implements StoryService {
      */
     @Override
     public StoryDto findStoryById(Long id) {
-        log.info("Find story by id: {}", id);
+        log.debug("Find story by id: {}", id);
         return storyMapper.toStoryDto(storyRepository.findById(id).orElseThrow(() -> {
-            log.error("Story with id: {} not found", id);
+            log.warn("Story with id: {} not found", id);
             return new StoryNotFoundException(String.format("Story with id: %s not found", id));
         }));
     }
@@ -69,7 +69,7 @@ public class StoryServiceImpl implements StoryService {
      */
     @Override
     public StoryDto createStory(StoryRq req) {
-        log.info("Create new story...");
+        log.debug("Create story");
         Story story = storyMapper.toStory(req);
         story.setCity(cityService.findCityById(req.getCityId()));
         return storyMapper.toStoryDto(storyRepository.save(story));
@@ -83,9 +83,9 @@ public class StoryServiceImpl implements StoryService {
      */
     @Override
     public StoryDto updateStory(long id, StoryDto storyDto) {
-        log.info("Update story with id: {}", id);
+        log.debug("Update story with id: {}", id);
         Story existing = storyRepository.findById(id).orElseThrow(() -> {
-            log.error("Story with id: {} not found", id);
+            log.warn("Story with id: {} not found", id);
             return new StoryNotFoundException(String.format("Story with id: %s not found", id));
         });
 
@@ -101,11 +101,11 @@ public class StoryServiceImpl implements StoryService {
      */
     @Override
     public void deleteStory(long id) {
-        log.info("Delete story with id: {}", id);
+        log.debug("Delete story with id: {}", id);
         if (storyRepository.existsById(id)) {
             storyRepository.deleteById(id);
         } else {
-            log.error("Story with id: {} not found", id);
+            log.warn("Story with id: {} not found", id);
             throw new StoryNotFoundException(String.format("Story with id: %s not found", id));
         }
     }

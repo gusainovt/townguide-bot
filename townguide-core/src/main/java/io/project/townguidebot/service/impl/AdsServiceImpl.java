@@ -27,7 +27,7 @@ public class AdsServiceImpl implements io.project.townguidebot.service.AdsServic
     @Transactional(readOnly = true)
     @Override
     public List<AdDto> findAllAds() {
-        log.info("Find all ads...");
+        log.debug("Find all ads");
         return adMapper.toListAdsDto(adsRepository.findAll());
     }
 
@@ -39,9 +39,9 @@ public class AdsServiceImpl implements io.project.townguidebot.service.AdsServic
     @Transactional(readOnly = true)
     @Override
     public AdDto findAdById(long id) {
-        log.info("Find ad with id: {}", id);
+        log.debug("Find ad with id: {}", id);
         return adMapper.toAdDto(adsRepository.findById(id).orElseThrow(() -> {
-            log.error("Ad with id: {} not found", id);
+            log.warn("Ad with id: {} not found", id);
             return new AdNotFoundException(String.format("Ad with id: %s not found", id));
         }));
     }
@@ -55,7 +55,7 @@ public class AdsServiceImpl implements io.project.townguidebot.service.AdsServic
     @Transactional
     @Override
     public AdDto createAd(AdDto adDto) {
-        log.info("Created new ad...");
+        log.debug("Create ad");
         Ad ad = adMapper.ToAd(adDto);
         return adMapper.toAdDto(adsRepository.save(ad));
     }
@@ -69,13 +69,13 @@ public class AdsServiceImpl implements io.project.townguidebot.service.AdsServic
     @Transactional
     @Override
     public AdDto updateAd(long id, AdDto adDto) {
-        log.info("Update ad with id: {}", id);
+        log.debug("Update ad with id: {}", id);
         if (adsRepository.existsById(id)) {
             Ad ad = adMapper.ToAd(adDto);
             ad.setId(id);
             return adMapper.toAdDto(adsRepository.save(ad));
         } else {
-            log.error("Ad with id: {} not found", id);
+            log.warn("Ad with id: {} not found", id);
             throw new AdNotFoundException(String.format("Ad with id: %s not found", id));
         }
     }
@@ -87,11 +87,11 @@ public class AdsServiceImpl implements io.project.townguidebot.service.AdsServic
     @Transactional
     @Override
     public void deleteAd(long id) {
-        log.info("Delete ad with id: {}", id);
+        log.debug("Delete ad with id: {}", id);
         if (adsRepository.existsById(id)) {
             adsRepository.deleteById(id);
         } else {
-            log.error("Ad with id: {} not found", id);
+            log.warn("Ad with id: {} not found", id);
             throw new AdNotFoundException(String.format("Ad with id: %s not found", id));
         }
     }

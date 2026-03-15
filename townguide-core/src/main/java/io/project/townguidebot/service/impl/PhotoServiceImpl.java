@@ -27,7 +27,7 @@ public class PhotoServiceImpl implements PhotoService {
     @Override
     @Transactional
     public Photo savePhoto(Long placeId, UploadPhotoResult uploadPhoto) {
-        log.info("Created new photo...");
+        log.debug("Create photo for place {}", placeId);
         Place place = placeRepository.getReferenceById(placeId);
         return photoRepository.save(Photo.builder()
             .place(place)
@@ -46,9 +46,9 @@ public class PhotoServiceImpl implements PhotoService {
      */
     @Override
     public List<Photo> getAllPhotoByPlace(Long placeId) {
-        log.info("Get all photos by place id: {}", placeId);
+        log.debug("Get all photos by place id: {}", placeId);
         return photoRepository.findPhotosByPlaceId(placeId).orElseThrow(() -> {
-            log.error("Photos not found by place id: {}", placeId);
+            log.warn("Photos not found by place id: {}", placeId);
             return new PhotoNotFoundException("Photos not found by place id: " + placeId);
         });
     }
@@ -56,7 +56,7 @@ public class PhotoServiceImpl implements PhotoService {
     @Override
     @Transactional(readOnly = true)
     public String getPhotoUrl(Long photoId) {
-        log.info("Get url for photo: {}", photoId);
+        log.debug("Get url for photo: {}", photoId);
         Photo photo = photoRepository.findById(photoId)
                 .orElseThrow(() -> new PhotoNotFoundException("Photo not found: " + photoId));
         return photo.getUrl();

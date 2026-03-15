@@ -25,7 +25,7 @@ public class SelectCommandHandler implements CommandHandlerStrategy {
 
     @Override
     public void handle(TelegramLongPollingBot bot, long chatId) throws TelegramApiException {
-        log.info("Select city command handle for chat: {}", chatId);
+        log.debug("Select city command handle for chat: {}", chatId);
         bot.execute(sendingService.selectCityCommandReceived(chatId));
     }
 }

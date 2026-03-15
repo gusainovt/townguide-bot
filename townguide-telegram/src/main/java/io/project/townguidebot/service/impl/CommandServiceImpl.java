@@ -20,7 +20,7 @@ import static io.project.townguidebot.service.constants.TelegramText.*;
 public class CommandServiceImpl implements CommandService {
     @Override
     public void initCommands(TelegramBot bot) {
-        log.info("Initialization bot menu");
+        log.debug("Initialization bot menu");
         List<BotCommand> listOfCommands = new ArrayList<>(List.of(
                 new BotCommand(START.getValue(), START_DESCRIPTION),
                 new BotCommand(HELP.getValue(), HELP_DESCRIPTION),
@@ -33,7 +33,7 @@ public class CommandServiceImpl implements CommandService {
             bot.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
 
         } catch (TelegramApiException e) {
-            log.error("Error commands initialization: {}", e.getMessage());
+            log.error("Error commands initialization", e);
         }
     }
 }
