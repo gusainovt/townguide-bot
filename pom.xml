@@ -34,9 +34,9 @@
 
   <modules>
     <module>townguide-core</module>
-    <module>townguide-infra</module>
+    <module>townguide-security</module>
+    <module>townguide-integration</module>
     <module>townguide-api</module>
-    <module>townguide-admin</module>
     <module>townguide-telegram</module>
     <module>townguide-boot</module>
   </modules>

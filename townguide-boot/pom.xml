@@ -22,12 +22,12 @@
     </dependency>
     <dependency>
       <groupId>io.project</groupId>
-      <artifactId>townguide-infra</artifactId>
+      <artifactId>townguide-security</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>io.project</groupId>
-      <artifactId>townguide-admin</artifactId>
+      <artifactId>townguide-integration</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

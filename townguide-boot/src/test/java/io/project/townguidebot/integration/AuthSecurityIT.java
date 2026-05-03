@@ -115,7 +115,7 @@ class AuthSecurityIT {
         user.setName("Петр");
         user.setFullName("Петр Иванов");
         user.setPasswordHash(passwordEncoder.encode("pass"));
-        user.setRole(AdminUser.Role.USER);
+        user.setRole(AdminUser.Role.USER_FREE);
         adminUserRepository.save(user);
     }
 
@@ -131,6 +131,23 @@ class AuthSecurityIT {
     @Test
     void protectedEndpoint_WithValidAdminToken_ShouldReturn200() {
         String accessToken = loginAndGetAccessToken("admin");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                "/api/v1/city",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                String.class
+        );
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void getEndpoint_WithValidFreeUserToken_ShouldReturn200() {
+        String accessToken = loginAndGetAccessToken("user");
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);

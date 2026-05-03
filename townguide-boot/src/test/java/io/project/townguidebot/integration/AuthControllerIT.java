@@ -4,6 +4,7 @@ import io.project.townguidebot.security.dto.AuthMeResponse;
 import io.project.townguidebot.security.dto.ChangePasswordRequest;
 import io.project.townguidebot.security.dto.LoginRequest;
 import io.project.townguidebot.security.dto.MessageResponse;
+import io.project.townguidebot.security.dto.RegisterRequest;
 import io.project.townguidebot.security.dto.RefreshRequest;
 import io.project.townguidebot.security.dto.TokenResponse;
 import io.project.townguidebot.security.model.AdminUser;
@@ -65,6 +66,21 @@ class AuthControllerIT extends AbstractIntegrationTest {
         assertFalse(resp.getBody().token().isBlank());
         assertNotNull(resp.getBody().refreshToken());
         assertFalse(resp.getBody().refreshToken().isBlank());
+    }
+
+    @Test
+    void register_ShouldCreateFreeUser() {
+        RegisterRequest request = new RegisterRequest();
+        request.setLogin("free-user");
+        request.setPassword("pass");
+
+        ResponseEntity<Void> resp = restTemplate.postForEntity("/auth/register", request, Void.class);
+
+        assertEquals(HttpStatus.CREATED, resp.getStatusCode());
+        AdminUser user = adminUserRepository.findByUsername("free-user").orElseThrow();
+        assertEquals("free-user", user.getLogin());
+        assertEquals(AdminUser.Role.USER_FREE, user.getRole());
+        assertTrue(passwordEncoder.matches("pass", user.getPasswordHash()));
     }
 
     @Test
