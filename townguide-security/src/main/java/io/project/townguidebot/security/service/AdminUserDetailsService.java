@@ -1,10 +1,9 @@
 package io.project.townguidebot.security.service;
 
-import io.project.townguidebot.security.model.AdminUser;
-import io.project.townguidebot.security.repository.AdminUserRepository;
+import io.project.townguidebot.model.User;
+import io.project.townguidebot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,21 +14,21 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AdminUserDetailsService implements UserDetailsService {
 
-  private final AdminUserRepository repository;
+  private final UserRepository repository;
 
   @Override
   public UserDetails loadUserByUsername(String username) {
     log.debug("Loading user by username '{}'", username);
-    AdminUser user = repository.findByUsername(username)
+    User user = repository.findByLogin(username)
         .orElseThrow(() -> {
           log.warn("User '{}' not found in database", username);
           return new UsernameNotFoundException("User not found");
         });
 
-    log.debug("User '{}' found with role {}", user.getUsername(), user.getRole());
+    log.debug("User '{}' found with role {}", user.getLogin(), user.getRole());
 
-    return User.builder()
-        .username(user.getUsername())
+    return org.springframework.security.core.userdetails.User.builder()
+        .username(user.getLogin())
         .password(user.getPasswordHash())
         .roles(user.getRole().name())
         .build();

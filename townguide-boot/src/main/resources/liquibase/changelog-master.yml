@@ -14,10 +14,6 @@ databaseChangeLog:
   - include:
       file: liquibase/scripts/cities-table.sql
   - include:
-      file: liquibase/scripts/admin-users.sql
-  - include:
-      file: liquibase/scripts/admin-users-profile.sql
-  - include:
-      file: liquibase/scripts/common-users-role.sql
-  - include:
       file: liquibase/scripts/audit-columns.sql
+  - include:
+      file: liquibase/scripts/drop-admin-users.sql

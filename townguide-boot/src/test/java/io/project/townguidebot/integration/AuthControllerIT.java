@@ -1,14 +1,15 @@
 package io.project.townguidebot.integration;
 
+import io.project.townguidebot.model.User;
+import io.project.townguidebot.model.enums.UserRole;
+import io.project.townguidebot.repository.UserRepository;
 import io.project.townguidebot.security.dto.AuthMeResponse;
 import io.project.townguidebot.security.dto.ChangePasswordRequest;
 import io.project.townguidebot.security.dto.LoginRequest;
 import io.project.townguidebot.security.dto.MessageResponse;
-import io.project.townguidebot.security.dto.RegisterRequest;
 import io.project.townguidebot.security.dto.RefreshRequest;
+import io.project.townguidebot.security.dto.RegisterRequest;
 import io.project.townguidebot.security.dto.TokenResponse;
-import io.project.townguidebot.security.model.AdminUser;
-import io.project.townguidebot.security.repository.AdminUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,22 +35,21 @@ class AuthControllerIT extends AbstractIntegrationTest {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    private AdminUserRepository adminUserRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
-        adminUserRepository.deleteAll();
-        AdminUser admin = new AdminUser();
-        admin.setUsername("admin");
+        userRepository.deleteAll();
+        User admin = new User();
         admin.setLogin("admin");
-        admin.setName("Иван");
-        admin.setFullName("Иван Петров");
+        admin.setName("Ivan");
+        admin.setFullName("Ivan Petrov");
         admin.setPasswordHash(passwordEncoder.encode("pass"));
-        admin.setRole(AdminUser.Role.ADMIN);
-        adminUserRepository.save(admin);
+        admin.setRole(UserRole.ADMIN);
+        userRepository.save(admin);
     }
 
     @Test
@@ -77,9 +77,9 @@ class AuthControllerIT extends AbstractIntegrationTest {
         ResponseEntity<Void> resp = restTemplate.postForEntity("/auth/register", request, Void.class);
 
         assertEquals(HttpStatus.CREATED, resp.getStatusCode());
-        AdminUser user = adminUserRepository.findByUsername("free-user").orElseThrow();
+        User user = userRepository.findByLogin("free-user").orElseThrow();
         assertEquals("free-user", user.getLogin());
-        assertEquals(AdminUser.Role.USER_FREE, user.getRole());
+        assertEquals(UserRole.USER_FREE, user.getRole());
         assertTrue(passwordEncoder.matches("pass", user.getPasswordHash()));
     }
 
@@ -133,8 +133,8 @@ class AuthControllerIT extends AbstractIntegrationTest {
         assertNotNull(response.getBody());
         assertEquals("admin", response.getBody().username());
         assertEquals("admin", response.getBody().login());
-        assertEquals("Иван", response.getBody().name());
-        assertEquals("Иван Петров", response.getBody().fullName());
+        assertEquals("Ivan", response.getBody().name());
+        assertEquals("Ivan Petrov", response.getBody().fullName());
         assertEquals("ROLE_ADMIN", response.getBody().role());
     }
 
@@ -154,7 +154,7 @@ class AuthControllerIT extends AbstractIntegrationTest {
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         assertTrue(passwordEncoder.matches(
                 "new-pass-123",
-                adminUserRepository.findByUsername("admin").orElseThrow().getPasswordHash()
+                userRepository.findByLogin("admin").orElseThrow().getPasswordHash()
         ));
     }
 
@@ -173,7 +173,7 @@ class AuthControllerIT extends AbstractIntegrationTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("Текущий пароль неверный", response.getBody().message());
+        assertEquals("РўРµРєСѓС‰РёР№ РїР°СЂРѕР»СЊ РЅРµРІРµСЂРЅС‹Р№", response.getBody().message());
     }
 
     private String loginAndGetAccessToken(String username, String password) {

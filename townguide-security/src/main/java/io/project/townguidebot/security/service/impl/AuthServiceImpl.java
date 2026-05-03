@@ -4,8 +4,9 @@ import io.project.townguidebot.security.dto.AuthMeResponse;
 import io.project.townguidebot.security.dto.ChangePasswordRequest;
 import io.project.townguidebot.security.dto.RegisterRequest;
 import io.project.townguidebot.security.exception.InvalidPasswordException;
-import io.project.townguidebot.security.model.AdminUser;
-import io.project.townguidebot.security.repository.AdminUserRepository;
+import io.project.townguidebot.model.User;
+import io.project.townguidebot.model.enums.UserRole;
+import io.project.townguidebot.repository.UserRepository;
 import io.project.townguidebot.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -20,7 +21,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-  private final AdminUserRepository adminUserRepository;
+  private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
 
   @Override
@@ -30,26 +31,25 @@ public class AuthServiceImpl implements AuthService {
     if (login == null || login.isBlank() || request.getPassword() == null || request.getPassword().isBlank()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Login and password are required");
     }
-    if (adminUserRepository.existsByUsername(login)) {
+    if (userRepository.existsByLogin(login)) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
     }
 
-    AdminUser user = new AdminUser();
-    user.setUsername(login);
+    User user = new User();
     user.setLogin(login);
     user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-    user.setRole(AdminUser.Role.USER_FREE);
-    adminUserRepository.save(user);
+    user.setRole(UserRole.USER_FREE);
+    userRepository.save(user);
   }
 
   @Override
   @Transactional(readOnly = true)
   public AuthMeResponse getCurrentUser() {
-    AdminUser user = getAuthenticatedUser();
+    User user = getAuthenticatedUser();
     return new AuthMeResponse(
         user.getId(),
-        user.getUsername(),
-        user.getLogin() != null ? user.getLogin() : user.getUsername(),
+        user.getLogin(),
+        user.getLogin(),
         user.getName(),
         user.getFullName(),
         "ROLE_" + user.getRole().name()
@@ -59,19 +59,19 @@ public class AuthServiceImpl implements AuthService {
   @Override
   @Transactional
   public void changePassword(ChangePasswordRequest request) {
-    AdminUser user = getAuthenticatedUser();
+    User user = getAuthenticatedUser();
     if (!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
       throw new InvalidPasswordException("Текущий пароль неверный");
     }
 
     user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
-    adminUserRepository.save(user);
+    userRepository.save(user);
   }
 
-  private AdminUser getAuthenticatedUser() {
+  private User getAuthenticatedUser() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String username = authentication.getName();
-    return adminUserRepository.findByUsername(username)
-        .orElseThrow(() -> new IllegalStateException("Authenticated admin not found: " + username));
+    return userRepository.findByLogin(username)
+        .orElseThrow(() -> new IllegalStateException("Authenticated user not found: " + username));
   }
 }

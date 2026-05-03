@@ -4,11 +4,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.project.townguidebot.config.BotInitializer;
 import io.project.townguidebot.listener.TelegramBot;
+import io.project.townguidebot.model.User;
+import io.project.townguidebot.model.enums.UserRole;
+import io.project.townguidebot.repository.UserRepository;
 import io.project.townguidebot.security.dto.LoginRequest;
 import io.project.townguidebot.security.dto.MessageResponse;
 import io.project.townguidebot.security.dto.TokenResponse;
-import io.project.townguidebot.security.model.AdminUser;
-import io.project.townguidebot.security.repository.AdminUserRepository;
 import io.project.townguidebot.service.CommandService;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -72,7 +73,7 @@ class AuthSecurityIT {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    private AdminUserRepository adminUserRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -98,25 +99,23 @@ class AuthSecurityIT {
 
     @BeforeEach
     void setUp() {
-        adminUserRepository.deleteAll();
+        userRepository.deleteAll();
 
-        AdminUser admin = new AdminUser();
-        admin.setUsername("admin");
+        User admin = new User();
         admin.setLogin("admin");
-        admin.setName("Иван");
-        admin.setFullName("Иван Петров");
+        admin.setName("Ivan");
+        admin.setFullName("Ivan Petrov");
         admin.setPasswordHash(passwordEncoder.encode("pass"));
-        admin.setRole(AdminUser.Role.ADMIN);
-        adminUserRepository.save(admin);
+        admin.setRole(UserRole.ADMIN);
+        userRepository.save(admin);
 
-        AdminUser user = new AdminUser();
-        user.setUsername("user");
+        User user = new User();
         user.setLogin("user");
-        user.setName("Петр");
-        user.setFullName("Петр Иванов");
+        user.setName("Petr");
+        user.setFullName("Petr Ivanov");
         user.setPasswordHash(passwordEncoder.encode("pass"));
-        user.setRole(AdminUser.Role.USER_FREE);
-        adminUserRepository.save(user);
+        user.setRole(UserRole.USER_FREE);
+        userRepository.save(user);
     }
 
     @Test
@@ -125,7 +124,7 @@ class AuthSecurityIT {
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("Требуется авторизация", response.getBody().message());
+        assertEquals("РўСЂРµР±СѓРµС‚СЃСЏ Р°РІС‚РѕСЂРёР·Р°С†РёСЏ", response.getBody().message());
     }
 
     @Test
@@ -176,7 +175,7 @@ class AuthSecurityIT {
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("Access token недействителен или истек", response.getBody().message());
+        assertEquals("Access token РЅРµРґРµР№СЃС‚РІРёС‚РµР»РµРЅ РёР»Рё РёСЃС‚РµРє", response.getBody().message());
     }
 
     @Test
@@ -193,7 +192,7 @@ class AuthSecurityIT {
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("Access token недействителен или истек", response.getBody().message());
+        assertEquals("Access token РЅРµРґРµР№СЃС‚РІРёС‚РµР»РµРЅ РёР»Рё РёСЃС‚РµРє", response.getBody().message());
     }
 
     @Test
@@ -206,13 +205,13 @@ class AuthSecurityIT {
         ResponseEntity<MessageResponse> response = restTemplate.exchange(
                 "/api/v1/city",
                 HttpMethod.POST,
-                new HttpEntity<>("{\"name\":\"Москва\",\"nameEng\":\"moscow\",\"description\":\"desc\",\"callback\":\"cb\"}", headers),
+                new HttpEntity<>("{\"name\":\"Moscow\",\"nameEng\":\"moscow\",\"description\":\"desc\",\"callback\":\"cb\"}", headers),
                 MessageResponse.class
         );
 
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("Недостаточно прав для создания города", response.getBody().message());
+        assertEquals("РќРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РїСЂР°РІ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РіРѕСЂРѕРґР°", response.getBody().message());
     }
 
     private String loginAndGetAccessToken(String username) {

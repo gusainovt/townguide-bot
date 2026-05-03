@@ -103,7 +103,7 @@ class TelegramBotDbIT {
 
         telegramBot.onUpdateReceived(update);
 
-        User saved = userRepository.findById(10L).orElseThrow();
+        User saved = userRepository.findByChatId(10L).orElseThrow();
         assertEquals(10L, saved.getChatId());
         assertEquals("Anna", saved.getFirstName());
         assertEquals("Ivanova", saved.getLastName());

@@ -1,6 +1,7 @@
 package io.project.townguidebot.model;
 
 import io.project.townguidebot.model.enums.LanguageCode;
+import io.project.townguidebot.model.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,7 +13,27 @@ import java.sql.Timestamp;
 public class User extends AuditableEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "chat_id", unique = true)
     private Long chatId;
+
+    @Column(name = "login", unique = true)
+    private String login;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "full_name")
+    private String fullName;
+
+    @Column(name = "password_hash")
+    private String passwordHash;
+
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     @Column(name = "first_name")
     private String firstName;
