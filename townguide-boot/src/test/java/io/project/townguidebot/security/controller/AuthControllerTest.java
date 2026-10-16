@@ -1,5 +1,6 @@
 package io.project.townguidebot.security.controller;
 
+import io.project.townguidebot.controller.impl.AuthController;
 import io.project.townguidebot.security.JwtProvider;
 import io.project.townguidebot.security.dto.AuthMeResponse;
 import io.project.townguidebot.security.dto.ChangePasswordRequest;

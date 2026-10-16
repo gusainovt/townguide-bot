@@ -1,5 +1,6 @@
 package io.project.townguidebot.controller.impl;
 
+import gusainov.library.annotation.LogUserRequest;
 import io.project.townguidebot.controller.UserController;
 import io.project.townguidebot.dto.request.UserFilterRequest;
 import io.project.townguidebot.dto.response.UsersResponse;
@@ -17,6 +18,7 @@ public class UserControllerImpl implements UserController {
   private final UserService userService;
 
   @Override
+  @LogUserRequest(method = "findUsersByFilter")
   public ResponseEntity<UsersResponse> findUsersByFilter(UserFilterRequest userFilterRequest) {
     UsersResponse response = userService.findUsersByFilter(userFilterRequest);
     return ResponseEntity.ok(response);

@@ -1,5 +1,6 @@
-package io.project.townguidebot.security.controller;
+package io.project.townguidebot.controller.impl;
 
+import gusainov.library.annotation.LogUserRequest;
 import io.project.townguidebot.security.JwtProvider;
 import io.project.townguidebot.security.dto.AuthMeResponse;
 import io.project.townguidebot.security.dto.ChangePasswordRequest;
@@ -34,6 +35,7 @@ public class AuthController {
 
   @Operation(summary = "Login", description = "Authenticates a user by login and password and returns JWT tokens.")
   @PostMapping("/login")
+  @LogUserRequest(method = "register")
   public TokenResponse login(@RequestBody LoginRequest request) {
     var authentication = authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(request.getLoginOrUsername(), request.getPassword())
@@ -43,6 +45,7 @@ public class AuthController {
 
   @Operation(summary = "Register", description = "Creates a free user with USER_FREE role.")
   @PostMapping("/register")
+  @LogUserRequest(method = "register")
   public ResponseEntity<Void> register(@RequestBody RegisterRequest request) {
     authService.register(request);
     return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -50,6 +53,7 @@ public class AuthController {
 
   @Operation(summary = "Refresh token", description = "Issues a new token pair by refresh token.")
   @PostMapping("/refresh")
+  @LogUserRequest(method = "refreshToken")
   public TokenResponse refresh(@RequestBody RefreshRequest request) {
     String refreshToken = request.refreshToken();
 
@@ -63,12 +67,14 @@ public class AuthController {
 
   @Operation(summary = "Current user", description = "Returns the authenticated user profile.")
   @GetMapping("/me")
+  @LogUserRequest(method = "getCurrentUser")
   public AuthMeResponse me() {
     return authService.getCurrentUser();
   }
 
   @Operation(summary = "Change password", description = "Changes password for the authenticated user.")
   @PostMapping("/change-password")
+  @LogUserRequest(method = "changePassword")
   public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request) {
     authService.changePassword(request);
     return ResponseEntity.noContent().build();

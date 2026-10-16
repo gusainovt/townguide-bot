@@ -1,5 +1,6 @@
 package io.project.townguidebot.controller.impl;
 
+import gusainov.library.annotation.LogUserRequest;
 import io.project.townguidebot.controller.PhotoController;
 import io.project.townguidebot.dto.UploadedFile;
 import io.project.townguidebot.service.CloudinaryService;
@@ -19,6 +20,7 @@ public class PhotoControllerImpl implements PhotoController {
     private final CloudinaryService cloudinaryService;
 
     @Override
+    @LogUserRequest(method = "savePhoto")
     public ResponseEntity<String> savePhoto(Long placeId, @RequestPart("file") MultipartFile multipartFile) throws IOException {
         UploadedFile uploadedFile = UploadedFile.builder()
                 .bytes(multipartFile.getBytes())

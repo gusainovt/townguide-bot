@@ -1,5 +1,6 @@
 package io.project.townguidebot.controller.impl;
 
+import gusainov.library.annotation.LogUserRequest;
 import io.project.townguidebot.controller.CityController;
 import io.project.townguidebot.dto.request.CityCreateRq;
 import io.project.townguidebot.dto.response.CityResponse;
@@ -18,11 +19,13 @@ public class CityControllerImpl implements CityController {
   private final CityService cityService;
 
   @Override
+  @LogUserRequest(method = "findAllCities")
   public List<CityResponse> findAllCities() {
     return cityService.getAllCity();
   }
 
   @Override
+  @LogUserRequest(method = "cityCreate")
   public CityResponse create(CityCreateRq req) {
     return cityService.create(req);
   }
