@@ -2,7 +2,6 @@ package io.project.townguidebot.service.impl;
 
 import io.project.townguidebot.dto.request.StoryRq;
 import io.project.townguidebot.exception.StoryNotFoundException;
-import io.project.townguidebot.mapper.StoryMapper;
 import io.project.townguidebot.model.Story;
 import io.project.townguidebot.dto.StoryDto;
 import io.project.townguidebot.repository.StoryRepository;

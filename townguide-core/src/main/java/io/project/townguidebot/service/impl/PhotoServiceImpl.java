@@ -2,13 +2,11 @@ package io.project.townguidebot.service.impl;
 
 import io.project.townguidebot.dto.UploadPhotoResult;
 import io.project.townguidebot.exception.PhotoNotFoundException;
-import io.project.townguidebot.mapper.PlaceMapper;
 import io.project.townguidebot.model.Photo;
 import io.project.townguidebot.model.Place;
 import io.project.townguidebot.repository.PhotoRepository;
 import io.project.townguidebot.repository.PlaceRepository;
 import io.project.townguidebot.service.PhotoService;
-import io.project.townguidebot.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

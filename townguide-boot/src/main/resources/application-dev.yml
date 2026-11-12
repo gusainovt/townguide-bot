@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/tg-bot-borovsk}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+
+telegram:
+  bot:
+    name: ${BOT_NAME:BorovskBot}
+    token: ${BOT_TOKEN:6361390443:AAE1DX_cFYx0FHyMPlmz2RtsD7bI6W7Sre8}
+    owner: ${BOT_OWNER:6282176930}
+
+weather-forecast-service:
+  url: ${WEATHER_URL:https://api.openweathermap.org/data/2.5/weather?q={city}&units=metric&appid={apikey}}
+  api-key: ${WEATHER_API_KEY:}
+
+cloudinary:
+  cloud_name: ${CLOUD_NAME:}
+  api_key: ${CLOUDINARY_API_KEY:}
+  api_secret: ${CLOUDINARY_API_SECRET:}
+
+jwt:
+  secret: ${JWT_SECRET:0123456789abcdef0123456789abcdef}
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL:INFO}
+    io.project.townguidebot.service: ${LOGGING_LEVEL_SERVICE:INFO}
+    io.project.townguidebot.security: ${LOGGING_LEVEL_SECURITY:INFO}
+    io.project.townguidebot.listener: ${LOGGING_LEVEL_LISTENER:INFO}

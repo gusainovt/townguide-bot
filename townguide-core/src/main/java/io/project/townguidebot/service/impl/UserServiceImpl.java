@@ -3,7 +3,6 @@ package io.project.townguidebot.service.impl;
 import io.project.townguidebot.dto.request.UserFilterRequest;
 import io.project.townguidebot.dto.response.UsersResponse;
 import io.project.townguidebot.dto.telegram.TelegramChatDto;
-import io.project.townguidebot.mapper.UserMapper;
 import io.project.townguidebot.model.User;
 import io.project.townguidebot.model.enums.LanguageCode;
 import io.project.townguidebot.repository.UserRepository;

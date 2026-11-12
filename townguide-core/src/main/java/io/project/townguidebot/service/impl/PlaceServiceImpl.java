@@ -5,7 +5,6 @@ import io.project.townguidebot.dto.UploadedFile;
 import io.project.townguidebot.dto.request.PlaceCreateRq;
 import io.project.townguidebot.dto.response.PlaceCreateRs;
 import io.project.townguidebot.exception.PlaceNotFoundException;
-import io.project.townguidebot.mapper.PlaceMapper;
 import io.project.townguidebot.model.Place;
 import io.project.townguidebot.dto.PlaceDto;
 import io.project.townguidebot.repository.PlaceRepository;

@@ -3,7 +3,6 @@ package io.project.townguidebot.service.impl;
 import io.project.townguidebot.dto.request.CityCreateRq;
 import io.project.townguidebot.dto.response.CityResponse;
 import io.project.townguidebot.exception.CityNotFoundException;
-import io.project.townguidebot.mapper.CityMapper;
 import io.project.townguidebot.model.City;
 import io.project.townguidebot.repository.CityRepository;
 import org.junit.jupiter.api.BeforeEach;
